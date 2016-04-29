@@ -1,0 +1,45 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="master.master.cs" Inherits="IceBreak.master" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>IceBreak</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+
+    <div id="menu">
+      <nav class="navbar navbar-default">
+          <div class="container-fluid">
+
+              <%-- Logo --%>
+              <div class="navbar-header">
+                  <a href="index.aspx" class ="navbar-brand"><p style="color:#59D0F7">IceBreak</p></a>
+              </div>
+
+              <%-- Menu Items --%>
+              <div>
+                  <ul class ="nav navbar-nav">
+                      <li class ="active"><a href="index.aspx">Home</a></li>
+                      <li><a href="#">Events</a></li>
+                      <li><a href="#">About</a></li>
+                  </ul>
+              </div>
+          </div>
+      </nav> 
+    </div>
+    <form id="form1" runat="server">
+    <div>
+        <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+        
+        </asp:ContentPlaceHolder>
+    </div>
+    </form>
+</body>
+</html>
+
