@@ -9,16 +9,19 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="stylesheets/sidebar.css"/>
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
 <body>
-
+    <div id="wrapper">
     <div id="menu">
-      <nav class="navbar navbar-default">
+      <nav class="navbar navbar-default " >
           <div class="container-fluid">
-
               <%-- Logo --%>
+              <div class="navbar-left" style="padding-top:16px">
+                    <a href="#" id="side-toggle" ; style="padding-right:10px" ><span class=" glyphicon glyphicon-menu-hamburger"></span></a>
+              </div>
               <div class="navbar-header">
                   <button type="button" class="navbar-toggle" data-toggle ="collapse" data-target="#navmenu">
                       <span class="icon-bar"></span>
@@ -30,35 +33,68 @@
 
               <%-- Menu Items --%>
               <div id="navmenu" class="collapse navbar-collapse">
-                  <ul class ="nav navbar-nav">
-                      <li class ="active"><a href="index.aspx">Home</a></li>
+                  <ul class ="nav navbar-nav" id="list">
+                      <li><a href="index.aspx">Home</a></li>
                       <li><a href="#">Events</a></li>
                       <li><a href="#">About</a></li>
                       <li><a href="#">Contact Us</a></li>
                   </ul>
 
-                   <%--Right side of nav bar/menu --%>
+                   <%--Right side of nav bar/menu  --%>
                   <ul class="nav navbar-nav navbar-right">
-                        <li class ="dropdown">
-                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Profile <span class="caret"></span></a>
-                          <ul class ="dropdown-menu">
-                              <li><a href="#">View Profile</a></li>
-                              <li><a href="#">History</a></li>
-                              <li><a href="#">Settings</a></li>
-                          </ul>
+                      <li>
+                          <a href="#"> <span class="glyphicon glyphicon-bell"></span></a>
                       </li>
+                      <li>
+                          <div class="input-group" style="width:200px;padding-top:8px">
+                              <input type="text" class="form-control" placeholder="Search" />
+                              <div class="input-group-btn">
+                                  <button type="submit" class="btn"><span class="glyphicon glyphicon-search"></span></button>
+                              </div>
+                          </div>
+                      </li>
+                       
                   </ul>
               </div>
           </div>
       </nav> 
     </div>
-    <form id="form1" runat="server">
-    <div>
-        <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+    
+        <div id="sidebar">
+            <ul class="sidebar-nav">
+                <li><a href="#"><span class="glyphicon glyphicon-user"></span> View Full Profile</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-book"></span> History</a></li>
+                 <li><a href="#"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
+            </ul>
+        </div>
+    
+        <form id="form1" runat="server">
+        <div>
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
         
-        </asp:ContentPlaceHolder>
+            </asp:ContentPlaceHolder>
+        </div>
+        </form>
     </div>
-    </form>
+
+
+    <script>
+        $(function () {
+            $('#list> li').click(function () {
+                $('#list > li').removeClass('active');
+                $(this).addClass('active');
+            });
+        });
+        $("#side-toggle").click(function (e){
+            e.preventDefault();
+            $("#wrapper").toggleClass("menuDisplayed");
+        });
+        $("#search").click(function (e) {
+            e.preventDefault();
+            $("#navmenu").toggleClass("searchdisplay");
+        });
+    </script>
 </body>
 </html>
 
