@@ -5,13 +5,13 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
 
-namespace IceBreak
+namespace IcebreakServices
 {
     // NOTE: You can use the "Rename" command on the "Refactor" menu to change the interface name "ITestService" in both code and config file together.
     [ServiceContract]
-    public interface ITestService
+    public interface IIBUserRequestService
     {
-        [OperationContract]
+        [OperationContract]//UriTemplate=""
         string DoWork();
     }
 }
