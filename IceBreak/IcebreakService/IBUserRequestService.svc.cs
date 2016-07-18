@@ -26,11 +26,6 @@ namespace IcebreakServices
             db = new DBServerTools();
         }
 
-        public List<User> getUsers()
-        {
-            return db.getUsers();
-        }
-
         public void registerUser(Stream streamdata)
         {
             StreamReader reader = new StreamReader(streamdata);
@@ -96,8 +91,69 @@ namespace IcebreakServices
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
             }
             WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
-            //WebOperationContext.Current.OutgoingResponse.StatusDescription =  res;
+            WebOperationContext.Current.OutgoingResponse.StatusDescription =  response;
             WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload",response);
+        }
+
+        public void signIn(Stream streamdata)
+        {
+            StreamReader reader = new StreamReader(streamdata);
+            string inbound_payload = reader.ReadToEnd();
+            string response = "";
+            reader.Close();
+            reader.Dispose();
+            //Process form submission
+            User new_user = new User();
+            inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
+            string[] usr_details = inbound_payload.Split('&');
+            if (usr_details.Length == 2)
+            {
+                foreach (string kv_pair in usr_details)
+                {
+                    if (kv_pair.Contains('='))
+                    {
+                        string var = kv_pair.Split('=')[0];
+                        string val = kv_pair.Split('=')[1];
+
+                        switch (var)
+                        {
+                            case "username":
+                                new_user.Username = val;
+                                break;                      
+                            case "password":
+                                new_user.Password = val;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        response = "Error: Broken key-value pair";
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                        break;
+                    }
+                }
+                //Read from DB here
+                string exec_result = db.signIn(new_user);
+                if (exec_result.ToLower().Contains("isvaliduser=true"))
+                {
+                    response = "Success: " + exec_result;
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response = "Error: " + exec_result;
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
+                }
+            }
+            else
+            {
+                response = "Error: Invalid token count (" + usr_details.Length + ") >> " + inbound_payload;
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+            }
+
+            WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+            //WebOperationContext.Current.OutgoingResponse.StatusDescription =  res;
+            WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", response);
         }
     }
 }

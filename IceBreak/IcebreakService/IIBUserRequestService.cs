@@ -14,16 +14,23 @@ namespace IcebreakServices
     [ServiceContract(Namespace ="http://icebreak.azurewebsites.net/")]
     public interface IIBUserRequestService
     {
-        [OperationContract]
+        /*[OperationContract]
         [WebGet(UriTemplate = "Users", ResponseFormat = WebMessageFormat.Json)]
-        List<User> getUsers();
+        List<User> getUsers();*/
 
         [OperationContract]
         [WebInvoke(
             Method = "POST",
-            UriTemplate = "/usrRegPOST",
+            UriTemplate = "/signup",
             BodyStyle = WebMessageBodyStyle.Bare)]
         //[WebInvoke(Method = "POST", UriTemplate = "usrRegPOST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]//, ResponseFormat = WebMessageFormat.Json, 
         void registerUser(Stream streamdata);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "/signin",
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        void signIn(Stream streamdata);
     }
 }

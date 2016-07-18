@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Data.SqlClient;
 using System.Data;
+using System.IO;
 
 namespace IcebreakServices
 {
@@ -15,66 +16,107 @@ namespace IcebreakServices
         private SqlCommand cmd;
         private SqlDataReader dataReader;
 
-        public List<User> getUsers()
+        public string userExists(User user)
         {
-            List<User> users = new List<User>();
+            //Hash input to compare with hashed DB credentials
+            string hashed_input_usr = Hash.HashString(user.Username);
+            string hashed_input_pwd = Hash.HashString(user.Password);
+
             conn = new SqlConnection(dbConnectionString);
             try
             {
                 conn.Open();
-                cmd = new SqlCommand("SELECT * FROM dbo.Users",conn);
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM dbo.Users WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd.Parameters.AddWithValue(@"usr", hashed_input_usr);
+                cmd.Parameters.AddWithValue(@"pwd", hashed_input_pwd);
+
                 dataReader = cmd.ExecuteReader();
-                while(dataReader.Read())
-                {
-                    users.Add(new User()
-                    {
-                        Fname = ((string)dataReader.GetValue(0)),
-                        Lname = ((string)dataReader.GetValue(1)),
-                        Username = ((string)dataReader.GetValue(2)),
-                        Email = ((string)dataReader.GetValue(3))
-                    });
-                }
+                dataReader.Read();
+
+                bool hasRows = dataReader.HasRows;
+
                 dataReader.Close();
                 cmd.Dispose();
                 conn.Close();
+
+                if(hasRows)
+                {
+                    return "Exists=true";
+                }//else there was no user found with those credentials.
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                //TODO: Store exception to logs
+                return e.Message;
             }
-            return users;
+            return "Exists=false";
         }
 
         public string registerUser(User user)
         {
+            string exist_check = userExists(user);
+            if (exist_check.Equals("Exists=false"))
+            {
+                try
+                {
+                    conn = new SqlConnection(dbConnectionString);
+                    conn.Open();
+                    string query = "INSERT INTO dbo.Users VALUES(@fname,@lname,@email,@password,@username)";
+                    cmd = new SqlCommand(query, conn);
+                    //string s = Hash.HashPassword(user.Password);
+
+                    cmd.Parameters.AddWithValue(@"fname", user.Fname);
+                    cmd.Parameters.AddWithValue(@"lname", user.Lname);
+                    cmd.Parameters.AddWithValue(@"username", Hash.HashString(user.Username));
+                    cmd.Parameters.AddWithValue(@"email", user.Email);
+                    cmd.Parameters.AddWithValue(@"password", Hash.HashString(user.Password));
+
+                    //cmd.Prepare();
+                    cmd.ExecuteNonQuery();
+
+                    cmd.Dispose();
+                    conn.Close();
+
+                    return "Success";
+                }
+                catch (Exception e)
+                {
+                    return e.Message;
+                }
+            }
+            else//User exists or there was an exception
+            {
+                return exist_check;
+            }
+        }
+
+        public string signIn(User user)
+        {
+            bool isValidUser = false;
+            //Hash input to compare with hashed DB credentials
+            string hashed_input_usr = Hash.HashString(user.Username);
+            string hashed_input_pwd = Hash.HashString(user.Password);
+
+            conn = new SqlConnection(dbConnectionString);
             try
             {
-                conn = new SqlConnection(dbConnectionString);
                 conn.Open();
-                string query = "INSERT INTO dbo.Users VALUES(@fname,@lname,@username,@email,@password)";
-                cmd = new SqlCommand(query, conn);
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM dbo.Users WHERE username=@usr AND pwd=@pwd", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd.Parameters.AddWithValue(@"usr", hashed_input_usr);
+                cmd.Parameters.AddWithValue(@"pwd", hashed_input_pwd);
 
-                /*cmd.Parameters.Add("@fname",SqlDbType.VarChar);
-                cmd.Parameters.Add("@lname", SqlDbType.VarChar);
-                cmd.Parameters.Add("@username", SqlDbType.VarChar);
-                cmd.Parameters.Add("@email", SqlDbType.VarChar);
-                cmd.Parameters.Add("@password", SqlDbType.VarChar);
+                dataReader = cmd.ExecuteReader();
+                dataReader.Read();
 
-                cmd.Parameters["@fname"].Value = user.Fname;
-                cmd.Parameters["@lname"].Value = user.Lname;
-                cmd.Parameters["@username"].Value = user.Username;
-                cmd.Parameters["@email"].Value = user.Email;
-                cmd.Parameters["@password"].Value = user.Password;*/
+                if(dataReader.HasRows)
+                {
+                    isValidUser = true;
+                }//else there was no user found with those credentials.
 
-                cmd.Parameters.AddWithValue(@"fname", user.Fname);
-                cmd.Parameters.AddWithValue(@"lname", user.Lname);
-                cmd.Parameters.AddWithValue(@"username", user.Username);
-                cmd.Parameters.AddWithValue(@"email", user.Email);
-                cmd.Parameters.AddWithValue(@"password", user.Password);
-
-                //cmd.Prepare();
-                cmd.ExecuteNonQuery();
-
+                dataReader.Close();
                 cmd.Dispose();
                 conn.Close();
             }
@@ -82,7 +124,7 @@ namespace IcebreakServices
             {
                 return e.Message;
             }
-            return "Success";
+            return "isValidUser=" + isValidUser;
         }
     }
 }
