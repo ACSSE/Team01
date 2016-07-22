@@ -19,7 +19,7 @@ namespace IcebreakServices
         public string userExists(User user)
         {
             //Hash input to compare with hashed DB credentials
-            string hashed_input_usr = Hash.HashString(user.Username);
+            //string hashed_input_usr = Hash.HashString(user.Username);
             string hashed_input_pwd = Hash.HashString(user.Password);
 
             conn = new SqlConnection(dbConnectionString);
@@ -28,8 +28,8 @@ namespace IcebreakServices
                 conn.Open();
                 //Query user
                 cmd = new SqlCommand("SELECT * FROM dbo.Users WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
-                cmd.Parameters.AddWithValue(@"usr", hashed_input_usr);
-                cmd.Parameters.AddWithValue(@"pwd", hashed_input_pwd);
+                cmd.Parameters.AddWithValue(@"usr", user.Username);
+                //cmd.Parameters.AddWithValue(@"pwd", hashed_input_pwd);
 
                 dataReader = cmd.ExecuteReader();
                 dataReader.Read();
@@ -44,7 +44,6 @@ namespace IcebreakServices
                 {
                     return "Exists=true";
                 }//else there was no user found with those credentials.
-
             }
             catch (Exception e)
             {
@@ -63,14 +62,15 @@ namespace IcebreakServices
                 {
                     conn = new SqlConnection(dbConnectionString);
                     conn.Open();
-                    string query = "INSERT INTO dbo.Users VALUES(@fname,@lname,@email,@password,@username)";
+                    string query = "INSERT INTO dbo.Users(fname,lname,email,pwd,username,access_level,event_id) VALUES(@fname,@lname,@email,@password,@username,@access_lvl,@event_id)";
                     cmd = new SqlCommand(query, conn);
-                    //string s = Hash.HashPassword(user.Password);
 
                     cmd.Parameters.AddWithValue(@"fname", user.Fname);
                     cmd.Parameters.AddWithValue(@"lname", user.Lname);
-                    cmd.Parameters.AddWithValue(@"username", Hash.HashString(user.Username));
+                    cmd.Parameters.AddWithValue(@"username", user.Username);//Hash.HashString(user.Username));
                     cmd.Parameters.AddWithValue(@"email", user.Email);
+                    cmd.Parameters.AddWithValue(@"access_lvl", user.Access_level);
+                    cmd.Parameters.AddWithValue(@"event_id", user.Event_id);
                     cmd.Parameters.AddWithValue(@"password", Hash.HashString(user.Password));
 
                     //cmd.Prepare();
@@ -92,11 +92,40 @@ namespace IcebreakServices
             }
         }
 
+        public string addEvent(Event ev)
+        {
+            try
+            {
+                conn = new SqlConnection(dbConnectionString);
+                conn.Open();
+                string query = "INSERT INTO dbo.Events VALUES(@title,@desc,@addr,@radius,@loc_gps)";
+                cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue(@"title", ev.Title);
+                cmd.Parameters.AddWithValue(@"desc", ev.Description);
+                cmd.Parameters.AddWithValue(@"addr", ev.Address);//Hash.HashString(user.Username));
+                cmd.Parameters.AddWithValue(@"radius", ev.Radius);
+                cmd.Parameters.AddWithValue(@"loc_gps", ev.Gps_location);
+
+                //cmd.Prepare();
+                cmd.ExecuteNonQuery();
+
+                cmd.Dispose();
+                conn.Close();
+
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
         public string signIn(User user)
         {
             bool isValidUser = false;
             //Hash input to compare with hashed DB credentials
-            string hashed_input_usr = Hash.HashString(user.Username);
+            //string hashed_input_usr = Hash.HashString(user.Username);
             string hashed_input_pwd = Hash.HashString(user.Password);
 
             conn = new SqlConnection(dbConnectionString);
@@ -105,7 +134,7 @@ namespace IcebreakServices
                 conn.Open();
                 //Query user
                 cmd = new SqlCommand("SELECT * FROM dbo.Users WHERE username=@usr AND pwd=@pwd", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
-                cmd.Parameters.AddWithValue(@"usr", hashed_input_usr);
+                cmd.Parameters.AddWithValue(@"usr", user.Username);
                 cmd.Parameters.AddWithValue(@"pwd", hashed_input_pwd);
 
                 dataReader = cmd.ExecuteReader();

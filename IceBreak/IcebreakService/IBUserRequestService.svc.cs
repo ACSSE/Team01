@@ -10,6 +10,7 @@ using System.Net;
 using System.Web;
 using System.ServiceModel.Activation;
 using System.IO;
+using System.Web.Hosting;
 
 namespace IcebreakServices
 {
@@ -24,6 +25,116 @@ namespace IcebreakServices
         public IBUserRequestService()
         {
             db = new DBServerTools();
+        }
+
+        public void addEvent(Stream streamdata)
+        {
+            Event ev = new Event();
+            StreamReader reader = new StreamReader(streamdata);
+            string inbound_payload = reader.ReadToEnd();
+            string response = "";
+            reader.Close();
+            reader.Dispose();
+
+            inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
+            string[] usr_details = inbound_payload.Split('&');
+            if (usr_details.Length == 5)
+            {
+                foreach (string kv_pair in usr_details)
+                {
+                    if (kv_pair.Contains('='))
+                    {
+                        string var = kv_pair.Split('=')[0];
+                        string val = kv_pair.Split('=')[1];
+
+                        switch (var)
+                        {
+                            case "title":
+                                ev.Title = val;
+                                break;
+                            case "description":
+                                ev.Description = val;
+                                break;
+                            case "address":
+                                ev.Address = val;
+                                break;
+                            case "gps":
+                                ev.Gps_location = val;
+                                break;
+                            case "radius":
+                                int radius;
+                                if (int.TryParse(val, out radius))
+                                {
+                                    ev.Radius = int.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to integer.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return;
+                                }
+                        }
+                    }
+                    else
+                    {
+                        response = "Error: Broken key-value pair";
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                        break;
+                    }
+                }
+                //Add event to DB
+                string exec_res = db.addEvent(ev);
+                if(exec_res.Equals("Success"))
+                {
+                    response = "Success: " + exec_res.ToString();
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response = "Query Execution Error: " + exec_res;
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                }
+            }
+            else
+            {
+                response = "Error: Invalid token count";
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+            }
+        }
+
+        public string imageUpload(string name, Stream fileStream)
+        {
+            StreamReader reader = new StreamReader(fileStream);
+            string inbound_payload = reader.ReadToEnd();
+            reader.Close();
+            reader.Dispose();
+
+            byte[] bytes = Convert.FromBase64String(inbound_payload);
+            var path = Path.Combine(HostingEnvironment.MapPath("~/images/"), name);//Path.Combine(@"C:\UploadedImages\" + name);
+            File.WriteAllBytes(path, bytes);
+
+            WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+            WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+            //WebOperationContext.Current.OutgoingResponse.StatusDescription = e.Message;
+            WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", inbound_payload);
+
+            return inbound_payload;
+        }
+
+        public string imageDownload(string fileName)
+        {
+            var path = Path.Combine(HostingEnvironment.MapPath("~/images/"), fileName);//Path.Combine(@"C:\UploadedImages\" + name);
+            byte[] binFileArr = File.ReadAllBytes(path);
+            string base64bin = Convert.ToBase64String(binFileArr);
+
+            WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+            WebOperationContext.Current.OutgoingResponse.ContentType = "multi-part/form-data";
+            WebOperationContext.Current.OutgoingResponse.ContentLength = binFileArr.Length;
+            //WebOperationContext.Current.OutgoingResponse.StatusDescription = e.Message;
+            WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", base64bin);
+
+            return base64bin;
         }
 
         public void registerUser(Stream streamdata)
@@ -72,6 +183,8 @@ namespace IcebreakServices
                         break;
                     }
                 }
+                new_user.Access_level = 0;
+                new_user.Event_id = 0;
                 //Add to DB here
                 string exec_result = db.registerUser(new_user);
                 if (exec_result.Equals("Success"))

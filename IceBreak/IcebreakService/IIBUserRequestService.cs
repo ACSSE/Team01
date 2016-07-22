@@ -14,9 +14,15 @@ namespace IcebreakServices
     [ServiceContract(Namespace ="http://icebreak.azurewebsites.net/")]
     public interface IIBUserRequestService
     {
-        /*[OperationContract]
-        [WebGet(UriTemplate = "Users", ResponseFormat = WebMessageFormat.Json)]
-        List<User> getUsers();*/
+        [OperationContract]
+        [WebGet(UriTemplate = "/imageDownload/{fileName}", ResponseFormat = WebMessageFormat.Json)]
+        string imageDownload(string fileName);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST",
+            UriTemplate = "/imgUpload/{fileName}",
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        string imageUpload(string fileName,Stream fileStream);
 
         [OperationContract]
         [WebInvoke(
@@ -32,5 +38,12 @@ namespace IcebreakServices
             UriTemplate = "/signin",
             BodyStyle = WebMessageBodyStyle.Bare)]
         void signIn(Stream streamdata);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "/addEvent",
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        void addEvent(Stream streamdata);
     }
 }

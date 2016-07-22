@@ -14,6 +14,8 @@ namespace IcebreakServices
         private string username;
         private string email;
         private string password;
+        private int access_level;
+        private int event_id;
 
         /*public User(string fname, string lname, string username, string email)
         {
@@ -78,6 +80,7 @@ namespace IcebreakServices
             }
         }
 
+        [DataMember]
         public string Password
         {
             get
@@ -88,6 +91,34 @@ namespace IcebreakServices
             set
             {
                 password = value;
+            }
+        }
+
+        [DataMember]
+        public int Access_level
+        {
+            get
+            {
+                return access_level;
+            }
+
+            set
+            {
+                access_level = value;
+            }
+        }
+
+        [DataMember]
+        public int Event_id
+        {
+            get
+            {
+                return event_id;
+            }
+
+            set
+            {
+                event_id = value;
             }
         }
 
