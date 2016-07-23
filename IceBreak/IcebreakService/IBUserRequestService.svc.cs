@@ -268,5 +268,10 @@ namespace IcebreakServices
             //WebOperationContext.Current.OutgoingResponse.StatusDescription =  res;
             WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", response);
         }
+
+        public List<Event> readEvent()
+        {
+            return db.getEvent();
+        }
     }
 }

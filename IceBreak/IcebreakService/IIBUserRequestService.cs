@@ -45,5 +45,9 @@ namespace IcebreakServices
             UriTemplate = "/addEvent",
             BodyStyle = WebMessageBodyStyle.Bare)]
         void addEvent(Stream streamdata);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/readEvent", ResponseFormat = WebMessageFormat.Json, BodyStyle =WebMessageBodyStyle.Bare)]
+        List<Event> readEvent();
     }
 }

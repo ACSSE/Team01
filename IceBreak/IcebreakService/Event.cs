@@ -2,6 +2,7 @@
 {
     public class Event
     {
+        private int id;
         private string title;
         private string description;
         private string address;
@@ -69,6 +70,19 @@
             set
             {
                 gps_location = value;
+            }
+        }
+
+        public int Id
+        {
+            get
+            {
+                return id;
+            }
+
+            set
+            {
+                id = value;
             }
         }
     }

@@ -6,6 +6,7 @@ using System.Web;
 using System.Data.SqlClient;
 using System.Data;
 using System.IO;
+using System.Web.Hosting;
 
 namespace IcebreakServices
 {
@@ -119,6 +120,43 @@ namespace IcebreakServices
             {
                 return e.Message;
             }
+        }
+
+        public List<Event> getEvent()
+        {
+            List<Event> events = new List<Event>();
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM dbo.Events", conn);
+                //cmd.Parameters.AddWithValue(@"id", id);
+                //cmd.Parameters.AddWithValue(@"pwd", hashed_input_pwd);
+
+                dataReader = cmd.ExecuteReader();
+                while(dataReader.Read())
+                {
+                    events.Add(new Event()
+                    {
+                        Id = (int)dataReader.GetValue(0),
+                        Title = (string)dataReader.GetValue(1),
+                        Description = (string)dataReader.GetValue(2),
+                        Address = (string)dataReader.GetValue(3),
+                        Radius = (int)dataReader.GetValue(4),
+                        Gps_location = (string)dataReader.GetValue(5)
+                    });
+                }
+                
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                File.WriteAllLines(Path.Combine(HostingEnvironment.MapPath("~/logs/"), new DateTime()+".log"),new String[] { e.Message});
+            }
+            return events;
         }
 
         public string signIn(User user)
