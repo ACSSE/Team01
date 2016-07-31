@@ -288,5 +288,17 @@ namespace IcebreakServices
         {
             return db.getUsersAtEvent(Convert.ToUInt16(eventId));
         }
+
+        public string removeUser(string handle)
+        {
+            string rem_result = db.removeUser(handle);
+            WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+            //WebOperationContext.Current.OutgoingResponse.StatusDescription = rem_result;
+            if (rem_result.Equals("Success"))
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+            else
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+            return rem_result;
+        }
     }
 }

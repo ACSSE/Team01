@@ -15,6 +15,12 @@ namespace IcebreakServices
     public interface IIBUserRequestService
     {
         [OperationContract]
+        [WebInvoke(Method = "DELETE",
+            UriTemplate = "/removeUser/{handle}",
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        string removeUser(string handle);
+
+        [OperationContract]
         [WebGet(UriTemplate = "/getUsersAtEvent/{eventId}", ResponseFormat = WebMessageFormat.Json)]
         List<User> getUsersAtEvent(string eventId);
 

@@ -54,6 +54,27 @@ namespace IcebreakServices
             return "Exists=false";
         }
 
+        public string removeUser(string handle)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("DELETE FROM dbo.Users WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd.Parameters.AddWithValue(@"usr", handle);
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+                conn.Close();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                //TODO: Store exception to logs
+                return e.Message;
+            }
+        }
+
         public List<User> getUsersAtEvent(int id)
         {
             #region ForRelease
