@@ -15,6 +15,13 @@ namespace IcebreakServices
     public interface IIBUserRequestService
     {
         [OperationContract]
+        [WebInvoke(Method = "POST",
+            UriTemplate = "/userUpdate/{handle}",
+            BodyStyle = WebMessageBodyStyle.Bare,
+            ResponseFormat = WebMessageFormat.Json)]
+        string userUpdate(string handle, Stream streamdata);
+
+        [OperationContract]
         [WebInvoke(Method = "DELETE",
             UriTemplate = "/removeUser/{handle}",
             BodyStyle = WebMessageBodyStyle.Bare)]

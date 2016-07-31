@@ -17,12 +17,80 @@ namespace IcebreakServices
         private SqlCommand cmd;
         private SqlDataReader dataReader;
 
+        public string updateUserDetails(User user)
+        {
+            if(userExists(user).Equals("Exists=true"))
+            {
+                try
+                {
+                    conn = new SqlConnection(dbConnectionString);
+                    conn.Open();
+                    if(user.Access_level>=0)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET access_level=@lvl WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"lvl", user.Access_level);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Email!=null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET email=@email WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"email", user.Email);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Event_id >= 0)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET event_id=@id WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"id", user.Event_id);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Fname != null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET fname=@fname WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"fname", user.Fname);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Lname != null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET lname=@lname WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"lname", user.Lname);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Password != null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET pwd=@pwd WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"pwd", Hash.HashString(user.Password));
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Username != null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET username=@username WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                        cmd.Parameters.AddWithValue(@"username", user.Username);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    return "Success";
+                }
+                catch (Exception e)
+                {
+                    //TODO: Store exception to logs
+                    return e.Message;
+                }
+            }
+            else
+            {
+                return "User does not exist.";
+            }
+        }
+
         public string userExists(User user)
         {
-            //Hash input to compare with hashed DB credentials
-            //string hashed_input_usr = Hash.HashString(user.Username);
-            string hashed_input_pwd = Hash.HashString(user.Password);
-
             conn = new SqlConnection(dbConnectionString);
             try
             {
@@ -30,7 +98,6 @@ namespace IcebreakServices
                 //Query user
                 cmd = new SqlCommand("SELECT * FROM dbo.Users WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
                 cmd.Parameters.AddWithValue(@"usr", user.Username);
-                //cmd.Parameters.AddWithValue(@"pwd", hashed_input_pwd);
 
                 dataReader = cmd.ExecuteReader();
                 dataReader.Read();

@@ -300,5 +300,87 @@ namespace IcebreakServices
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
             return rem_result;
         }
+
+        public string userUpdate(string handle, Stream streamdata)
+        {
+            StreamReader reader = new StreamReader(streamdata);
+            string inbound_payload = reader.ReadToEnd();
+            reader.Close();
+            reader.Dispose();
+
+            /*WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+            WebOperationContext.Current.OutgoingResponse.StatusDescription = "Not enough URL params";
+            WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+            WebOperationContext.Current.OutgoingResponse.Headers.Add("Response", "<Response goes here>");
+            return "Some response";*/
+            inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
+            string[] usr_details = inbound_payload.Split('&');
+            User new_user = new User();
+            if(handle.Length>=0)
+            {
+                new_user.Username = handle;
+                foreach (string usr in usr_details)
+                {
+                    if (usr.Contains('='))
+                    {
+                        string var = usr.Split('=')[0];
+                        string val = usr.Split('=')[1];
+
+                        switch (var)
+                        {
+                            case "fname":
+                                new_user.Fname = val;
+                                break;
+                            case "lname":
+                                new_user.Lname = val;
+                                break;
+                            case "username":
+                                if (!val.Equals(handle))
+                                    return "User handle in URL does not match with user handle in parameters.";
+                                new_user.Username = val;
+                                break;
+                            case "email":
+                                new_user.Email = val;
+                                break;
+                            case "password":
+                                new_user.Password = val;
+                                break;
+                            case "access_level":
+                                new_user.Access_level = Convert.ToUInt16(val);
+                                break;
+                            case "event_id":
+                                new_user.Event_id = Convert.ToUInt16(val);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        return "Broken key-value pair.";
+                    }
+                }
+
+                string result = db.updateUserDetails(new_user);
+                WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+                
+                if (result.Equals("Success"))
+                {
+                    WebOperationContext.Current.OutgoingResponse.StatusDescription = "Successfully updated user.";
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    WebOperationContext.Current.OutgoingResponse.StatusDescription = result;
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                }
+                return result;
+            }
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+                WebOperationContext.Current.OutgoingResponse.StatusDescription = "Not enough URL params";
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return "Not enough URL params";
+            }
+        }
     }
 }
