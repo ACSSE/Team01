@@ -15,14 +15,19 @@ namespace IcebreakServices
     public interface IIBUserRequestService
     {
         [OperationContract]
+        [WebGet(UriTemplate = "/getUsersAtEvent/{eventId}", ResponseFormat = WebMessageFormat.Json)]
+        List<User> getUsersAtEvent(string eventId);
+
+        [OperationContract]
         [WebGet(UriTemplate = "/imageDownload/{fileName}", ResponseFormat = WebMessageFormat.Json)]
         string imageDownload(string fileName);
+
 
         [OperationContract]
         [WebInvoke(Method = "POST",
             UriTemplate = "/imgUpload/{fileName}",
             BodyStyle = WebMessageBodyStyle.Bare)]
-        string imageUpload(string fileName,Stream fileStream);
+        void imageUpload(string fileName,Stream fileStream);
 
         [OperationContract]
         [WebInvoke(
@@ -46,8 +51,15 @@ namespace IcebreakServices
             BodyStyle = WebMessageBodyStyle.Bare)]
         void addEvent(Stream streamdata);
 
+        /*[OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "/addEventImg/{eventId}",
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        void addEventImg(string eventId, Stream streamdata);*/
+
         [OperationContract]
-        [WebGet(UriTemplate = "/readEvent", ResponseFormat = WebMessageFormat.Json, BodyStyle =WebMessageBodyStyle.Bare)]
-        List<Event> readEvent();
+        [WebGet(UriTemplate = "/readEvents", ResponseFormat = WebMessageFormat.Json, BodyStyle =WebMessageBodyStyle.Bare)]
+        List<Event> readEvents();
     }
 }

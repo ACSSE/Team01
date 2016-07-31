@@ -85,9 +85,21 @@ namespace IcebreakServices
                 }
                 //Add event to DB
                 string exec_res = db.addEvent(ev);
+
+                List<Event> events = db.getEvents();
+                string eventId = "";
+                foreach(Event e in events)
+                {
+                    //TODO: validate with user admin attribute for event
+                    if(e.Title.Equals(ev.Title) && e.Gps_location.Equals(ev.Gps_location) && e.Radius==ev.Radius)
+                    {
+                        eventId = Convert.ToString(e.Id);
+                    }
+                }
                 if(exec_res.Equals("Success"))
                 {
                     response = "Success: " + exec_res.ToString();
+                    WebOperationContext.Current.OutgoingResponse.Headers.Add("req_event_icon", eventId);
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
                 }
                 else
@@ -103,7 +115,7 @@ namespace IcebreakServices
             }
         }
 
-        public string imageUpload(string name, Stream fileStream)
+        public void imageUpload(string name, Stream fileStream)
         {
             StreamReader reader = new StreamReader(fileStream);
             string inbound_payload = reader.ReadToEnd();
@@ -117,9 +129,7 @@ namespace IcebreakServices
             WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
             WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
             //WebOperationContext.Current.OutgoingResponse.StatusDescription = e.Message;
-            WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", inbound_payload);
-
-            return inbound_payload;
+            //WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", inbound_payload);
         }
 
         public string imageDownload(string fileName)
@@ -269,9 +279,14 @@ namespace IcebreakServices
             WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", response);
         }
 
-        public List<Event> readEvent()
+        public List<Event> readEvents()
         {
-            return db.getEvent();
+            return db.getEvents();
+        }
+
+        public List<User> getUsersAtEvent(string eventId)
+        {
+            return db.getUsersAtEvent(Convert.ToUInt16(eventId));
         }
     }
 }

@@ -54,6 +54,52 @@ namespace IcebreakServices
             return "Exists=false";
         }
 
+        public List<User> getUsersAtEvent(int id)
+        {
+            #region ForRelease
+            /*if(id == 0)//Prevent anyone from reading data from people that are not at any event
+                return null;*/
+            # endregion
+
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM dbo.Users WHERE event_id=@id", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd.Parameters.AddWithValue(@"id", id);
+
+                dataReader = cmd.ExecuteReader();
+                List<User> users = new List<User>();
+                while (dataReader.Read())
+                {
+                    users.Add(new User
+                    {
+                        Fname = Convert.ToString(dataReader.GetValue(0)),
+                        Lname = Convert.ToString(dataReader.GetValue(1)),
+                        Email = Convert.ToString(dataReader.GetValue(2)),
+                        Username = Convert.ToString(dataReader.GetValue(4))
+                    });
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+                return users;
+            }
+            catch (Exception e)
+            {
+                //TODO: Store exception to logs
+                return new List<User>
+                { new User
+                    {
+                        Fname = "<Error>",
+                        Lname = e.Message
+                    }
+                };
+            }
+        }
+
         public string registerUser(User user)
         {
             string exist_check = userExists(user);
@@ -122,7 +168,7 @@ namespace IcebreakServices
             }
         }
 
-        public List<Event> getEvent()
+        public List<Event> getEvents()
         {
             List<Event> events = new List<Event>();
             conn = new SqlConnection(dbConnectionString);
