@@ -74,5 +74,9 @@ namespace IcebreakServices
         [OperationContract]
         [WebGet(UriTemplate = "/readEvents", ResponseFormat = WebMessageFormat.Json, BodyStyle =WebMessageBodyStyle.Bare)]
         List<Event> readEvents();
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getUser", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        User getUser();
     }
 }

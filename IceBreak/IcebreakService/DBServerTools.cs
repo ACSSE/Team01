@@ -255,6 +255,41 @@ namespace IcebreakServices
                 return e.Message;
             }
         }
+        public User getUser(string handle)
+        {
+            User  user = new User();
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM dbo.User WHERE username=@username", conn);
+                cmd.Parameters.AddWithValue(@"username", handle);
+
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    user.Fname = (string)dataReader.GetValue(0);
+                    user.Lname = (string)dataReader.GetValue(1);
+                    user.Occupation = (string)dataReader.GetValue(0);
+                    user.Age = (int)dataReader.GetValue(0);
+                    user.Bio = (string)dataReader.GetValue(0);
+                    user.Gender = (string)dataReader.GetValue(0);
+                    user.Catchphrase = (string)dataReader.GetValue(1);
+
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                File.WriteAllLines(Path.Combine(HostingEnvironment.MapPath("~/logs/"), new DateTime() + ".log"), new String[] { e.Message });
+            }
+            return user;
+        }
+
 
         public List<Event> getEvents()
         {

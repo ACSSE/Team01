@@ -288,6 +288,10 @@ namespace IcebreakServices
         {
             return db.getUsersAtEvent(Convert.ToUInt16(eventId));
         }
+        public User getUser(string username)
+        {
+            return db.getUser(username);
+        }
 
         public string removeUser(string handle)
         {
