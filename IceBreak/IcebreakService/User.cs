@@ -16,6 +16,11 @@ namespace IcebreakServices
         private string password;
         private int access_level;
         private int event_id;
+        private int age;
+        private string gender;
+        private string occupaton;
+        private string bio;
+        private string catchphrase;
 
         /*public User(string fname, string lname, string username, string email)
         {
@@ -107,7 +112,66 @@ namespace IcebreakServices
                 access_level = value;
             }
         }
-
+        [DataMember]
+        public int Age
+        {
+            get
+            {
+                return age;
+            }
+            set
+            {
+                age = value;
+            }
+        }
+        [DataMember]
+        public string Bio
+        {
+            get
+            {
+                return bio;
+            }
+            set
+            {
+                bio = value;
+            }
+        }
+        [DataMember]
+        public string Gender
+        {
+            get
+            {
+                return gender;
+            }
+            set
+            {
+                gender = value;
+            }
+        }
+        [DataMember]
+        public string Catchphrase
+        {
+            get
+            {
+                return catchphrase;
+            }
+            set
+            {
+                catchphrase = value;
+            }
+        }
+        [DataMember]
+        public string Occupation
+        {
+            get
+            {
+                return occupaton;
+            }
+            set
+            {
+                occupaton = value;
+            }
+        }
         [DataMember]
         public int Event_id
         {
@@ -124,7 +188,7 @@ namespace IcebreakServices
 
         public override string ToString()
         {
-            return "[FN:" + this.fname + ",LN:"+ this.lname +",UN:"+ this.username +",EM:"+ this.email +",PW:"+ this.password +"]";
+            return "[FN:" + this.fname + ",LN:"+ this.lname +",UN:"+ this.username +",EM:"+ this.email +",AGE:"+this.age+ ",BIO:" + this.bio + ",GDR:" + this.gender + ",CP:" + this.catchphrase + ",OCP:" + this.occupaton + ",PW:" + this.password +"]";
         }
     }
 }

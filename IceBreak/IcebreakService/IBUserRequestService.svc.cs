@@ -297,6 +297,10 @@ namespace IcebreakServices
         {
             return db.getUsersAtEvent(Convert.ToUInt16(eventId));
         }
+        public User getUser(string username)
+        {
+            return db.getUser(username);
+        }
 
         public string removeUser(string handle)
         {
@@ -360,6 +364,23 @@ namespace IcebreakServices
                             case "event_id":
                                 new_user.Event_id = Convert.ToUInt16(val);
                                 break;
+                             case "age":
+                                new_user.Age = Convert.ToUInt16(val);
+                                break;
+                            case "gender":
+                                new_user.Gender = val;
+                                break;
+                            case "occupation":
+                                new_user.Occupation = val;
+                                break;
+                            case "bio":
+                                new_user.Bio = val;
+                                break;
+                            case "catchphrase":
+                                new_user.Catchphrase = val;
+                                break;
+                                                         
+
                         }
                     }
                     else
@@ -392,6 +413,7 @@ namespace IcebreakServices
             }
         }
 
+<<<<<<< HEAD
         public string getImage(string filename)
         {
             //var path = Path.Combine(HostingEnvironment.MapPath("~/images/"), filename);//Path.Combine(@"C:\UploadedImages\" + name);
@@ -408,6 +430,11 @@ namespace IcebreakServices
             //WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", base64bin);
             //HttpContext.Current.Response.Write("Some base64 string");
             return filename;
+=======
+        public User getUser()
+        {
+            throw new NotImplementedException();
+>>>>>>> be1224a9ac739cd4f1c3759328c101981af99d3c
         }
     }
 }

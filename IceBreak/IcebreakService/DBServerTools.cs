@@ -35,6 +35,41 @@ namespace IcebreakServices
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
                     }
+                    if (user.Age >=0)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET Age=@age WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"age", user.Age);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Occupation != null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET Occupation=@occupation WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"occupation", user.Occupation);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Bio != null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET Bio=@bio WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"bio", user.Bio);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Catchphrase != null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET Catchphrase=@cp WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"cp", user.Catchphrase);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Gender != null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET Gender=@gender WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"gender", user.Gender);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
                     if (user.Event_id >= 0)
                     {
                         cmd = new SqlCommand("UPDATE dbo.Users SET event_id=@id WHERE username=@usr", conn);
@@ -252,6 +287,41 @@ namespace IcebreakServices
                 return e.Message;
             }
         }
+        public User getUser(string handle)
+        {
+            User  user = new User();
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM dbo.User WHERE username=@username", conn);
+                cmd.Parameters.AddWithValue(@"username", handle);
+
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    user.Fname = (string)dataReader.GetValue(0);
+                    user.Lname = (string)dataReader.GetValue(1);
+                    user.Occupation = (string)dataReader.GetValue(0);
+                    user.Age = (int)dataReader.GetValue(0);
+                    user.Bio = (string)dataReader.GetValue(0);
+                    user.Gender = (string)dataReader.GetValue(0);
+                    user.Catchphrase = (string)dataReader.GetValue(1);
+
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                File.WriteAllLines(Path.Combine(HostingEnvironment.MapPath("~/logs/"), new DateTime() + ".log"), new String[] { e.Message });
+            }
+            return user;
+        }
+
 
         public List<Event> getEvents()
         {
