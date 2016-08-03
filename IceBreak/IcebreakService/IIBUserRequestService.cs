@@ -32,7 +32,10 @@ namespace IcebreakServices
         List<User> getUsersAtEvent(string eventId);
 
         [OperationContract]
-        [WebGet(UriTemplate = "/imageDownload/{fileName}", ResponseFormat = WebMessageFormat.Json)]
+        [WebGet(
+            UriTemplate = "/imageDownload/{fileName}",
+            ResponseFormat = WebMessageFormat.Json, 
+            BodyStyle =WebMessageBodyStyle.WrappedResponse)]
         string imageDownload(string fileName);
 
 
@@ -70,6 +73,12 @@ namespace IcebreakServices
             UriTemplate = "/addEventImg/{eventId}",
             BodyStyle = WebMessageBodyStyle.Bare)]
         void addEventImg(string eventId, Stream streamdata);*/
+
+        [OperationContract]
+        [WebInvoke(Method = "GET",
+        UriTemplate = "/getImage/{filename}",
+        ResponseFormat = WebMessageFormat.Json)]
+        string getImage(string filename);
 
         [OperationContract]
         [WebGet(UriTemplate = "/readEvents", ResponseFormat = WebMessageFormat.Json, BodyStyle =WebMessageBodyStyle.Bare)]

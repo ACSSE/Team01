@@ -78,6 +78,7 @@
     <Compile Include="Event.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="IIBUserRequestService.cs" />
+    <Compile Include="Image.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IBUserRequestService.svc.cs">
       <DependentUpon>IBUserRequestService.svc</DependentUpon>

@@ -132,18 +132,27 @@ namespace IcebreakServices
             //WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", inbound_payload);
         }
 
+        /*[OperationContract]
+        [WebGet(UriTemplate = "foo")]*/
         public string imageDownload(string fileName)
         {
             var path = Path.Combine(HostingEnvironment.MapPath("~/images/"), fileName);//Path.Combine(@"C:\UploadedImages\" + name);
             byte[] binFileArr = File.ReadAllBytes(path);
+
+            //byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(toEncode);
+
             string base64bin = Convert.ToBase64String(binFileArr);
+            //WebOperationContext.Current.CreateTextResponse(base64bin);
+            //WebOperationContext.Current.OutgoingResponse.SuppressEntityBody = false;
+            //WebOperationContext.Current.OutgoingResponse.Format = WebMessageFormat.Xml;
 
             WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
-            WebOperationContext.Current.OutgoingResponse.ContentType = "multi-part/form-data";
-            WebOperationContext.Current.OutgoingResponse.ContentLength = binFileArr.Length;
+            //WebOperationContext.Current.OutgoingResponse.ContentLength = base64bin.Length;
+            WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain;charset=utf-8";//"multi-part/form-data"
             //WebOperationContext.Current.OutgoingResponse.StatusDescription = e.Message;
-            WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", base64bin);
-
+            //WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", base64bin);
+            //HttpContext.Current.Response.Write("Some base64 string");
+            //"a/b|c+d_f-g"
             return base64bin;
         }
 
@@ -381,6 +390,24 @@ namespace IcebreakServices
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                 return "Not enough URL params";
             }
+        }
+
+        public string getImage(string filename)
+        {
+            //var path = Path.Combine(HostingEnvironment.MapPath("~/images/"), filename);//Path.Combine(@"C:\UploadedImages\" + name);
+            //byte[] binFileArr = File.ReadAllBytes(path);
+            //string base64bin = Convert.ToBase64String(binFileArr);
+            //WebOperationContext.Current.CreateTextResponse(base64bin);
+            //WebOperationContext.Current.OutgoingResponse.SuppressEntityBody = false;
+            //WebOperationContext.Current.OutgoingResponse.Format = WebMessageFormat.Xml;
+
+            //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+            //WebOperationContext.Current.OutgoingResponse.ContentLength = base64bin.Length;
+            //WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";//"text/plain;charset=utf-8";//"multi-part/form-data";
+            //WebOperationContext.Current.OutgoingResponse.StatusDescription = e.Message;
+            //WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", base64bin);
+            //HttpContext.Current.Response.Write("Some base64 string");
+            return filename;
         }
     }
 }

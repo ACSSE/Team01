@@ -1,0 +1,52 @@
+<!DOCTYPE html5>
+<html>
+	<head>
+		<title>Icebreaker Tests</title>
+		<script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+		<script>
+			function registerUser() 
+			{
+				//alert("Sending AJAX");
+				//var fname = document.getElementById("");
+				//var person = {name: "Jim Cowart",location: "",state: "Tennessee",company: "appendTo",};
+       			//var EmpUser = {"Fname": "WebClientUser", "Lname": "Raju", "Username": "usrname", "Email": "email@icebreak.co.za"};
+	            //var st = JSON.stringify(EmpUser);
+	            //debugger;
+	            var sendData = 
+	            {
+	            	FName: "FN",
+			        LName: "LN",
+			        Address: "Test Address"
+			        //userId:1
+			    };
+	          	$.ajax(
+	          	{
+	          		url: "http://icebreak.azurewebsites.net/BaseService.svc/DoWork",
+	              	data: JSON.stringify(sendData),
+	              	type: "POST",
+	              	processData: true,
+	              	dataType: "jsonp",
+	               	contentType: "application/json; charset=utf-8",
+	              	success: function (data) 
+	              	{
+	              		alert("Works: " + data);
+	                  // Play with response returned in JSON format
+          			},
+              		error: function (XMLHttpRequest, textStatus, errorThrown) 
+              		{
+                    	alert("XMLHttpRequest:" + XMLHttpRequest +"Status: "+textStatus + " Error: " + errorThrown);
+              		}
+          		});
+      		}
+		</script>
+	</head>
+	<body>
+		<div style="width:500px;background-color:#343434;">
+			<input type="text" name="fname" value="Joe">
+			<input type="text" name="lname" value="Soap">
+			<input type="text" name="username" value="joso42">
+			<input type="text" name="email" value="joso@icebreak.co.za">
+			<button onclick="registerUser()	">Register</button>
+		</div>
+	</body>
+</html>
