@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Data.Sql;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Data.SqlClient;
-using System.Data;
 using System.IO;
 using System.Web.Hosting;
 
@@ -91,6 +87,7 @@ namespace IcebreakServices
 
         public string userExists(User user)
         {
+
             conn = new SqlConnection(dbConnectionString);
             try
             {
