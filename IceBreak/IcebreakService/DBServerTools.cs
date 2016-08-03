@@ -39,6 +39,41 @@ namespace IcebreakServices
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
                     }
+                    if (user.Age >=0)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET Age=@age WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"age", user.Age);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Occupation != null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET Occupation=@occupation WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"occupation", user.Occupation);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Bio != null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET Bio=@bio WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"bio", user.Bio);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Catchphrase != null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET Catchphrase=@cp WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"cp", user.Catchphrase);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Gender != null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET Gender=@gender WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"gender", user.Gender);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
                     if (user.Event_id >= 0)
                     {
                         cmd = new SqlCommand("UPDATE dbo.Users SET event_id=@id WHERE username=@usr", conn);

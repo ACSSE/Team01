@@ -355,6 +355,23 @@ namespace IcebreakServices
                             case "event_id":
                                 new_user.Event_id = Convert.ToUInt16(val);
                                 break;
+                             case "age":
+                                new_user.Age = Convert.ToUInt16(val);
+                                break;
+                            case "gender":
+                                new_user.Gender = val;
+                                break;
+                            case "occupation":
+                                new_user.Occupation = val;
+                                break;
+                            case "bio":
+                                new_user.Bio = val;
+                                break;
+                            case "catchphrase":
+                                new_user.Catchphrase = val;
+                                break;
+                                                         
+
                         }
                     }
                     else
@@ -385,6 +402,11 @@ namespace IcebreakServices
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                 return "Not enough URL params";
             }
+        }
+
+        public User getUser()
+        {
+            throw new NotImplementedException();
         }
     }
 }
