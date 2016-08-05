@@ -410,5 +410,22 @@ namespace IcebreakServices
                 return "Not enough URL params";
             }
         }
+
+        public List<User> getUserContacts()
+        {
+            string[] fnames = { "Adrian", "Chanel", "Jacob", "George", "Chayenne", "Lois" };
+            string[] lnames = { "Jones", "Jonas", "Brown", "Black", "Victor", "Travis" };
+            List<User> users = new List<User>();
+            for (int i = 0; i < 10; i++)
+            {
+                users.Add(new User()
+                {
+                    Fname = fnames[getRandomNumber(fnames.Length)],
+                    Lname = lnames[getRandomNumber(lnames.Length)],
+                    Bio = "<insert bio here>"
+                });
+            }
+            return users;
+        }
     }
 }
