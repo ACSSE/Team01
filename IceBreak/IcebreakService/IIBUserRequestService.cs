@@ -32,6 +32,10 @@ namespace IcebreakServices
         List<User> getUsersAtEvent(string eventId);
 
         [OperationContract]
+        [WebGet(UriTemplate = "/getUser/{username}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        User getUser(string username);
+
+        [OperationContract]
         [WebGet(UriTemplate = "/imageDownload/{fileName}", ResponseFormat = WebMessageFormat.Json)]
         string imageDownload(string fileName);
 
@@ -75,8 +79,6 @@ namespace IcebreakServices
         [WebGet(UriTemplate = "/readEvents", ResponseFormat = WebMessageFormat.Json, BodyStyle =WebMessageBodyStyle.Bare)]
         List<Event> readEvents();
 
-        [OperationContract]
-        [WebGet(UriTemplate = "/getUser", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        User getUser();
+        
     }
 }
