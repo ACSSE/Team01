@@ -379,8 +379,6 @@ namespace IcebreakServices
                             case "catchphrase":
                                 new_user.Catchphrase = val;
                                 break;
-                                                         
-
                         }
                     }
                     else
@@ -411,30 +409,6 @@ namespace IcebreakServices
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                 return "Not enough URL params";
             }
-        }
-
-<<<<<<< HEAD
-        public string getImage(string filename)
-        {
-            //var path = Path.Combine(HostingEnvironment.MapPath("~/images/"), filename);//Path.Combine(@"C:\UploadedImages\" + name);
-            //byte[] binFileArr = File.ReadAllBytes(path);
-            //string base64bin = Convert.ToBase64String(binFileArr);
-            //WebOperationContext.Current.CreateTextResponse(base64bin);
-            //WebOperationContext.Current.OutgoingResponse.SuppressEntityBody = false;
-            //WebOperationContext.Current.OutgoingResponse.Format = WebMessageFormat.Xml;
-
-            //WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
-            //WebOperationContext.Current.OutgoingResponse.ContentLength = base64bin.Length;
-            //WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";//"text/plain;charset=utf-8";//"multi-part/form-data";
-            //WebOperationContext.Current.OutgoingResponse.StatusDescription = e.Message;
-            //WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", base64bin);
-            //HttpContext.Current.Response.Write("Some base64 string");
-            return filename;
-=======
-        public User getUser()
-        {
-            throw new NotImplementedException();
->>>>>>> be1224a9ac739cd4f1c3759328c101981af99d3c
         }
     }
 }
