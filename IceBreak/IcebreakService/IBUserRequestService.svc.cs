@@ -416,16 +416,23 @@ namespace IcebreakServices
             string[] fnames = { "Adrian", "Chanel", "Jacob", "George", "Chayenne", "Lois" };
             string[] lnames = { "Jones", "Jonas", "Brown", "Black", "Victor", "Travis" };
             List<User> users = new List<User>();
+            Random rand = new Random();
             for (int i = 0; i < 10; i++)
             {
                 users.Add(new User()
                 {
-                    Fname = fnames[getRandomNumber(fnames.Length)],
-                    Lname = lnames[getRandomNumber(lnames.Length)],
+                    Fname = fnames[rand.Next(0,fnames.Length)],
+                    Lname = lnames[rand.Next(0, lnames.Length)],
                     Bio = "<insert bio here>"
                 });
             }
             return users;
+        }
+
+        public int getRandomNumber(int max)
+        {
+            double r = new Random().NextDouble();
+            return Convert.ToInt16(Math.Floor(r * max));
         }
     }
 }
