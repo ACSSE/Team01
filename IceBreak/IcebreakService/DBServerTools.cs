@@ -195,13 +195,16 @@ namespace IcebreakServices
                 {
                     users.Add(new User
                     {
-                        Fname = Convert.ToString(dataReader.GetValue(0)),
-                        Lname = Convert.ToString(dataReader.GetValue(1)),
-                        Email = Convert.ToString(dataReader.GetValue(2)),
-                        Username = Convert.ToString(dataReader.GetValue(4))
-                    });
+                    Fname = (string)dataReader.GetValue(0),
+                    Lname = (string)dataReader.GetValue(1),
+                    Occupation = (string)dataReader.GetValue(10),
+                    Age = (int)dataReader.GetValue(7),
+                    Bio = (string)dataReader.GetValue(8),
+                    Gender = (string)dataReader.GetValue(11),
+                    Catchphrase = (string)dataReader.GetValue(9)
+                });
                 }
-
+                
                 dataReader.Close();
                 cmd.Dispose();
                 conn.Close();
