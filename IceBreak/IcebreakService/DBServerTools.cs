@@ -352,7 +352,8 @@ namespace IcebreakServices
                         Description = (string)dataReader.GetValue(2),
                         Address = (string)dataReader.GetValue(3),
                         Radius = (int)dataReader.GetValue(4),
-                        Gps_location = (string)dataReader.GetValue(5)
+                        Gps_location = (string)dataReader.GetValue(5),
+                        AccessID = (int)dataReader.GetValue(6)
                     });
                 }
                 
