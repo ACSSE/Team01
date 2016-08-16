@@ -25,7 +25,13 @@ a
     background: #33a6cc;
 }
 
-    .btn-primary:active, .btn-primary.active {
-        background: #007299;
-        box-shadow: none;
-    }
+.btn-primary:active, .btn-primary.active {
+    background: #007299;
+    box-shadow: none;
+}
+.container-fluid{
+     margin-right: auto;
+    margin-left: auto;
+    padding-right: 0px;
+    padding-left: 0px;
+}

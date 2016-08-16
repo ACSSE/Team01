@@ -1,4 +1,7 @@
 ﻿
+body, html {
+    height: 100%;
+}
 .navbar {
     margin-bottom: 0;
 }
@@ -11,13 +14,14 @@
     background:#3ec6f2;
     -webkit-transition:width 0.3s;
     transition: width 0.3s;
+    margin-bottom: -5000px;
+    padding-bottom: 5000px;
 }
 
 #page-content-wrapper
 {
     width:100%;
     position:absolute;
-    padding: 15px;
 
 }
 
