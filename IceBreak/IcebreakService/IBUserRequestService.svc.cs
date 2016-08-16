@@ -117,6 +117,7 @@ namespace IcebreakServices
 
         public void imageUpload(string name, Stream fileStream)
         {
+            name = name.ToLower();
             StreamReader reader = new StreamReader(fileStream);
             string inbound_payload = reader.ReadToEnd();
             reader.Close();
@@ -128,31 +129,22 @@ namespace IcebreakServices
 
             WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
             WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
-            //WebOperationContext.Current.OutgoingResponse.StatusDescription = e.Message;
-            //WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", inbound_payload);
         }
 
         /*[OperationContract]
         [WebGet(UriTemplate = "foo")]*/
         public string imageDownload(string fileName)
         {
+            fileName = fileName.ToLower();
             var path = Path.Combine(HostingEnvironment.MapPath("~/images/"), fileName);//Path.Combine(@"C:\UploadedImages\" + name);
             byte[] binFileArr = File.ReadAllBytes(path);
 
             //byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(toEncode);
 
             string base64bin = Convert.ToBase64String(binFileArr);
-            //WebOperationContext.Current.CreateTextResponse(base64bin);
-            //WebOperationContext.Current.OutgoingResponse.SuppressEntityBody = false;
-            //WebOperationContext.Current.OutgoingResponse.Format = WebMessageFormat.Xml;
 
             WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
-            //WebOperationContext.Current.OutgoingResponse.ContentLength = base64bin.Length;
             WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain;charset=utf-8";//"multi-part/form-data"
-            //WebOperationContext.Current.OutgoingResponse.StatusDescription = e.Message;
-            //WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", base64bin);
-            //HttpContext.Current.Response.Write("Some base64 string");
-            //"a/b|c+d_f-g"
             return base64bin;
         }
 
@@ -199,16 +191,16 @@ namespace IcebreakServices
                     {
                         response = "Error: Broken key-value pair";
                         WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
-                        break;
                     }
                 }
                 new_user.Access_level = 0;
                 new_user.Event_id = 0;
                 //Add to DB here
+                WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
                 string exec_result = db.registerUser(new_user);
                 if (exec_result.Equals("Success"))
                 {
-                    response = "Success: " + new_user.ToString();
+                    response = exec_result;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
                 }
                 else
@@ -222,9 +214,6 @@ namespace IcebreakServices
                 response = "Error: Invalid token count ("+usr_details.Length+") >> " + inbound_payload;
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
             }
-            WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
-            WebOperationContext.Current.OutgoingResponse.StatusDescription =  response;
-            WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload",response);
         }
 
         public void signIn(Stream streamdata)
@@ -288,6 +277,77 @@ namespace IcebreakServices
             WebOperationContext.Current.OutgoingResponse.Headers.Add("Payload", response);
         }
 
+        public string addMessage(Stream streamdata)
+        {
+            StreamReader reader = new StreamReader(streamdata);
+            string inbound_payload = reader.ReadToEnd();
+            string response = "";
+            reader.Close();
+            reader.Dispose();
+            //Process form submission
+            Message new_msg = new Message();
+            DateTime d = DateTime.Now;
+            new_msg.Message_time = String.Format("{0:yyyy-MM-dd H-mm-ss}",d); //d.Year + "/" + d.Month + "/" + d.Day + " " + d.TimeOfDay ;
+            //Set other fields
+            inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
+            string[] msg_details = inbound_payload.Split('&');
+            if (msg_details.Length == 5)
+            {
+                foreach (string kv_pair in msg_details)
+                {
+                    if (kv_pair.Contains('='))
+                    {
+                        string var = kv_pair.Split('=')[0];
+                        string val = kv_pair.Split('=')[1];
+
+                        switch (var)
+                        {
+                            case "message_id":
+                                new_msg.Message_id = val;
+                                break;
+                            case "message":
+                                new_msg.Msg = val;
+                                break;
+                            case "message_status":
+                                new_msg.Message_status = Convert.ToInt16(val);
+                                break;
+                            case "message_sender":
+                                new_msg.Message_sender = val;
+                                break;
+                            case "message_receiver":
+                                new_msg.Message_receiver = val;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        response = "Error: Broken key-value pair";
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                        return response;
+                    }
+                }
+                //Insert to DB
+                string exec_result = db.addMessage(new_msg);
+                if (exec_result.ToLower().Contains("success"))
+                {
+                    response = exec_result;
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response = exec_result;
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+                }
+                return response;
+            }
+            else
+            {
+                response = "Error: Invalid token count (" + msg_details.Length + ") >> " + inbound_payload;
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return response;
+            }
+        }
+
         public List<Event> readEvents()
         {
             return db.getEvents();
@@ -297,6 +357,45 @@ namespace IcebreakServices
         {
             return db.getUsersAtEvent(Convert.ToUInt16(eventId));
         }
+
+        /*public string updateUserMailbox(Stream streamdata)
+        {
+            StreamReader reader = new StreamReader(streamdata);
+            string inbound_payload = reader.ReadToEnd();
+            reader.Close();
+            reader.Dispose();
+            //Process form submission
+            Message new_msg = new Message();
+            inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
+            string[] msg_details = inbound_payload.Split('&');
+            if (msg_details.Length >= 1)
+            {
+                foreach (string s in msg_details)
+                {
+                    if (s.Contains("="))
+                    {
+                        string[] kv_pair = s.Split('=');
+                        switch (kv_pair[0])
+                        {
+                            case "Message_status":
+                                new_msg.Message_status = Convert.ToInt16(kv_pair[1]);
+                                break;
+                            case "Message_receiver":
+                                new_msg.Message_receiver = kv_pair[1];
+                                break;
+                            case "Message_sender":
+                                new_msg.Message_sender = kv_pair[1];
+                                break;
+                        }
+                    }
+                    else
+                        return "Fail: Broken key-value pair.";
+                }
+                return db.updateUserMailbox(new_msg);
+            }
+            else return "Fail: Empty data.";
+        }*/
+
         public User getUser(string username)
         {
             return db.getUser(username);
@@ -433,6 +532,16 @@ namespace IcebreakServices
         {
             double r = new Random().NextDouble();
             return Convert.ToInt16(Math.Floor(r * max));
+        }
+
+        public List<Message> checkUserInbox(string username)
+        {
+            return db.checkUserInbox(username);
+        }
+
+        public List<Message> checkUserOutbox(string sender)
+        {
+            return db.checkUserOutbox(sender);
         }
     }
 }

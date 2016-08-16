@@ -16,6 +16,13 @@ namespace IcebreakServices
     {
         [OperationContract]
         [WebInvoke(Method = "POST",
+            UriTemplate = "/addMessage",
+            BodyStyle = WebMessageBodyStyle.Bare,
+            ResponseFormat = WebMessageFormat.Json)]
+        string addMessage(Stream streamdata);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST",
             UriTemplate = "/userUpdate/{handle}",
             BodyStyle = WebMessageBodyStyle.Bare,
             ResponseFormat = WebMessageFormat.Json)]
@@ -42,12 +49,31 @@ namespace IcebreakServices
             BodyStyle =WebMessageBodyStyle.WrappedResponse)]
         string imageDownload(string fileName);
 
+        [OperationContract]
+        [WebGet(
+            UriTemplate = "/checkUserInbox/{username}",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedResponse)]
+        List<Message> checkUserInbox(string username);
+
+        [OperationContract]
+        [WebGet(
+            UriTemplate = "/checkUserOutbox/{sender}",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedResponse)]
+        List<Message> checkUserOutbox(string sender);
 
         [OperationContract]
         [WebInvoke(Method = "POST",
             UriTemplate = "/imgUpload/{fileName}",
             BodyStyle = WebMessageBodyStyle.Bare)]
         void imageUpload(string fileName,Stream fileStream);
+
+        /*[OperationContract]
+        [WebInvoke(Method = "POST",
+            UriTemplate = "/updateUserMailbox",
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        string updateUserMailbox(Stream fileStream);*/
 
         [OperationContract]
         [WebInvoke(
