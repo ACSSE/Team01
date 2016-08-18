@@ -16,16 +16,11 @@ namespace IceBreak
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-          
                 if (Session["USER"] != null)
                 {
                 string check = (string)Session["USER"];
                 login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + check + "</a>";
 
-            }
-                else
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "Pop", "$(function() { openModel; });", true);
                 }
         }
         protected void Login(object sender, EventArgs e)
@@ -35,11 +30,13 @@ namespace IceBreak
             if(String.IsNullOrEmpty(username))
             {
                 usernameBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "loginModal", "$('#loginModal').modal();", true);
                 return;
             }
             if (String.IsNullOrEmpty(password))
             {
                 passwordBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "loginModal", "$('#loginModal').modal();", true);
                 return;
             }
             User user = new User();
@@ -57,6 +54,7 @@ namespace IceBreak
             else
             {
                 txtInvalid.Style.Clear();
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "loginModal", "$('#loginModal').modal();", true);
             }
 
         }

@@ -138,9 +138,7 @@
             e.preventDefault();
             $("#navmenu").toggleClass("searchdisplay");
         });
-        function openModal() {
-            $('#loginModal').modal('show');
-        }
+
     </script>
 </body>
 </html>
