@@ -11,7 +11,7 @@ namespace IceBreak
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            Page.ClientScript.RegisterStartupScript(this.GetType(),"onLoad", "<script type='text/javascript'> startTime();</script>", true);
         }
     }
 }
