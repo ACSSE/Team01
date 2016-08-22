@@ -332,11 +332,49 @@ namespace IcebreakServices
                 {
                     response = exec_result;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
-                }
-                else
-                {
-                    response = exec_result;
-                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+                    //Send notifcation to receiver    > reg_token_rec,reg_token_sen,m.getId,SRV_REC
+                    string reg_token_rec = db.getUserToken(new_msg.Message_receiver);
+                    string reg_token_sen = db.getUserToken(new_msg.Message_sender);
+                    /*String url_params = String.Format("registration_ids:{"+
+                                            "registration_id:\"{0}\"," +
+                                            "registration_id:\"{1}\"}&" +
+                                            "priority=high&"+
+                                            "data:{"+
+                                            "\"m_id\":\"{2}\",\"status\":\"{3}\"}",reg_token_rec,reg_token_sen,
+                                            new_msg.Message_id,DBServerTools.ICEBREAK_SERV_RECEIVED);*/
+
+                    string title = new_msg.Message_status>=DBServerTools.ICEBREAK?"New IceBreak Request":"New Message";
+                    User sender = db.getUser(new_msg.Message_sender);
+                    if (sender!=null)
+                    {
+                        string fname = DBServerTools.isEmpty(sender.Fname) ? "X" : sender.Fname;
+                        string lname = DBServerTools.isEmpty(sender.Lname) ? "X" : sender.Lname;
+                        string name = "";
+                        if (!fname.Equals("X") && !lname.Equals("X"))
+                            name = fname + " " + lname[0] + '.';
+                        else
+                            name = "Anonymous";
+
+                        string text = name + " would like to get to know you.";
+                        /*string notif = "{" +
+                                            "\"notification\":{" +
+                                            "\"title\": \"" + title + "\"," +
+                                            "\"text\": \"" + text + "\"}," +
+                                            "\"data\": {" +
+                                            "\"msg_id\": \"" + new_msg.Message_id + "\"}," +
+                                            "\"to\": \"" + reg_token_rec + "\"}";*/
+                        string notif = "{" +
+                                "\"data\": {" +
+                                "\"msg_id\": \"" + new_msg.Message_id + "\"}," +
+                                "\"to\": \"" + reg_token_rec + "\"}";
+                        sendNotification(notif);
+                    }
+                    else
+                    {
+                        response = exec_result;
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+                        db.addError(ErrorCodes.ENOTIF, "Can't send notification because send is NULL", "addMessage");
+                    }
                 }
                 return response;
             }
@@ -345,6 +383,92 @@ namespace IcebreakServices
                 response = "Error: Invalid token count (" + msg_details.Length + ") >> " + inbound_payload;
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                 return response;
+            }
+        }
+
+        /*
+        { "notification": {
+    "title": "Portugal vs. Denmark",
+    "text": "5 to 1"
+  },
+  "to" : "bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1..."
+}
+        */
+
+        public void sendNotification(string url_params)
+        {
+            WebRequest req = WebRequest.Create("https://fcm.googleapis.com/fcm/send?" + url_params);
+            req.Method = "POST";
+            req.ContentType = "application/json";
+            req.Headers.Add("Authorization", "key=AIzaSyAbyhAF4s4HzZqYcHztCnk9Xcgpjd4Wt1U");
+            req.ContentLength = url_params.Length;
+            Stream dataStream = req.GetRequestStream();
+
+            dataStream.Write(Encoding.UTF8.GetBytes(url_params), 0, url_params.Length);
+            dataStream.Close ();
+
+            WebResponse response = req.GetResponse();
+
+            dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.
+            StreamReader reader = new StreamReader(dataStream);
+            // Read the content.
+            string responseFromServer = reader.ReadToEnd();
+            // Save error to DB -- TODO: fix this
+            if(!((HttpWebResponse)response).StatusCode.Equals("OK"))
+                db.addError(ErrorCodes.ENOTIF, ((HttpWebResponse)response).StatusCode + ":>" + responseFromServer, "sendNotification");
+            
+            // Clean up the streams.
+            reader.Close();
+            dataStream.Close();
+            response.Close();
+        }
+
+        public string setUniqueUserToken(Stream streamdata)
+        {
+            string username="", token="";
+            StreamReader reader = new StreamReader(streamdata);
+            string inbound_payload = reader.ReadToEnd();
+            reader.Close();
+            reader.Dispose();
+            //Process posted user token
+            inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
+            string[] usr_token = inbound_payload.Split('&');
+            if (usr_token.Length == 2)
+            {
+                foreach (string kv_pair in usr_token)
+                {
+                    if (kv_pair.Contains('='))
+                    {
+                        string var = kv_pair.Split('=')[0];
+                        string val = kv_pair.Split('=')[1];
+
+                        switch (var)
+                        {
+                            case "username":
+                                username = val;
+                                break;
+                            case "token":
+                                token = val;
+                                break;
+                        }
+                    }
+                }
+                if(username.Length>0 && token.Length>0)
+                {
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                    return db.setUniqueUserToken(username, token);
+                }
+                else
+                {
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                    return "Username or Token are null: username==null?" + (username.Length <= 0) + ", token==null?" + (token.Length <= 0);
+                }
+            }
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return "Invalid parameter count (" + usr_token.Length + ")";
             }
         }
 
@@ -542,6 +666,11 @@ namespace IcebreakServices
         public List<Message> checkUserOutbox(string sender)
         {
             return db.checkUserOutbox(sender);
+        }
+
+        public Message getMessageById(string msg_id)
+        {
+            return db.getMessageById(msg_id);
         }
     }
 }

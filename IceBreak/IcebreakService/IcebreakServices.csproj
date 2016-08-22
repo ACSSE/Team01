@@ -75,6 +75,7 @@
       <DependentUpon>BaseService.svc</DependentUpon>
     </Compile>
     <Compile Include="DBServerTools.cs" />
+    <Compile Include="ErrorCodes.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="IIBUserRequestService.cs" />

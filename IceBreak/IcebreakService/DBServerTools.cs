@@ -248,11 +248,15 @@ namespace IcebreakServices
             {
                 conn.Open();
                 //Get user's unread messages and Icebreaks
-                cmd = new SqlCommand("SELECT * FROM [Messages] WHERE Message_sender=@sender", conn);
+                cmd = new SqlCommand("SELECT * FROM [Messages] WHERE Message_sender=@sender "
+                    + "AND NOT Message_status=@read "
+                    + "AND NOT Message_status=@done", conn);
                 /*cmd.Parameters.AddWithValue(@"read", READ);
                 cmd.Parameters.AddWithValue(@"done", ICEBREAK_DONE);
                 cmd.Parameters.AddWithValue(@"receiver", receiver);*/
                 cmd.Parameters.AddWithValue(@"sender", sender);
+                cmd.Parameters.AddWithValue(@"read", sender);
+                cmd.Parameters.AddWithValue(@"done", sender);
 
                 dataReader = cmd.ExecuteReader();
                 while (dataReader.Read())
@@ -324,7 +328,7 @@ namespace IcebreakServices
                     }
                     else
                     {
-                        return "Fail: Message ID or status are NULL.";
+                        return "Exception: Message ID or status are NULL.";
                     }
                 }
                 catch (Exception e)
@@ -334,9 +338,37 @@ namespace IcebreakServices
             }
             else
             {
-                return "Fail: User not found";
+                return "Exception: User not found";
             }
         }*/
+
+        public string getUserToken(string username)
+        {
+            #region ForRelease
+            /*if(id == 0)//Prevent anyone from reading data from people that are not at any event
+                return null;*/
+            # endregion
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                string token = "";
+                //Query user
+                cmd = new SqlCommand("SELECT user_token FROM dbo.Users WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd.Parameters.AddWithValue(@"usr", username);
+
+                dataReader = cmd.ExecuteReader();
+                dataReader.Read();
+
+                token = Convert.ToString(dataReader.GetValue(0));
+
+                return token;
+            }
+            catch (Exception e)
+            {
+                return "Exception: " + e.Message;
+            }
+        }
 
         public List<User> getUsersAtEvent(int id)
         {
@@ -448,6 +480,56 @@ namespace IcebreakServices
             }*/
         }
 
+        public string setUniqueUserToken(string username, string token)
+        {
+            if (userExists(new User() { Username = username }).ToLower().Equals("exists=true"))
+            {
+                //update user entry - add id
+                conn = new SqlConnection(dbConnectionString);
+                conn.Open();
+
+                string query = "UPDATE dbo.Users SET user_token=@token WHERE username=@user";
+                cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue(@"token", token);
+                cmd.Parameters.AddWithValue(@"user", username);
+
+                //cmd.Prepare();
+                cmd.ExecuteNonQuery();
+
+                cmd.Dispose();
+                conn.Close();
+                return "SUPD";
+            }
+            else
+            {
+                return "EUDNE";
+            }
+        }
+
+        public string addError(int code, string error, string method)
+        {
+            try
+            {
+                conn = new SqlConnection(dbConnectionString);
+                conn.Open();
+
+                string query = "INSERT INTO dbo.Exceptions VALUES(@ex_code,@ex_msg,@ex_method)";
+                cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue(@"ex_code", code);
+                cmd.Parameters.AddWithValue(@"ex_msg", error);
+                cmd.Parameters.AddWithValue(@"ex_method", method);
+
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+                conn.Close();
+                return "SINS";
+            }
+            catch (Exception e)
+            {
+                return "Exception: " + e.Message;
+            }
+        }
+
         public string addMessage(Message m)
         {
             try
@@ -509,17 +591,58 @@ namespace IcebreakServices
                 }
                 else if(msgState == CONN_CLOSED)
                 {
-                    return "Fail: Connection closed.";
+                    return "Exception: Connection closed.";
                 }
             }
             catch (Exception e)
             {
-                return "Fail: " + e.Message;
+                return "Exception: " + e.Message;
             }
-            return "Fail: Unknown Response.";
+            return "Exception: Unknown Response.";
         }
 
-        public Boolean isEmpty(string s)
+        public Message getMessageById(string msg_id)
+        {
+            Message m = null;
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Get user's unread messages and Icebreaks
+                cmd = new SqlCommand("SELECT * FROM dbo.Messages WHERE Message_id=@id", conn);
+                cmd.Parameters.AddWithValue(@"id", msg_id);
+
+                dataReader = cmd.ExecuteReader();
+                if (dataReader.HasRows)
+                {
+                    m = new Message();
+                    dataReader.Read();
+        
+                    string date = Convert.ToString(dataReader.GetValue(5));
+                    date = date.Replace('/', '-');
+                    date = date.Replace(':', '-');
+
+                    m.Message_id = Convert.ToString(dataReader.GetValue(0));
+                    m.Message_receiver = Convert.ToString(dataReader.GetValue(4));
+                    m.Message_sender = Convert.ToString(dataReader.GetValue(3));
+                    m.Message_time = date;
+                    m.Message_status = Convert.ToInt16(dataReader.GetValue(2));
+                    m.Msg = Convert.ToString(dataReader.GetValue(1));
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return m;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public static bool isEmpty(string s)
         {
             if(s == null)
                 return true;
@@ -618,7 +741,6 @@ namespace IcebreakServices
                     user.Bio = (string)dataReader.GetValue(8);
                     user.Gender = (string)dataReader.GetValue(11);
                     user.Catchphrase = (string)dataReader.GetValue(9);
-
                 }
 
                 dataReader.Close();

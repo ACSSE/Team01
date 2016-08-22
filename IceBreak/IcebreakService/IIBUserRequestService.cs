@@ -23,6 +23,13 @@ namespace IcebreakServices
 
         [OperationContract]
         [WebInvoke(Method = "POST",
+            UriTemplate = "/setUniqueUserToken",
+            BodyStyle = WebMessageBodyStyle.Bare,
+            ResponseFormat = WebMessageFormat.Json)]
+        string setUniqueUserToken(Stream streamdata);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST",
             UriTemplate = "/userUpdate/{handle}",
             BodyStyle = WebMessageBodyStyle.Bare,
             ResponseFormat = WebMessageFormat.Json)]
@@ -41,6 +48,10 @@ namespace IcebreakServices
         [OperationContract]
         [WebGet(UriTemplate = "/getUser/{username}", ResponseFormat = WebMessageFormat.Json)]
         User getUser(string username);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getMessageById/{msg_id}", ResponseFormat = WebMessageFormat.Json)]
+        Message getMessageById(string msg_id);
 
         [OperationContract]
         [WebGet(
