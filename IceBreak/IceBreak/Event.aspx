@@ -4,7 +4,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-
+<div id="page-content-wrapper">
     <div class="container" id="EventView" runat="server">
 
         <!-- Page Heading -->
@@ -17,6 +17,7 @@
         </div>
 
     </div>
+</div>
    
  <div class="floatingContainer">
 	<div class="actionButton">
