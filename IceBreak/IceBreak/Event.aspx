@@ -1,10 +1,11 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/master.Master" AutoEventWireup="true" CodeBehind="Event.aspx.cs" Inherits="IceBreak.Event" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    <link rel="stylesheet" href="stylesheets/style.css"/>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
 
-    <div class="container">
+    <div class="container" id="EventView" runat="server">
 
         <!-- Page Heading -->
         <div class="row">
@@ -14,45 +15,14 @@
                 </h1>
             </div>
         </div>
-        <!-- /.row -->
-
-        <!-- Project One -->
-        <div class="row">
-            <div class="col-md-7">
-                <a href="#">
-                    <img class="img-responsive" src="http://placehold.it/700x300" alt="" />
-                </a>
-            </div>
-            <div class="col-md-5">
-                <h3>Project One</h3>
-                <h4>Subheading</h4>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium veniam exercitationem expedita laborum at voluptate. Labore, voluptates totam at aut nemo deserunt rem magni pariatur quos perspiciatis atque eveniet unde.</p>
-                <asp:Button runat="server" ID="btnViewEvent"  Text="View Event" CssClass="btn btn-primary" UseSubmitBehavior="true" ></asp:Button><span class="glyphicon glyphicon-chevron-right"></span></a>
-            </div>
-        </div>
-        <!-- /.row -->
-
-        <hr/>
-         <div class="row">
-            <div class="col-md-7">
-                <a href="#">
-                    <img class="img-responsive" src="http://placehold.it/700x300" alt="" />
-                </a>
-            </div>
-            <div class="col-md-5">
-                <h3>Project One</h3>
-                <h4>Subheading</h4>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Laudantium veniam exercitationem expedita laborum at voluptate. Labore, voluptates totam at aut nemo deserunt rem magni pariatur quos perspiciatis atque eveniet unde.</p>
-                <asp:Button runat="server" ID="Button1"  Text="View Event" CssClass="btn btn-primary" UseSubmitBehavior="true" ></asp:Button><span class="glyphicon glyphicon-chevron-right"></span></a>
-            </div>
-        </div>
-        <!-- /.row -->
-
-        <hr/>
-
 
     </div>
-    
+   
+ <div class="floatingContainer">
+	<div class="actionButton">
+		<span class="glyphicon glyphicon-plus" style="font-size:large;color:black"></span>
+	</div>
+</div>
 
     <script>
         function startTime() {
