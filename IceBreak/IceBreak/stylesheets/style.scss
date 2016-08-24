@@ -52,7 +52,6 @@ a
     position: relative;
     width: 4em;
     z-index: 1000;
-    padding-top:1.5em;
    
 
 
@@ -61,8 +60,13 @@ a
 		@include circleShadow(8px);
 	}
 }
+.glyphicon-center{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 .img-responsive {
 max-width: 700px;
 max-height:300px;
 } 
-
