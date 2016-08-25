@@ -117,6 +117,7 @@
     <Content Include="Event.aspx" />
     <Content Include="images\favicon.png" />
     <Content Include="images\partyedit.jpg" />
+    <Content Include="images\Tevin.jpg" />
     <Content Include="packages.config" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -130,6 +131,8 @@
     </None>
     <None Include="Properties\PublishProfiles\icebreak - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\icebreak - Web Deploy.pubxml" />
+    <Content Include="Profile.aspx" />
+    <Content Include="stylesheets\profile.css" />
     <Content Include="stylesheets\style.css">
       <DependentUpon>style.scss</DependentUpon>
     </Content>
@@ -173,6 +176,13 @@
     <Compile Include="master.Master.designer.cs">
       <DependentUpon>master.Master</DependentUpon>
     </Compile>
+    <Compile Include="Profile.aspx.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Profile.aspx.designer.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -195,7 +205,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3679</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

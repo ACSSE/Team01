@@ -20,9 +20,9 @@ namespace IceBreak
                 {
                 string check = (string)Session["USER"];
                 login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + check + "</a>";
+            }
 
-                }
-        }
+            }
         protected void Login(object sender, EventArgs e)
         {
             string username = txtUsername.Value;
@@ -58,6 +58,57 @@ namespace IceBreak
             }
 
         }
-       
+        protected void SignUp(object sender, EventArgs e)
+        {
+            string name = txtName.Value;
+            string lastname = txtLastName.Value;
+            string email = txtemail.Value;
+            string usrname = txtUsrname.Value;
+            string pass = txtPass.Value;
+            if (String.IsNullOrEmpty(name))
+            {
+                NameBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            if (String.IsNullOrEmpty(lastname))
+            {
+                lastNameBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            if (String.IsNullOrEmpty(email))
+            {
+                EmailBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            if (String.IsNullOrEmpty(usrname))
+            {
+                UsernameSignupBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            if (String.IsNullOrEmpty(pass))
+            {
+                PasswordSignupBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            User user = new User();
+            user.Fname = name;
+            user.Lname = lastname;
+            user.Email = email;
+            user.Username = usrname;
+            user.Password = pass;
+
+            DBServerTools dbs = new DBServerTools();
+            String check = dbs.registerUser(user);
+            String c = dbs.signIn(user);
+            //dbs.registerUser(user);
+            //dbs.signIn(user);
+          
+
+        }
     }
 }
