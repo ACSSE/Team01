@@ -8,6 +8,7 @@
 
 
     <div id="page-content-wrapper">
+        
         <div class="register-container container">
             <div class="row">
                  <div class="iphone span5">
@@ -41,9 +42,17 @@
             </div>
     </div>
 
+     
 
-
-
+   <script type="text/javascript">
+       function showAlert()
+       {
+           $('#alertModal').modal('show');
+       }
+       function showAlert2() {
+           $('#alertModal2').modal('show');
+       }
+   </script>
 
 
 </asp:Content>

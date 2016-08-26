@@ -75,16 +75,16 @@
         </div>
        
         <form id="form1" runat="server">
-        <%--<asp:ScriptManager ID="ScriptManager1" runat="server">
-         </asp:ScriptManager>--%>
+        <asp:ScriptManager ID="ScriptManager1" runat="server">
+         </asp:ScriptManager>
         <div>
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
         
             </asp:ContentPlaceHolder>
         </div>
 
-    <%--<asp:UpdatePanel ID="UpdatePanel1" runat="server">
-        <ContentTemplate>--%>
+    
+
              <%-- Login modal  --%>
         <div id ="loginModal" class="modal fade" role="dialog" runat="server">
             <div class="modal-dialog">
@@ -117,8 +117,6 @@
                 </div>
             </div>
         </div>
-       <%-- </ContentTemplate>
-     </asp:UpdatePanel>--%>
         </form>
     </div>
 

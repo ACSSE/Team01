@@ -737,6 +737,9 @@ namespace IcebreakServices
                     user.Fname = (string)dataReader.GetValue(0);
                     user.Lname = (string)dataReader.GetValue(1);
                     user.Occupation = (string)dataReader.GetValue(10);
+                    user.Access_level = (int)dataReader.GetValue(5);
+                    user.Email = (string)dataReader.GetValue(2);
+                    user.Username = (string)dataReader.GetValue(4);
                     user.Age = (int)dataReader.GetValue(7);
                     user.Bio = (string)dataReader.GetValue(8);
                     user.Gender = (string)dataReader.GetValue(11);

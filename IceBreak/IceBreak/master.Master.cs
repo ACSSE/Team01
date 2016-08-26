@@ -23,6 +23,7 @@ namespace IceBreak
 
                 }
         }
+       
         protected void Login(object sender, EventArgs e)
         {
             string username = txtUsername.Value;
@@ -49,7 +50,9 @@ namespace IceBreak
             if (check.ToLower().Contains("isvaliduser=true"))
             {
                 Session["USER"] = username;
-                login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + username + "</a>";
+                user = dbs.getUser(username);
+                Session["LEVEL"] = user.Access_level;
+                login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + username +"</a>";
             }
             else
             {
