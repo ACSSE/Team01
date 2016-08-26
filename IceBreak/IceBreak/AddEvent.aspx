@@ -17,26 +17,26 @@
                     <div class="form">
                         <h2>Add Event To <strong style="color:#59D0F7">IceBreak</strong></></h2>
                         <div class="form-group" style="text-align:left">
-                            <label for="eventname">Event Name</label>
-                            <input type="text" id="eventname" name="eventname" placeholder="enter your event name..."/>
+                            <label for="eventname"  runat="server">Event Name</label><span id="lbl_name" runat="server" style="color:red; display:none"> - Please enter your event name.</span>
+                            <input type="text" id="eventname" name="eventname" placeholder="enter your event name..." runat="server"/>
                        </div>
                         <div class="form-group" style="text-align:left">
-                             <label for="EventAddress">Event Address</label>
-                             <input type="text" id="eventaddress" name="eventaddress" placeholder="enter your event address..."/>
+                             <label for="EventAddress">Event Address</label><span id="address_span" runat="server" style="color:red; display:none"> - Please enter your event address.</span>
+                             <input type="text" id="eventaddress" name="eventaddress" placeholder="enter your event address..."  runat="server"/>
                        </div>
                         <div class="form-group" style="text-align:left">
-                            <label for="EventDescription">Event Description</label>
-                            <textarea class="form-control" rows="4" id="EventDescrip" name="eventdescrip" placeholder="enter your event description..."></textarea>
+                            <label for="EventDescription">Event Description</label><span id="descrip_span" runat="server" style="color:red; display:none"> - Please enter your event description.</span>
+                            <textarea class="form-control" rows="4" id="eventdescrip" name="eventdescrip" placeholder="enter your event description..."  runat="server"></textarea>
                         </div>
                         <div class="form-group" style="text-align:left">
-                            <label for="Event Date ">Event Date</label>
-                            <input type="date" id="date" name="date"/>
+                            <label for="Event Date ">Event Date</label><span id="date_span" runat="server" style="color:red; display:none"> - Please enter your event date.</span>
+                            <input type="date" id="date" name="date"  runat="server"/>
                         </div>
                         <div class="form-group" style="text-align:left">
-                            <label for="Even Time">Event Time</label>
-                            <input type="time" id="time" name="time"/>
+                            <label for="Event Time">Event Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event name.</span>
+                            <input type="time" id="time" name="time"  runat="server"/>
                         </div>
-                        <button type="submit">ADD EVENT</button>
+                        <asp:Button runat="server" ID="btnAddButton"  UseSubmitBehavior="true" CssClass="AddButton" OnClick="btnAdd_Event" Text="ADD EVENT"></asp:Button>
                    </div>
                </div>
             </div>

@@ -86,7 +86,7 @@ strong { font-weight: 700; }
 .form input:-ms-input-placeholder { color: #aaa; }
 .form input::-webkit-input-placeholder { color: #aaa; }
 
-.form button {
+input[type=submit] {
     cursor: pointer;
     width: 60%;
     height: 42px;
@@ -112,13 +112,13 @@ strong { font-weight: 700; }
     
 }
 
-.form button:hover {
+.AddButton:hover {
     -moz-box-shadow: 0 -15px 30px 0 rgba(255,255,255,.05) inset;
     -webkit-box-shadow: 0 -15px 30px 0 rgba(255,255,255,.05) inset;
     box-shadow: 0 -15px 30px 0 rgba(255,255,255,.05) inset;
 }
 
-.form button:active {
+.AddButton:active {
     -moz-box-shadow:
         0 -15px 30px 0 rgba(255,255,255,.05) inset,       
         0 5px 8px 0 rgba(0,0,0,.1) inset;
