@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IcebreakServices;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,18 +12,18 @@ namespace IceBreak
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            //if (Session["LEVEL"] == null)
-            //{
-            //    ScriptManager.RegisterStartupScript(this, this.GetType(),"alert","alert('You must login');window.location ='index.aspx';", true);
-            //}
-            //else
-            //{
-            //    int check = (int)Session["LEVEL"];
-            //    if (check != 1)
-            //    {
-            //        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
-            //    }
-            //}
+            if (Session["LEVEL"] == null)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login');window.location ='index.aspx';", true);
+            }
+            else
+            {
+                int check = (int)Session["LEVEL"];
+                if (check != 1)
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
+                }
+            }
         }
         protected void btnAdd_Event(object sender, EventArgs e)
         {
@@ -76,7 +77,28 @@ namespace IceBreak
             {
                 time_span.Style.Add("display", "none");
             }
+            IcebreakServices.Event evnt = new IcebreakServices.Event();
+            evnt.Title = EventName;
+            evnt.Address = EventAddress;
+            evnt.Description = EventDescrip;
+            evnt.Date = EventDate;
+            evnt.Time = EventTime;
+
+            DBServerTools dbs = new DBServerTools();
+            string check = dbs.addEvent(evnt);
+           
+            if(check.Contains("Success"))
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You have successfully added an event');window.location ='Event.aspx';", true);
+            }
+            else
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You are not sucessful try again');", true);
+            }
             
         }
-    }
+        protected void btnUpload(object sender, EventArgs e)
+        {
+        }
+     }
 }

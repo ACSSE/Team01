@@ -9,6 +9,8 @@
         private int radius;
         private string gps_location;
         private int access_id;
+        private string time;
+        private string date;
 
 
         public int AccessID
@@ -86,7 +88,28 @@
                 gps_location = value;
             }
         }
-
+        public string Time
+        {
+            get
+            {
+                return time;
+            }
+            set
+            {
+                time = value;
+            }
+        }
+        public string Date
+        {
+            get
+            {
+                return date;
+            }
+            set
+            {
+                date = value;
+            }
+        }
         public int Id
         {
             get

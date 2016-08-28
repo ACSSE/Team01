@@ -693,11 +693,14 @@ namespace IcebreakServices
 
         public string addEvent(Event ev)
         {
+            ev.Radius = 0;
+            ev.Gps_location = "0";
+            ev.AccessID = 12;
             try
             {
                 conn = new SqlConnection(dbConnectionString);
                 conn.Open();
-                string query = "INSERT INTO dbo.Events VALUES(@title,@desc,@addr,@radius,@loc_gps)";
+                string query = "INSERT INTO dbo.Events(event_title,event_description,event_address,event_radius,event_gps_location,access_id,date,time) VALUES(@title,@desc,@addr,@radius,@loc_gps,@acc_id,@date,@time)";
                 cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue(@"title", ev.Title);
@@ -705,6 +708,9 @@ namespace IcebreakServices
                 cmd.Parameters.AddWithValue(@"addr", ev.Address);//Hash.HashString(user.Username));
                 cmd.Parameters.AddWithValue(@"radius", ev.Radius);
                 cmd.Parameters.AddWithValue(@"loc_gps", ev.Gps_location);
+                cmd.Parameters.AddWithValue(@"acc_id", ev.AccessID);
+                cmd.Parameters.AddWithValue(@"date", ev.Date);
+                cmd.Parameters.AddWithValue(@"time", ev.Time);
 
                 //cmd.Prepare();
                 cmd.ExecuteNonQuery();
@@ -777,7 +783,7 @@ namespace IcebreakServices
                 //cmd.Parameters.AddWithValue(@"pwd", hashed_input_pwd);
 
                 dataReader = cmd.ExecuteReader();
-                while(dataReader.Read())
+                while (dataReader.Read())
                 {
                     events.Add(new Event()
                     {
@@ -787,7 +793,10 @@ namespace IcebreakServices
                         Address = (string)dataReader.GetValue(3),
                         Radius = (int)dataReader.GetValue(4),
                         Gps_location = (string)dataReader.GetValue(5),
-                        AccessID = (int)dataReader.GetValue(6)
+                        AccessID = (int)dataReader.GetValue(6),
+                        Date = (string)dataReader.GetValue(7),
+                        Time = (string)dataReader.GetValue(8)
+                                       
                     });
                 }
                 

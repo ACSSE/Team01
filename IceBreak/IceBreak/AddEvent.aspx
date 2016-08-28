@@ -36,6 +36,9 @@
                             <label for="Event Time">Event Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event name.</span>
                             <input type="time" id="time" name="time"  runat="server"/>
                         </div>
+                        <div class="form-group" style="text-align:left">
+                        <asp:Button runat ="server" CssClass="UploadButton AddButton" Text="Upload photo" OnClick="btnUpload"/>
+                        </div>
                         <asp:Button runat="server" ID="btnAddButton"  UseSubmitBehavior="true" CssClass="AddButton" OnClick="btnAdd_Event" Text="ADD EVENT"></asp:Button>
                    </div>
                </div>
