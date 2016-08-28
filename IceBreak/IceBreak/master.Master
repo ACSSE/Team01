@@ -1,5 +1,4 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="master.master.cs" Inherits="IceBreak.master" %>
-
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -109,7 +108,7 @@
                     </div>
                     <div class="modal-footer">
                         <div style="float:left">
-                          <p>Don't have an account? Create one <a href="signUpModal" data-toggle="modal" data-target="#signUpModal">Sign Up</a>here</p>
+                          <p>Don't have an account? Create one <a href="signUpModal" data-toggle="modal" data-target="#signUpModal">Sign Up </a>here</p>
                         </div>
                         <div>                            
                         <asp:Button runat="server" ID="btnLogin" OnClick="Login" Text="LOGIN" CssClass="btn btn-primary" UseSubmitBehavior="true" ></asp:Button>

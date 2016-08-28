@@ -14,20 +14,23 @@ namespace IceBreak
 {
     public partial class master : System.Web.UI.MasterPage
     {
+        
         protected void Page_Load(object sender, EventArgs e)
         {
-                if (Session["USER"] != null)
+            if (Session["USER"] != null)
                 {
                 string check = (string)Session["USER"];
                 login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + check + "</a>";
             }
 
-            }
+        }
+
         protected void Login(object sender, EventArgs e)
         {
             string username = txtUsername.Value;
             string password = txtPassword.Value;
-            if(String.IsNullOrEmpty(username))
+            
+            if (String.IsNullOrEmpty(username))
             {
                 usernameBox.Attributes.Add("class", "form-inline has-error has-feedback");
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "loginModal", "$('#loginModal').modal();", true);
@@ -103,12 +106,32 @@ namespace IceBreak
             user.Password = pass;
 
             DBServerTools dbs = new DBServerTools();
-            String check = dbs.registerUser(user);
-            String c = dbs.signIn(user);
-            //dbs.registerUser(user);
-            //dbs.signIn(user);
-          
+            dbs.registerUser(user);
+            String check = dbs.signIn(user);
 
+            if (check.ToLower().Contains("isvaliduser=true"))
+            {
+                Session["USER"] = usrname;
+                login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + usrname + "</a>";
+            }
+            else
+            {
+                txtInvalid.Style.Clear();
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "loginModal", "$('#loginModal').modal();", true);
+            }
+
+
+
+        }
+
+        class Helpers
+        {
+            public static void getUsername(master page)
+            {
+                //You can access your controls here like:
+                String username = page.txtUsername.Value;
+            
+            }
         }
     }
 }
