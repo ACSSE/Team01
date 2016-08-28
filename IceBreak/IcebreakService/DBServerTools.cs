@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
+using System.Web;
 using System.Web.Hosting;
 
 namespace IcebreakServices
@@ -797,6 +798,23 @@ namespace IcebreakServices
                 File.WriteAllLines(Path.Combine(HostingEnvironment.MapPath("~/logs/"), new DateTime()+".log"),new String[] { e.Message});
             }
             return events;
+        }
+
+        public class loggedInSession
+        {
+            public loggedInSession login
+            {
+
+
+                get
+                {
+                    return (loggedInSession)HttpContext.Current.Session["USER"];
+                }
+                set
+                {
+                    HttpContext.Current.Session["USER"] = value;
+                }
+            }
         }
 
         public string signIn(User user)

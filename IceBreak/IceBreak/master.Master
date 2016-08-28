@@ -1,4 +1,5 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="master.master.cs" Inherits="IceBreak.master" %>
+
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -83,10 +84,8 @@
             </asp:ContentPlaceHolder>
         </div>
 
-    <%--<asp:UpdatePanel ID="UpdatePanel1" runat="server">
-        <ContentTemplate>--%>
-             <%-- Login modal  --%>
-        <div id ="loginModal" class="modal fade" role="dialog" runat="server">
+  
+          <div id ="loginModal" class="modal fade" role="dialog" runat="server">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -117,6 +116,9 @@
                 </div>
             </div>
         </div>
+        
+             <%-- Login modal  --%>
+      
        <%-- </ContentTemplate>
      </asp:UpdatePanel>--%>
        

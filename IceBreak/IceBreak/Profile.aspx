@@ -8,6 +8,7 @@
   <div id="page-content-wrapper">
       <div id ="body" class="body">
 </div>
+      <label style="font-family:'Bookman Old Style';font-size:18pt;text-align:center;margin-top:5%;margin-left:19%">Tevin M.</label>
       <div id="img-circle" class="img-circle">
          <img class="img-circle" src="images/Tevin.jpg"/>
       </div>
@@ -19,45 +20,44 @@
         <br />
         <br />
         <br />
-        <br />
-        <br />
+    
        
         <div style="width:200px;margin:auto;font-size:18pt;font-family:'Bookman Old Style'">
             <p>Profile</p>
         </div>
         
         <p style="font-weight:bold;font-size:13pt">
-            Enter the following credentials:
+            Current credentials:
         </p>
         
         <div style="text-align:center;font-family:'Bookman Old Style';font-weight:300;width:350px;margin:auto;" id="inputs">
             <asp:Label ID="Label1" runat="server" Text="1.Name" style="font-size:11pt;"></asp:Label>
             <span id="txtName_lbl" runat="server"></span>
-            <asp:TextBox ID="txtName" class="form-control" runat="server" Width="345px" style="margin-right:12%;border-radius:5px;height:20px;border-color:black" ></asp:TextBox>
+            <asp:TextBox ID="txtName"  class="form-control" runat="server" Width="345px" style="margin-right:12%;height:25px;border-color:black" Visible="True"></asp:TextBox>
             
             <asp:Label ID="Label2" runat="server" Text="2.Surname" style="font-size:11pt;"></asp:Label>
             <span id="txtSurname_lbl" runat="server"></span>
-            <asp:TextBox ID="txtSurname" runat="server" class="form-control" Width="345px" style="border-radius:5px;height:20px;border-color:black"></asp:TextBox>
+            <asp:TextBox ID="txtSurname" runat="server" class="form-control" Width="345px" style="height:25px;border-color:black"></asp:TextBox>
             
             <asp:Label ID="Label3" runat="server" Text="3.E-Mail" style="font-size:11pt;"></asp:Label>
             <span id="txtEmail_lbl" runat="server"></span>
-            <asp:TextBox ID="txtEmail" runat="server" class="form-control" Width="345px" style="border-radius:5px;height:20px;border-color:black"></asp:TextBox>
+            <asp:TextBox ID="txtEmail" runat="server" class="form-control" Width="345px" style="height:25px;border-color:black"></asp:TextBox>
             
             <asp:Label ID="Label4" runat="server" Text="4.Username" style="font-size:11pt;"></asp:Label>
             <span id="txtUser_lbl" runat="server"></span>
-            <asp:TextBox ID="txtUser" runat="server" class="form-control" Width="345px" style="border-radius:5px;height:20px;border-color:black"></asp:TextBox>
+            <asp:TextBox ID="txtUser" runat="server" class="form-control" Width="345px" style="height:25px;border-color:black"></asp:TextBox>
             
             <asp:Label ID="Label5" runat="server" Text="5.Age" style="font-size:11pt;"></asp:Label>
             <span id="txtAge_lbl" runat="server"></span>
-            <asp:TextBox ID="txtAge" runat="server" class="form-control" Width="345px" style="border-radius:5px;height:20px;border-color:black"></asp:TextBox>
+            <asp:TextBox ID="txtAge" runat="server" class="form-control" Width="345px" style="height:25px;border-color:black"></asp:TextBox>
             
             <asp:Label ID="Label6" runat="server" Text="6.Bio" style="font-size:11pt;"></asp:Label>
             <span id="txtPass_lbl" runat="server"></span>
-            <asp:TextBox  ID="txtPass" runat="server" class="form-control" Width="345px" style="border-radius:5px;border-color:black"></asp:TextBox>
+            <asp:TextBox  ID="txtBio" runat="server" class="form-control" Width="345px" style="height:25px;border-color:black"></asp:TextBox>
             
             <asp:Label ID="Label7" runat="server" Text="7.Catchphrase" style="font-size:11pt;"></asp:Label>
             <span id="txtConfirm_lbl" runat="server"></span>
-            <asp:TextBox  ID="txtConfirm" runat="server" class="form-control" Width="345px" style="border-radius:5px;height:20px;border-color:black"></asp:TextBox>
+            <asp:TextBox  ID="txtCatch" runat="server" class="form-control" Width="345px" style="height:25px;border-color:black"></asp:TextBox>
        
            
         </div> 
@@ -65,7 +65,8 @@
     <br />
     <br />
     <br />  
-            
+       
+           
 
   </div>
 

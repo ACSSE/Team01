@@ -11,15 +11,13 @@
 }
 
 .img-circle {
-    margin-top: 100px;
-    margin-left: 200px;
+    margin-top: 2%;
+    margin-left: 10%;
+    position: relative;
     background-size: cover;
-    position: absolute;
-    width: 400px;
-    height: 400px;
-    border-radius: 200px;
-     box-shadow: #313131 0px 0px 8px 8px;
-    -moz-box-shadow: #313131 0px 0px 8px 8px;
+    width: 40%;
+    height: 60%;
+    border-radius: 200px;   
    
 }
 
@@ -30,7 +28,7 @@
     position: absolute;
     top: 50px;
     margin-bottom: 20%;
-    margin-left: 50%;
+    margin-left: 40%;
     box-shadow: #313131 0px 0px 8px 8px;
     -webkit-box-shadow: #313131 0px 0px 8px 8px;
     -moz-box-shadow: #313131 0px 0px 8px 8px;
@@ -50,3 +48,4 @@
 #inputs p {
     color: red;
 }
+

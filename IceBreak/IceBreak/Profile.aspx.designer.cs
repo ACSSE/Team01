@@ -166,13 +166,13 @@ namespace IceBreak {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl txtPass_lbl;
         
         /// <summary>
-        /// txtPass control.
+        /// txtBio control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtPass;
+        protected global::System.Web.UI.WebControls.TextBox txtBio;
         
         /// <summary>
         /// Label7 control.
@@ -193,12 +193,12 @@ namespace IceBreak {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl txtConfirm_lbl;
         
         /// <summary>
-        /// txtConfirm control.
+        /// txtCatch control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtConfirm;
+        protected global::System.Web.UI.WebControls.TextBox txtCatch;
     }
 }

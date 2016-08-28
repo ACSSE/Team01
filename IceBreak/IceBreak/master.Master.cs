@@ -14,7 +14,7 @@ namespace IceBreak
 {
     public partial class master : System.Web.UI.MasterPage
     {
-        
+    
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["USER"] != null)
@@ -24,9 +24,9 @@ namespace IceBreak
             }
 
         }
-
-        protected void Login(object sender, EventArgs e)
+        public void Login(object sender, EventArgs e)
         {
+              
             string username = txtUsername.Value;
             string password = txtPassword.Value;
             
@@ -51,7 +51,8 @@ namespace IceBreak
 
             if (check.ToLower().Contains("isvaliduser=true"))
             {
-                Session["USER"] = username;
+                 User obj = (User)Session["USER"];
+                //Session["USER"] = username;
                 login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + username + "</a>";
             }
             else
@@ -124,14 +125,6 @@ namespace IceBreak
 
         }
 
-        class Helpers
-        {
-            public static void getUsername(master page)
-            {
-                //You can access your controls here like:
-                String username = page.txtUsername.Value;
-            
-            }
-        }
+    
     }
 }
