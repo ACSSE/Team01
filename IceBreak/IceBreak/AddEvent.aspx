@@ -30,7 +30,7 @@
                         </div>
                         <div class="form-group" style="text-align:left">
                             <label for="Event Date ">Event Date</label><span id="date_span" runat="server" style="color:red; display:none"> - Please enter your event date.</span>
-                            <input type="date" id="date" name="date"  runat="server"/>
+                            <input type="date" id="date" name="date" runat="server"/>
                         </div>
                         <div class="form-group" style="text-align:left">
                             <label for="Event Time">Event Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event name.</span>
