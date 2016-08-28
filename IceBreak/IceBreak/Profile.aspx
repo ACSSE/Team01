@@ -10,7 +10,15 @@
       <div id="img-circle" class="img-circle">
          <img class="img-circle" src="images/Tevin.jpg"/>
       </div>
-
+    <div id="list2" >
+   <ol >
+      <li style=" border-style: none;border-bottom: solid #ff0000;"><p><em>The Netherlands</em> is a country in ...</p></li>
+      <li><p><em>The United States of America</em> is a federal constitutional ...</p></li>
+      <li><p><em>The Philippines</em> officially known as the Republic ...</p></li>
+      <li><p><em>The United Kingdom</em> of Great Britain and ...</p></li>
+   </ol>
+</div>
+            
 
   </div>
 
