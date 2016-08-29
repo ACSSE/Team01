@@ -800,22 +800,7 @@ namespace IcebreakServices
             return events;
         }
 
-        public class loggedInSession
-        {
-            public loggedInSession login
-            {
-
-
-                get
-                {
-                    return (loggedInSession)HttpContext.Current.Session["USER"];
-                }
-                set
-                {
-                    HttpContext.Current.Session["USER"] = value;
-                }
-            }
-        }
+       
 
         public string signIn(User user)
         {

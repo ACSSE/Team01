@@ -51,8 +51,8 @@ namespace IceBreak
 
             if (check.ToLower().Contains("isvaliduser=true"))
             {
-                 User obj = (User)Session["USER"];
-                //Session["USER"] = username;
+               
+                Session["USER"] = username;
                 login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + username + "</a>";
             }
             else

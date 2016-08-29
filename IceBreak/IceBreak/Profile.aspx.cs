@@ -46,10 +46,10 @@ namespace IceBreak
 
             
            String check = dbs.userExists(user);
-            usrname = "tevmoodley";
-            //User obj = (User)Session["USER"];
-            //obj.Username = usrname;
-            //usrname = obj.Username;
+            string usr = (string)Session["USER"];
+            usrname = usr;
+          
+            
             
 
             IcebreakServices.User u = dbs.getUser(usrname);
@@ -57,13 +57,7 @@ namespace IceBreak
             txtSurname.Text = u.Lname;
             txtEmail.Text = u.Email;
             txtBio.Text = u.Bio;
-            //if (check.ToLower().Contains("isvaliduser=true"))
-            //{
-            //    Session["USER"] = usrname;
-            //}
-            //else
-            //{
-            //}
+        
 
 
 
