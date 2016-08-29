@@ -46,7 +46,7 @@
                    <%--Right side of nav bar/menu  --%>
                   <ul class="nav navbar-nav navbar-right">
                       <li id="login" runat="server">
-                          <a href="#" data-toggle="modal" data-target="#loginModal" >Login</a>
+                          <a href="#" data-toggle="modal" data-target="#loginModal" >Login</a>                          
                       </li>
                       <li>
                           <a href="#"> <span class="glyphicon glyphicon-bell"></span></a>
@@ -64,7 +64,7 @@
           </div>
       </nav> 
     </div>
-    
+
         <div id="sidebar">
             <ul class="sidebar-nav">
                 <li><a href="#"><span class="glyphicon glyphicon-user"></span> View Full Profile</a></li>
@@ -75,16 +75,16 @@
         </div>
        
         <form id="form1" runat="server">
-        <%--<asp:ScriptManager ID="ScriptManager1" runat="server">
-         </asp:ScriptManager>--%>
+        <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true">
+         </asp:ScriptManager>
         <div>
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
         
             </asp:ContentPlaceHolder>
         </div>
 
-    <%--<asp:UpdatePanel ID="UpdatePanel1" runat="server">
-        <ContentTemplate>--%>
+    
+
              <%-- Login modal  --%>
         <div id ="loginModal" class="modal fade" role="dialog" runat="server">
             <div class="modal-dialog">
@@ -117,11 +117,11 @@
                 </div>
             </div>
         </div>
-       <%-- </ContentTemplate>
-     </asp:UpdatePanel>--%>
+            <div class="hide">
+                <asp:Button runat="server" OnClick="Logout" ID="logout"/>
+            </div>
         </form>
     </div>
-
 
     <script type="text/javascript">
         $(function () {
@@ -138,6 +138,10 @@
             e.preventDefault();
             $("#navmenu").toggleClass("searchdisplay");
         });
+        function Logout()
+        {
+            document.getElementById("logout").click();
+        }
 
     </script>
 </body>

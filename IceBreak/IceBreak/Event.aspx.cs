@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -20,10 +21,35 @@ namespace IceBreak
 
             foreach(IcebreakServices.Event evnt in events)
             {
-                        EventView.InnerHtml += "<div class='row'>"+
+                String picUrl = "http://icebreak.azurewebsites.net/images/events/event_icons-" + evnt.Id + ".png";
+                String server = "http://icebreak.azurewebsites.net";
+                String relativePath = "/images/events/event_icons-" + evnt.Id + ".png";
+                Uri serverUri = new Uri(server);
+                Uri relativeUri = new Uri(relativePath, UriKind.Relative);
+                Uri fullUri = new Uri(serverUri, relativeUri);
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(picUrl);
+                request.Method = WebRequestMethods.Http.Head;
+                bool pageExists = true;
+                try
+                {
+                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                    pageExists = response.StatusCode == HttpStatusCode.OK;
+                } 
+                catch(WebException ex)
+                {
+                    pageExists = false;
+                }
+               
+                if (!pageExists)
+                {
+                    picUrl = "http://icebreak.azurewebsites.net/images/events/default.png";
+                }
+
+                EventView.InnerHtml += "<div class='row'>"+
                            "<div class='col-md-7'>"+
                         "<a href = '#'>"+
-                            "<img class='img-responsive' src='http://icebreak.azurewebsites.net/images/event_icons-"+evnt.Id+".png' alt=''/>"+
+                            "<img class='img-responsive' src='"+picUrl+"' alt=''/>"+
                         "</a>"+
                     "</div>"+
                     "<div class='col-md-5'>"+

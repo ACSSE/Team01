@@ -1,6 +1,5 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/master.Master" AutoEventWireup="true" CodeBehind="Event.aspx.cs" Inherits="IceBreak.Event" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-    <link rel="stylesheet" href="stylesheets/style.css"/>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
@@ -19,11 +18,13 @@
     </div>
 </div>
    
- <div class="floatingContainer">
+<a href="AddEvent.aspx">
+<div class="floatingContainer">
 	<div class="actionButton">
-		<span class="glyphicon glyphicon-plus" style="font-size:large;color:black"></span>
+		<span class="glyphicon glyphicon-plus glyphicon-center" style="font-size:x-large;color:white;"></span>
 	</div>
 </div>
+</a>
 
     <script>
         function startTime() {

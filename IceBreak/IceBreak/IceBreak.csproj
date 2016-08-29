@@ -114,9 +114,15 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AddEvent.aspx" />
     <Content Include="Event.aspx" />
     <Content Include="images\favicon.png" />
+    <Content Include="images\image1.jpg" />
+    <Content Include="images\image2.jpg" />
+    <Content Include="images\iphone.png" />
     <Content Include="images\partyedit.jpg" />
+    <Content Include="images\pattern.jpg" />
+    <Content Include="images\pencil.png" />
     <Content Include="packages.config" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -130,12 +136,21 @@
     </None>
     <None Include="Properties\PublishProfiles\icebreak - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\icebreak - Web Deploy.pubxml" />
+    <Content Include="scripts\jquery.backstretch.min.js" />
+    <Content Include="scripts\scripts.js" />
+    <Content Include="stylesheets\addeventform.css">
+      <DependentUpon>addeventform.scss</DependentUpon>
+    </Content>
+    <Content Include="stylesheets\addeventform.min.css">
+      <DependentUpon>addeventform.css</DependentUpon>
+    </Content>
     <Content Include="stylesheets\style.css">
       <DependentUpon>style.scss</DependentUpon>
     </Content>
     <Content Include="stylesheets\style.min.css">
       <DependentUpon>style.css</DependentUpon>
     </Content>
+    <Content Include="stylesheets\addeventform.scss" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -152,6 +167,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddEvent.aspx.cs">
+      <DependentUpon>AddEvent.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AddEvent.aspx.designer.cs">
+      <DependentUpon>AddEvent.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Event.aspx.cs">
       <DependentUpon>Event.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

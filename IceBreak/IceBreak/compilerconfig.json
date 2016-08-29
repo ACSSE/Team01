@@ -2,5 +2,9 @@
   {
     "outputFile": "stylesheets/style.css",
     "inputFile": "stylesheets/style.scss"
+  },
+  {
+    "outputFile": "stylesheets/addeventform.css",
+    "inputFile": "stylesheets/addeventform.scss"
   }
 ]
