@@ -75,10 +75,10 @@ namespace IcebreakServices
         List<Message> checkUserOutbox(string sender);
 
         [OperationContract]
-        [WebInvoke(Method = "POST",
+        [WebInvoke(Method = "PUT",
             UriTemplate = "/imgUpload/{fileName}",
             BodyStyle = WebMessageBodyStyle.Bare)]
-        void imageUpload(string fileName,Stream fileStream);
+        string imageUpload(string fileName, Stream fileStream);
 
         /*[OperationContract]
         [WebInvoke(Method = "POST",
@@ -116,8 +116,12 @@ namespace IcebreakServices
         void addEventImg(string eventId, Stream streamdata);*/
 
         [OperationContract]
-        [WebGet(UriTemplate = "/readEvents", ResponseFormat = WebMessageFormat.Json, BodyStyle =WebMessageBodyStyle.Bare)]
+        [WebGet(UriTemplate = "/readEvents/", ResponseFormat = WebMessageFormat.Json, BodyStyle =WebMessageBodyStyle.Bare)]
         List<Event> readEvents();
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getEvent/{event_id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        Event getEvent(string event_id);
 
         [OperationContract]
         [WebGet(UriTemplate = "/getUserContacts", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]

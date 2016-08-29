@@ -115,7 +115,7 @@ namespace IcebreakServices
             }
         }
 
-        public void imageUpload(string name, Stream fileStream)
+        public string imageUpload(string name, Stream fileStream)
         {
             name = name.ToLower();
             StreamReader reader = new StreamReader(fileStream);
@@ -124,11 +124,24 @@ namespace IcebreakServices
             reader.Dispose();
 
             byte[] bytes = Convert.FromBase64String(inbound_payload);
-            var path = Path.Combine(HostingEnvironment.MapPath("~/images/"), name);//Path.Combine(@"C:\UploadedImages\" + name);
-            File.WriteAllBytes(path, bytes);
+            if (name.Contains("|"))
+            {
+                if (name[0] == '|')
+                    name = name.Substring(1);//Remove first slash if it exists
 
-            WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
-            WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+                string[] dirs = name.Split('|');//get directory structure
+                string dir = "";
+                for (int i = 0; i < dirs.Length - 1; i++)//last element would be the filename
+                    dir += dirs[i] + '/';
+                var path = Path.Combine(HostingEnvironment.MapPath("~/images/" + dir), dirs[dirs.Length-1]);//Path.Combine(@"C:\UploadedImages\" + name);
+                File.WriteAllBytes(path, bytes);
+
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+
+                return "Success";
+            }
+            else return "Fail: Cannot write to root";
         }
 
         /*[OperationContract]
@@ -136,16 +149,42 @@ namespace IcebreakServices
         public string imageDownload(string fileName)
         {
             fileName = fileName.ToLower();
-            var path = Path.Combine(HostingEnvironment.MapPath("~/images/"), fileName);//Path.Combine(@"C:\UploadedImages\" + name);
-            byte[] binFileArr = File.ReadAllBytes(path);
 
-            //byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(toEncode);
+            if (fileName.Contains("|"))
+            {
+                    if (fileName[0] == '|')
+                        fileName = fileName.Substring(1);//Remove first slash if it exists
 
-            string base64bin = Convert.ToBase64String(binFileArr);
+                string[] dirs = fileName.Split('|');//get directory structure
+                string dir = "";
+                for (int i = 0; i < dirs.Length - 1; i++)//last element would be the filename
+                    dir += dirs[i] + '/';
 
-            WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
-            WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain;charset=utf-8";//"multi-part/form-data"
-            return base64bin;
+                var path = Path.Combine(HostingEnvironment.MapPath("~/images/" + dir), dirs[dirs.Length - 1]);//Path.Combine(@"C:\UploadedImages\" + name);
+                byte[] binFileArr;
+
+                if (File.Exists(path))
+                {
+                    binFileArr = File.ReadAllBytes(path);
+                }
+                else
+                {
+                    path = Path.Combine(HostingEnvironment.MapPath("~/images/" + dir), "default.png");//Path.Combine(@"C:\UploadedImages\" + name);
+                    binFileArr = File.ReadAllBytes(path);
+                }
+
+                //byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(toEncode);
+
+                string base64bin = Convert.ToBase64String(binFileArr);
+
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain;charset=utf-8";//"multi-part/form-data"
+                return base64bin;
+            }
+            else
+            {
+                return "FNE";
+            }
         }
 
         public void registerUser(Stream streamdata)
@@ -367,6 +406,14 @@ namespace IcebreakServices
                                 "\"data\": {" +
                                 "\"msg_id\": \"" + new_msg.Message_id + "\"}," +
                                 "\"to\": \"" + reg_token_rec + "\"}";
+                        //send push notification to receiver
+                        sendNotification(notif);
+
+                        notif = "{" +
+                                "\"data\": {" +
+                                "\"msg_id\": \"" + new_msg.Message_id + "\"}," +
+                                "\"to\": \"" + reg_token_sen + "\"}";
+                        //send push notification to sender
                         sendNotification(notif);
                     }
                     else
@@ -376,14 +423,19 @@ namespace IcebreakServices
                         db.addError(ErrorCodes.ENOTIF, "Can't send notification because send is NULL", "addMessage");
                     }
                 }
-                return response;
+                else
+                {
+                    response = exec_result;
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+                    db.addError(ErrorCodes.ENOTIF, "Can't send notification because addMessage wasn't successful", "addMessage");
+                }
             }
             else
             {
                 response = "Error: Invalid token count (" + msg_details.Length + ") >> " + inbound_payload;
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
-                return response;
             }
+            return response;
         }
 
         /*
@@ -415,7 +467,7 @@ namespace IcebreakServices
             // Read the content.
             string responseFromServer = reader.ReadToEnd();
             // Save error to DB -- TODO: fix this
-            if(!((HttpWebResponse)response).StatusCode.Equals("OK"))
+            if(!((HttpWebResponse)response).StatusCode.ToString().Contains("OK"))
                 db.addError(ErrorCodes.ENOTIF, ((HttpWebResponse)response).StatusCode + ":>" + responseFromServer, "sendNotification");
             
             // Clean up the streams.
@@ -456,6 +508,16 @@ namespace IcebreakServices
                 }
                 if(username.Length>0 && token.Length>0)
                 {
+                    List<Message> messages = db.checkUserInbox(username);
+                    foreach(Message m in messages)
+                    {
+                        string notif = "{" +
+                                "\"data\": {" +
+                                "\"msg_id\": \"" + m.Message_id + "\"}," +
+                                "\"to\": \"" + username + "\"}";
+                        //send push notification to sender
+                        sendNotification(notif);
+                    }
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
                     return db.setUniqueUserToken(username, token);
                 }
@@ -615,12 +677,12 @@ namespace IcebreakServices
                 
                 if (result.Equals("Success"))
                 {
-                    WebOperationContext.Current.OutgoingResponse.StatusDescription = "Successfully updated user.";
+                    //WebOperationContext.Current.OutgoingResponse.StatusDescription = "Successfully updated user.";
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
                 }
                 else
                 {
-                    WebOperationContext.Current.OutgoingResponse.StatusDescription = result;
+                    //WebOperationContext.Current.OutgoingResponse.StatusDescription = result;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                 }
                 return result;
@@ -671,6 +733,11 @@ namespace IcebreakServices
         public Message getMessageById(string msg_id)
         {
             return db.getMessageById(msg_id);
+        }
+
+        public Event getEvent(string event_id)
+        {
+            return db.getEvent(event_id);
         }
     }
 }

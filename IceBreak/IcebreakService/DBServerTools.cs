@@ -125,12 +125,12 @@ namespace IcebreakServices
                 catch (Exception e)
                 {
                     //TODO: Store exception to logs
-                    return e.Message;
+                    return "Fail:" + e.Message;
                 }
             }
             else
             {
-                return "User does not exist.";
+                return "Fail: User does not exist.";
             }
         }
 
@@ -599,6 +599,47 @@ namespace IcebreakServices
                 return "Exception: " + e.Message;
             }
             return "Exception: Unknown Response.";
+        }
+
+        public Event getEvent(string event_id)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM dbo.Events WHERE event_id=@event_id", conn);
+                cmd.Parameters.AddWithValue(@"event_id", event_id);
+
+                dataReader = cmd.ExecuteReader();
+                Event e = null;
+                while (dataReader.Read())
+                {
+                    e = new Event()
+                    {
+                        Id = (int)dataReader.GetValue(0),
+                        Title = (string)dataReader.GetValue(1),
+                        Description = (string)dataReader.GetValue(2),
+                        Address = (string)dataReader.GetValue(3),
+                        Radius = (int)dataReader.GetValue(4),
+                        Gps_location = (string)dataReader.GetValue(5),
+                        AccessID = (int)dataReader.GetValue(6)
+                    };
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+                return e;
+            }
+            catch (Exception e)
+            {
+                return new Event
+                {
+                    Title = "<Error>",
+                    Description = e.Message
+                };
+            }
         }
 
         public Message getMessageById(string msg_id)
