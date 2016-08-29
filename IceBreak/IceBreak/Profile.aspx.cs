@@ -34,8 +34,8 @@ namespace IceBreak
             string usrname = txtUser.Text;
             string Bio = txtBio.Text;
             int Age = user.Age;
-            string agestring = txtAge.Text.ToString();
             string catchphrase = txtCatch.Text;
+            
 
             //string username = m.txtUsername.Value;
             
@@ -64,7 +64,12 @@ namespace IceBreak
             txtUser.Text = u.Username;
             txtCatch.Text = u.Catchphrase;
             txtAge.Text = u.Age.ToString();
-
+            lblName.Text = u.Fname;
+            lblSurname.Text = u.Lname;
+            lblOccupation.Text = u.Occupation;
+            lblAge.Text = u.Age.ToString();
+            lblBio.Text = u.Bio;
+            
 
 
 

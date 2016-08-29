@@ -130,6 +130,7 @@
     <None Include="compilerconfig.json.defaults">
       <DependentUpon>compilerconfig.json</DependentUpon>
     </None>
+    <Content Include="images\pattern.jpg.lnk" />
     <None Include="Properties\PublishProfiles\icebreak - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\icebreak - Web Deploy.pubxml" />
     <Content Include="Profile.aspx" />

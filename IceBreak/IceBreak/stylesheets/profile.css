@@ -12,25 +12,25 @@
 }
 
 .img-circle {
-    margin-top: 2%;
-    margin-left: 10%;
-    position: absolute;
+    margin-top: 5%;
+    margin-left:12%;
+    position: relative;
     background-size: auto;
-    width: 40%;
-    height: auto;
+    width: 350px;
+    height:350px;
     border-radius: 200px;   
    
 }
 
 #con {
-    width: 40%;
+    width: 30%;
     height: auto;
     background-size: cover;
     position: absolute;
     top: 50px;
     margin-bottom: 20%;
      background-color:#fff;
-    margin-left: 40%;
+    margin-left: 45%;
     box-shadow: #313131 0px 0px 8px 8px;
     -webkit-box-shadow: #313131 0px 0px 8px 8px;
     -moz-box-shadow: #313131 0px 0px 8px 8px;
