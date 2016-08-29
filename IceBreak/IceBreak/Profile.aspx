@@ -6,16 +6,18 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
   <div id="page-content-wrapper">
-      <div id ="body" class="body">
+      <div id ="body" class="body"style="position:relative">
+          
 </div>
       <label style="font-family:'Bookman Old Style';font-size:18pt;text-align:center;margin-top:5%;margin-left:19%">Tevin M.</label>
-      <div id="img-circle" class="img-circle">
-         <img class="img-circle" src="images/Tevin.jpg"/>
-      </div>
+ 
    
       <style>
       
     </style>
+      <div id="img-circle" class="img-circle" style="position:absolute">
+         <img class="img-circle" src="images/Tevin.jpg"/>
+      </div>
     <div id="con" style="text-align:center">
         <br />
         <br />
@@ -37,11 +39,11 @@
             
             <asp:Label ID="Label2" runat="server" Text="2.Surname" style="font-size:11pt;"></asp:Label>
             <span id="txtSurname_lbl" runat="server"></span>
-            <asp:TextBox ID="txtSurname" runat="server" class="form-control" Width="345px" style="height:25px;border-color:black"></asp:TextBox>
+            <asp:TextBox ID="txtSurname" runat="server" class="form-control" Width="345px" style="height:25px;border-color:black" Visible="True"></asp:TextBox>
             
             <asp:Label ID="Label3" runat="server" Text="3.E-Mail" style="font-size:11pt;"></asp:Label>
             <span id="txtEmail_lbl" runat="server"></span>
-            <asp:TextBox ID="txtEmail" runat="server" class="form-control" Width="345px" style="height:25px;border-color:black"></asp:TextBox>
+            <asp:TextBox ID="txtEmail" runat="server" class="form-control" Width="345px" style="height:25px;border-color:black" Visible="True"></asp:TextBox>
             
             <asp:Label ID="Label4" runat="server" Text="4.Username" style="font-size:11pt;"></asp:Label>
             <span id="txtUser_lbl" runat="server"></span>
@@ -49,7 +51,7 @@
             
             <asp:Label ID="Label5" runat="server" Text="5.Age" style="font-size:11pt;"></asp:Label>
             <span id="txtAge_lbl" runat="server"></span>
-            <asp:TextBox ID="txtAge" runat="server" class="form-control" Width="345px" style="height:25px;border-color:black"></asp:TextBox>
+            <asp:TextBox ID="txtAge" runat="server" class="form-control" Width="345px" style="height:25px;border-color:black" TextMode="Number"></asp:TextBox>
             
             <asp:Label ID="Label6" runat="server" Text="6.Bio" style="font-size:11pt;"></asp:Label>
             <span id="txtPass_lbl" runat="server"></span>

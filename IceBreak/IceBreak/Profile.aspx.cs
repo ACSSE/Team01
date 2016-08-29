@@ -31,8 +31,10 @@ namespace IceBreak
             string name = txtName.Text;
             string lastname = txtSurname.Text;
             string email = txtEmail.Text;
-            string usrname = txtName.Text;
+            string usrname = txtUser.Text;
             string Bio = txtBio.Text;
+            int Age = user.Age;
+            string agestring = txtAge.Text.ToString();
             string catchphrase = txtCatch.Text;
 
             //string username = m.txtUsername.Value;
@@ -42,6 +44,7 @@ namespace IceBreak
             user.Lname = lastname;
             user.Email = email;
             user.Bio = Bio;
+            user.Age = Age;
             user.Catchphrase = catchphrase;
 
             
@@ -51,13 +54,16 @@ namespace IceBreak
           
             
             
-
+   
             IcebreakServices.User u = dbs.getUser(usrname);
             txtName.Text = u.Fname;
             txtSurname.Text = u.Lname;
             txtEmail.Text = u.Email;
+            txtUser.Text = u.Username;
             txtBio.Text = u.Bio;
-        
+            txtUser.Text = u.Username;
+            txtCatch.Text = u.Catchphrase;
+            txtAge.Text = u.Age.ToString();
 
 
 

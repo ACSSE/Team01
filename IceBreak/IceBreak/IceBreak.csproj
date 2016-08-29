@@ -117,6 +117,7 @@
     <Content Include="Event.aspx" />
     <Content Include="images\favicon.png" />
     <Content Include="images\partyedit.jpg" />
+    <Content Include="images\profile.jpg" />
     <Content Include="images\Tevin.jpg" />
     <Content Include="packages.config" />
     <Content Include="ApplicationInsights.config">

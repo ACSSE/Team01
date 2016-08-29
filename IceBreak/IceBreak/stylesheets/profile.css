@@ -1,5 +1,6 @@
 ﻿body {
-    background-color: #46bdf0;
+    background-image:url(../images/profile.jpg);
+    background-repeat:no-repeat;
 }
 
 .img-circleshaddow {
@@ -13,10 +14,10 @@
 .img-circle {
     margin-top: 2%;
     margin-left: 10%;
-    position: relative;
-    background-size: cover;
+    position: absolute;
+    background-size: auto;
     width: 40%;
-    height: 60%;
+    height: auto;
     border-radius: 200px;   
    
 }
@@ -28,6 +29,7 @@
     position: absolute;
     top: 50px;
     margin-bottom: 20%;
+     background-color:#fff;
     margin-left: 40%;
     box-shadow: #313131 0px 0px 8px 8px;
     -webkit-box-shadow: #313131 0px 0px 8px 8px;
