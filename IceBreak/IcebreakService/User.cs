@@ -21,6 +21,8 @@ namespace IcebreakServices
         private string occupaton;
         private string bio;
         private string catchphrase;
+        private string fb_token;
+        private string fb_id;
 
         /*public User(string fname, string lname, string username, string email)
         {
@@ -183,6 +185,32 @@ namespace IcebreakServices
             set
             {
                 event_id = value;
+            }
+        }
+
+        public string Fb_token
+        {
+            get
+            {
+                return fb_token;
+            }
+
+            set
+            {
+                fb_token = value;
+            }
+        }
+
+        public string Fb_id
+        {
+            get
+            {
+                return fb_id;
+            }
+
+            set
+            {
+                fb_id = value;
             }
         }
 

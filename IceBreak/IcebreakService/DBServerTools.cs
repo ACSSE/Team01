@@ -112,12 +112,30 @@ namespace IcebreakServices
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
                     }
-                    if (user.Username != null)
+                    if (user.Fb_token != null)
                     {
-                        cmd = new SqlCommand("UPDATE dbo.Users SET username=@username WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
-                        cmd.Parameters.AddWithValue(@"username", user.Username);
+                        cmd = new SqlCommand("UPDATE dbo.Users SET fb_token=@token WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"token", user.Fb_token);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
+                    }
+                    if (user.Fb_id != null)
+                    {
+                        cmd = new SqlCommand("UPDATE dbo.Users SET fb_id=@id WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"id", user.Fb_id);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Username != null)
+                    {
+                        if (userExists(user).ToLower().Equals("exists=false"))//Make sure username has not been taken
+                        {
+                            cmd = new SqlCommand("UPDATE dbo.Users SET username=@username WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                            cmd.Parameters.AddWithValue(@"username", user.Username);
+                            cmd.Parameters.AddWithValue(@"usr", user.Username);
+                            cmd.ExecuteNonQuery();
+                        }
+                        else return "Error: Username already exists.";
                     }
 
                     return "Success";
@@ -702,7 +720,7 @@ namespace IcebreakServices
                 {
                     conn = new SqlConnection(dbConnectionString);
                     conn.Open();
-                    string query = "INSERT INTO dbo.Users(fname,lname,email,pwd,username,access_level,event_id) VALUES(@fname,@lname,@email,@password,@username,@access_lvl,@event_id)";
+                    string query = "INSERT INTO dbo.Users(fname,lname,email,pwd,username,access_level,event_id,fb_id,fb_token) VALUES(@fname,@lname,@email,@password,@username,@access_lvl,@event_id,@fb_id,@fb_token)";
                     cmd = new SqlCommand(query, conn);
 
                     cmd.Parameters.AddWithValue(@"fname", user.Fname);
@@ -712,6 +730,8 @@ namespace IcebreakServices
                     cmd.Parameters.AddWithValue(@"access_lvl", user.Access_level);
                     cmd.Parameters.AddWithValue(@"event_id", user.Event_id);
                     cmd.Parameters.AddWithValue(@"password", Hash.HashString(user.Password));
+                    cmd.Parameters.AddWithValue(@"fb_id", user.Fb_id);
+                    cmd.Parameters.AddWithValue(@"fb_token", user.Fb_token);
 
                     //cmd.Prepare();
                     cmd.ExecuteNonQuery();

@@ -96,7 +96,7 @@ namespace IcebreakServices
                         eventId = Convert.ToString(e.Id);
                     }
                 }
-                if(exec_res.Equals("Success"))
+                if(exec_res.ToLower().Contains("success"))
                 {
                     response = "Success: " + exec_res.ToString();
                     WebOperationContext.Current.OutgoingResponse.Headers.Add("req_event_icon", eventId);
@@ -196,6 +196,9 @@ namespace IcebreakServices
             reader.Dispose();
             //Process form submission
             User new_user = new User();
+            //Set user defaults
+            new_user.Fb_id = "NONE";
+            new_user.Fb_token = "NONE";
             inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
             string[] usr_details = inbound_payload.Split('&');
             if (usr_details.Length == 5)
@@ -224,6 +227,12 @@ namespace IcebreakServices
                             case "password":
                                 new_user.Password = val;
                                 break;
+                            case "fb_token":
+                                new_user.Fb_token = val;
+                                break;
+                            case "fb_id":
+                                new_user.Fb_id = val;
+                                break;
                         }
                     }
                     else
@@ -237,14 +246,14 @@ namespace IcebreakServices
                 //Add to DB here
                 WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
                 string exec_result = db.registerUser(new_user);
-                if (exec_result.Equals("Success"))
+                if (exec_result.ToLower().Contains("success"))
                 {
                     response = exec_result;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
                 }
                 else
                 {
-                    response = "Query Execution Error: " + exec_result;
+                    response = "Error: " + exec_result;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                 }
             }
@@ -592,7 +601,7 @@ namespace IcebreakServices
             string rem_result = db.removeUser(handle);
             WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
             //WebOperationContext.Current.OutgoingResponse.StatusDescription = rem_result;
-            if (rem_result.Equals("Success"))
+            if (rem_result.ToLower().Contains("success"))
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
             else
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
@@ -664,6 +673,12 @@ namespace IcebreakServices
                             case "catchphrase":
                                 new_user.Catchphrase = val;
                                 break;
+                            case "fb_token":
+                                new_user.Fb_token = val;
+                                break;
+                            case "fb_id":
+                                new_user.Fb_id = val;
+                                break;
                         }
                     }
                     else
@@ -675,7 +690,7 @@ namespace IcebreakServices
                 string result = db.updateUserDetails(new_user);
                 WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
                 
-                if (result.Equals("Success"))
+                if (result.ToLower().Contains("success"))
                 {
                     //WebOperationContext.Current.OutgoingResponse.StatusDescription = "Successfully updated user.";
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
