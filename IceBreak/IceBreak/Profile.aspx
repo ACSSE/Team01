@@ -8,13 +8,16 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div id="page-content-wrapper">
-        <div id="body" class="body" style="position: relative">
-        </div>
+
+        
+             
 
         <div id="img-circle" class="img-circle">
             <asp:Label ID="lblName" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt;text-align:center;  margin-left: 40%"></asp:Label>
             <asp:Label ID="lblSurname" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align: center "></asp:Label>
-            <img class="img-circle" src="images/Tevin.jpg" />
+            <div id="DIV" class="img-circle" runat="server">
+              <img class="img-circle" />
+         </div>
             <br />
             <br />
            

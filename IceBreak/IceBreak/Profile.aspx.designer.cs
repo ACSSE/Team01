@@ -13,6 +13,24 @@ namespace IceBreak {
     public partial class Profile {
         
         /// <summary>
+        /// EventView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl EventView;
+        
+        /// <summary>
+        /// Profilepic control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl Profilepic;
+        
+        /// <summary>
         /// lblName control.
         /// </summary>
         /// <remarks>
@@ -29,6 +47,15 @@ namespace IceBreak {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label lblSurname;
+        
+        /// <summary>
+        /// DIV control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl DIV;
         
         /// <summary>
         /// lblOccupation control.

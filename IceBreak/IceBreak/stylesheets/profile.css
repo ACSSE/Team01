@@ -12,9 +12,9 @@
 }
 
 .img-circle {
-    margin-top: 5%;
+  
     margin-left:12%;
-    position: relative;
+    position: absolute;
     background-size: auto;
     width: 350px;
     height:350px;

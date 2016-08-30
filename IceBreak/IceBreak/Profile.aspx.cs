@@ -51,10 +51,11 @@ namespace IceBreak
            String check = dbs.userExists(user);
             string usr = (string)Session["USER"];
             usrname = usr;
-          
-            
-            
-   
+            String picUrl = "http://icebreak.azurewebsites.net/images/events/event_icons-" + usr + ".png";
+
+
+
+
             IcebreakServices.User u = dbs.getUser(usrname);
             txtName.Text = u.Fname;
             txtSurname.Text = u.Lname;
@@ -69,25 +70,18 @@ namespace IceBreak
             lblOccupation.Text = u.Occupation;
             lblAge.Text = u.Age.ToString();
             lblBio.Text = u.Bio;
-            
+            DIV.InnerHtml += "<a href = '#'>" +
+                            "<img class='img-circle' src='http://icebreak.azurewebsites.net/images/profile/" + usr + ".png' alt=''/>" +
+                        "</a>";
+
+
+
+
 
 
 
         }
 
-        class Helpers
-        {
-            public static void getUsername(master page)
-            {
-                //You can access your controls here like:
-                String username = page.txtUsername.Value;
-
-            }
-        }
-
-    
-
-        
 
     }
    
