@@ -92,7 +92,7 @@ namespace IcebreakServices
             UriTemplate = "/signup",
             BodyStyle = WebMessageBodyStyle.Bare)]
         //[WebInvoke(Method = "POST", UriTemplate = "usrRegPOST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]//, ResponseFormat = WebMessageFormat.Json, 
-        void registerUser(Stream streamdata);
+        string registerUser(Stream streamdata);
 
         [OperationContract]
         [WebInvoke(

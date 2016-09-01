@@ -29,7 +29,7 @@ namespace IcebreakServices
 
         public string updateUserDetails(User user)
         {
-            if(userExists(user).Equals("Exists=true"))
+            if(userExists(user).ToLower().Contains("exists=true"))
             {
                 try
                 {
@@ -44,10 +44,13 @@ namespace IcebreakServices
                     }
                     if (user.Email!=null)
                     {
-                        cmd = new SqlCommand("UPDATE dbo.Users SET email=@email WHERE username=@usr", conn);
-                        cmd.Parameters.AddWithValue(@"email", user.Email);
-                        cmd.Parameters.AddWithValue(@"usr", user.Username);
-                        cmd.ExecuteNonQuery();
+                        if (!user.Email.Equals("NONE"))
+                        {
+                            cmd = new SqlCommand("UPDATE dbo.Users SET email=@email WHERE username=@usr", conn);
+                            cmd.Parameters.AddWithValue(@"email", user.Email);
+                            cmd.Parameters.AddWithValue(@"usr", user.Username);
+                            cmd.ExecuteNonQuery();
+                        }
                     }
                     if (user.Age > 0)
                     {
@@ -128,28 +131,81 @@ namespace IcebreakServices
                     }
                     if (user.Username != null)
                     {
-                        if (userExists(user).ToLower().Equals("exists=false"))//Make sure username has not been taken
+                        if (userExists(user).ToLower().Contains("exists=false"))//Make sure username has not been taken
                         {
                             cmd = new SqlCommand("UPDATE dbo.Users SET username=@username WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
                             cmd.Parameters.AddWithValue(@"username", user.Username);
                             cmd.Parameters.AddWithValue(@"usr", user.Username);
                             cmd.ExecuteNonQuery();
                         }
-                        else return "Error: Username already exists.";
+                        else
+                        {
+                            //Clean up
+                            if (cmd != null)
+                                cmd.Dispose();
+                            if (conn != null)
+                                if (conn.State == System.Data.ConnectionState.Open)
+                                    conn.Close();
+                            cmd.Dispose();
+
+                            return "Success: Exists=true";
+                        }
                     }
+
+                    //Clean up
+                    if (cmd != null)
+                        cmd.Dispose();
+                    if (conn != null)
+                        if (conn.State == System.Data.ConnectionState.Open)
+                            conn.Close();
+                        cmd.Dispose();
 
                     return "Success";
                 }
                 catch (Exception e)
                 {
                     //TODO: Store exception to logs
-                    return "Fail:" + e.Message;
+                    return "Error: " + e.Message;
                 }
             }
             else
             {
-                return "Fail: User does not exist.";
+                return "Error: User does not exist.";
             }
+        }
+
+        public string userFbIdExists(User user)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query ID
+                cmd = new SqlCommand("SELECT * FROM dbo.Users WHERE fb_id=@id", conn);
+                cmd.Parameters.AddWithValue(@"id", user.Fb_id);
+
+                dataReader = cmd.ExecuteReader();
+                dataReader.Read();
+
+                string username = Convert.ToString(dataReader.GetValue(4));
+
+                bool hasRows = dataReader.HasRows;
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                if (hasRows)
+                {
+                    return username;
+                }//else there was no user found with that ID
+            }
+            catch (Exception e)
+            {
+                //TODO: Store exception to logs
+                return e.Message;
+            }
+            return "Exists=false";
         }
 
         public string userExists(User user)
@@ -362,10 +418,6 @@ namespace IcebreakServices
 
         public string getUserToken(string username)
         {
-            #region ForRelease
-            /*if(id == 0)//Prevent anyone from reading data from people that are not at any event
-                return null;*/
-            # endregion
             conn = new SqlConnection(dbConnectionString);
             try
             {
@@ -500,7 +552,7 @@ namespace IcebreakServices
 
         public string setUniqueUserToken(string username, string token)
         {
-            if (userExists(new User() { Username = username }).ToLower().Equals("exists=true"))
+            if (userExists(new User() { Username = username }).ToLower().Contains("exists=true"))
             {
                 //update user entry - add id
                 conn = new SqlConnection(dbConnectionString);
@@ -713,25 +765,40 @@ namespace IcebreakServices
 
         public string registerUser(User user)
         {
+            if(user.Fb_token!=null && user.Fb_id!=null)//Facebook registration
+            {
+                string result = userFbIdExists(user);
+                if (!result.ToLower().Contains("exists=false"))//if ID exists
+                {
+                    user.Username = result;//update username of user to the one in the DB - in case they are trying to actually log in with Facebook not register
+                }
+            }
             string exist_check = userExists(user);
-            if (exist_check.Equals("Exists=false"))
+            if (exist_check.ToLower().Contains("exists=false"))//insert new user if they don't exist in DB
             {
                 try
                 {
                     conn = new SqlConnection(dbConnectionString);
                     conn.Open();
-                    string query = "INSERT INTO dbo.Users(fname,lname,email,pwd,username,access_level,event_id,fb_id,fb_token) VALUES(@fname,@lname,@email,@password,@username,@access_lvl,@event_id,@fb_id,@fb_token)";
+                    string query = "INSERT INTO dbo.Users(fname,lname,email,pwd,username,access_level,event_id,"+
+                        "Age,Bio,Catchphrase,Occupation,Gender,fb_token,fb_id) VALUES(@fname,@lname,@email,"+
+                        "@password,@username,@access_lvl,@event_id,@age,@bio,@catchphrase,@occupation,@gender,@fb_token,@fb_id)";
                     cmd = new SqlCommand(query, conn);
 
                     cmd.Parameters.AddWithValue(@"fname", user.Fname);
                     cmd.Parameters.AddWithValue(@"lname", user.Lname);
-                    cmd.Parameters.AddWithValue(@"username", user.Username);//Hash.HashString(user.Username));
                     cmd.Parameters.AddWithValue(@"email", user.Email);
+                    cmd.Parameters.AddWithValue(@"password", Hash.HashString(user.Password));
+                    cmd.Parameters.AddWithValue(@"username", user.Username);//Hash.HashString(user.Username));
                     cmd.Parameters.AddWithValue(@"access_lvl", user.Access_level);
                     cmd.Parameters.AddWithValue(@"event_id", user.Event_id);
-                    cmd.Parameters.AddWithValue(@"password", Hash.HashString(user.Password));
-                    cmd.Parameters.AddWithValue(@"fb_id", user.Fb_id);
+                    cmd.Parameters.AddWithValue(@"age", user.Event_id);
+                    cmd.Parameters.AddWithValue(@"bio", user.Event_id);
+                    cmd.Parameters.AddWithValue(@"catchphrase", user.Event_id);
+                    cmd.Parameters.AddWithValue(@"occupation", user.Event_id);
+                    cmd.Parameters.AddWithValue(@"gender", user.Event_id);
                     cmd.Parameters.AddWithValue(@"fb_token", user.Fb_token);
+                    cmd.Parameters.AddWithValue(@"fb_id", user.Fb_id);
 
                     //cmd.Prepare();
                     cmd.ExecuteNonQuery();
@@ -748,7 +815,11 @@ namespace IcebreakServices
             }
             else//User exists or there was an exception
             {
-                return exist_check;
+                if (exist_check.ToLower().Contains("exists=true"))
+                {
+                    return updateUserDetails(user);//update user info instead
+                }
+                return exist_check;//most likely an exception was thrown if it gets here
             }
         }
 

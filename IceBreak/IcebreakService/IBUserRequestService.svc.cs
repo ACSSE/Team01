@@ -141,7 +141,7 @@ namespace IcebreakServices
 
                 return "Success";
             }
-            else return "Fail: Cannot write to root";
+            else return "Error: Cannot write to root";
         }
 
         /*[OperationContract]
@@ -187,21 +187,26 @@ namespace IcebreakServices
             }
         }
 
-        public void registerUser(Stream streamdata)
+        public string registerUser(Stream streamdata)
         {
             StreamReader reader = new StreamReader(streamdata);
             string inbound_payload = reader.ReadToEnd();
             string response="";
             reader.Close();
             reader.Dispose();
+
             //Process form submission
+
             User new_user = new User();
             //Set user defaults
-            new_user.Fb_id = "NONE";
-            new_user.Fb_token = "NONE";
+            /*new_user.Fb_id = "NONE";
+            new_user.Fb_token = "NONE";*/
+            new_user.Access_level = 0;
+            new_user.Event_id = 0;
+
             inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
             string[] usr_details = inbound_payload.Split('&');
-            if (usr_details.Length == 5)
+            if (usr_details.Length >= 5)
             {
                 foreach (string kv_pair in usr_details)
                 {
@@ -218,6 +223,12 @@ namespace IcebreakServices
                             case "lname":
                                 new_user.Lname = val;
                                 break;
+                            case "age":
+                                new_user.Age = Convert.ToUInt16(val);
+                                break;
+                            case "access_level":
+                                new_user.Access_level = Convert.ToUInt16(val);
+                                break;
                             case "username":
                                 new_user.Username = val;
                                 break;
@@ -226,6 +237,18 @@ namespace IcebreakServices
                                 break;
                             case "password":
                                 new_user.Password = val;
+                                break;
+                            case "catchphrase":
+                                new_user.Catchphrase = val;
+                                break;
+                            case "occupation":
+                                new_user.Occupation = val;
+                                break;
+                            case "bio":
+                                new_user.Bio = val;
+                                break;
+                            case "gender":
+                                new_user.Gender = val;
                                 break;
                             case "fb_token":
                                 new_user.Fb_token = val;
@@ -239,11 +262,10 @@ namespace IcebreakServices
                     {
                         response = "Error: Broken key-value pair";
                         WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                        return response;
                     }
                 }
-                new_user.Access_level = 0;
-                new_user.Event_id = 0;
-                //Add to DB here
+                //Add to DB
                 WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
                 string exec_result = db.registerUser(new_user);
                 if (exec_result.ToLower().Contains("success"))
@@ -253,14 +275,16 @@ namespace IcebreakServices
                 }
                 else
                 {
-                    response = "Error: " + exec_result;
+                    response = exec_result;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                 }
+                return response;
             }
             else
             {
                 response = "Error: Invalid token count ("+usr_details.Length+") >> " + inbound_payload;
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return response;
             }
         }
 
