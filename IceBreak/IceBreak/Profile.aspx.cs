@@ -12,17 +12,10 @@ namespace IceBreak
     public partial class Profile : System.Web.UI.Page 
     {
 
-        protected void Page_Load(object sender, EventArgs e)
+       protected void Page_Load(object sender, EventArgs e)
         {
 
-        //    if (Session["USER"] != null)
-        //    {
-        //        string checking = (string)Session["USER"];
-        //    }
-
-
             DBServerTools dbs = new DBServerTools();
-            master m = new master();
             User user = new User();
            
 
@@ -74,14 +67,63 @@ namespace IceBreak
                             "<img class='img-circle' src='http://icebreak.azurewebsites.net/images/profile/" + usr + ".png' alt=''/>" +
                         "</a>";
 
-
-
-
-
-
+            update.Click += new EventHandler(this.Updatebutton_click);
 
         }
 
+       protected void Updatebutton_click(Object sender,EventArgs e)
+        {
+            //Button clickedButton = (Button)sender;
+            DBServerTools dbs = new DBServerTools();
+            User user = new User();
+            
+            string usr = (string)Session["USER"];
+
+            string name = txtName.Text;
+            string lastname = txtSurname.Text;
+            string email = txtEmail.Text;
+            string usrname = txtUser.Text;
+            string Bio = txtBio.Text;
+            string username = txtUser.Text;
+            UInt16 age;
+            try
+            {
+                 age = (UInt16)(Convert.ToInt16(txtAge.Text));
+            }
+            catch(FormatException ex)
+            {
+                return;//TODO: return message
+            }
+            catch (OverflowException ex)
+            {
+                return;//TODO: return message
+            }
+            string catchphrase = txtCatch.Text;
+
+           
+            user.Fname = name;
+            user.Lname = lastname;
+            user.Email = email;
+            user.Username = username;
+            user.Bio = Bio;
+            user.Catchphrase = catchphrase;
+            user.Age = (int)age;
+            user.Username = usrname;
+            txtName.Text = "Testing";
+            dbs.updateUserDetails(user);
+
+            /*IcebreakServices.User u = dbs.getUser(usrname);
+            /txtName.Text = u.Fname;
+            txtSurname.Text = u.Lname;
+            txtEmail.Text = u.Email;
+            txtUser.Text = u.Username;
+            txtBio.Text = u.Bio;
+            txtUser.Text = u.Username;
+            txtCatch.Text = u.Catchphrase;
+            txtAge.Text = u.Age.ToString();
+            lblName.Text = u.Fname;
+            lblSurname.Text = u.Lname;*/
+        }
 
     }
    
