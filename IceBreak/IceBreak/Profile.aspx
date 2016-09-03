@@ -9,25 +9,31 @@
     <div id="page-content-wrapper">
 
         <div id="img-circle" class="img-circle" style="margin-top:5%">
-            <asp:Label ID="lblName" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt;text-align:center;  margin-left: 50%"></asp:Label>
+            <div style="text-align:center;width:500px">
+             <asp:Label ID="lblName" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt;text-align:center"></asp:Label>
             <asp:Label ID="lblSurname" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align: center "></asp:Label>
-            <div id="DIV" class="img-circle" runat="server">
+                <br />
+                <br />
+            </div>
+            
+            <div id="DIV" class="img-circle" style="align-content:center" runat="server">
               <img class="img-circle"  />
          </div>
             <br />
-            <br />
+            
            <div style="margin-top:100%;text-align:center;margin-left:100px">
 
            </div>
-             <asp:Label ID="lblOccupation" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align:center;margin-left: 50%"></asp:Label>
+            
+              <div style="text-align:center;width:500px">
+                   <asp:Label ID="lblOccupation" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align:center"></asp:Label>
                  <br />
            
-             <asp:Label ID="lblAge" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align:center;margin-left: 70%"></asp:Label>
+             <asp:Label ID="lblAge" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align:center"></asp:Label>
                  <br />
                  <br />
-             <asp:Label ID="lblB" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align:center;margin-left: 67%">Bio:</asp:Label>
+             <asp:Label ID="lblB" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align:center">Bio:</asp:Label>
                  <br />
-              <div style="text-align:center;width:500px">
                   <asp:Label ID="lblBio" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; align-content:center"></asp:Label>
            </div>
              
@@ -72,7 +78,7 @@
                 <span id="txtPass_lbl" runat="server"></span>
                 <asp:TextBox ID="txtBio" runat="server" class="form-control" Width="345px" Style="height: 80px; border-color: black" TextMode="MultiLine"></asp:TextBox>
 
-                <asp:Button ID="update" runat="server" Text="Update User" OnClick="Updatebutton_click" Height="49px" Width="139px" style="border-radius:5px;border-color:black;margin:auto;margin-top:20px;background-color: #59D0F7"/>
+                <asp:Button ID="update" runat="server" Text="Update Information" OnClick="Updatebutton_click" Height="49px" Width="139px" style="border-radius:5px;border-color:black;margin:auto;margin-top:20px;background-color: #59D0F7"/>
 
             </div>
         </div>

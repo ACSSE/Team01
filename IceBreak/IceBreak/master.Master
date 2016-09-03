@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+     <link rel="stylesheet" href="stylesheets/profile.css" />
     <link rel="stylesheet" href="~/stylesheets/sidebar.css" runat="server"/>
     <link rel="stylesheet" href="~/stylesheets/style.css" runat ="server"/>
     <link rel="shortcut icon" href="images/favicon.png" />
@@ -68,6 +69,7 @@
         <div id="sidebar">
             <ul class="sidebar-nav">
                 <li><span class=""></span></li>
+                <li style="color:white"><img class="img-circle" src="images/Tevin.jpg" style="width:60px;height:60px;position:relative;margin-top:5px" />Tevin Moodley</li>
                 <li><a href="Profile.aspx"><span class="glyphicon glyphicon-user"></span> View Full Profile</a></li>
                 <li><a href="#"><span class="glyphicon glyphicon-book"></span> History</a></li>
                  <li><a href="#"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>

@@ -65,7 +65,6 @@ namespace IceBreak
             txtEmail.Text = u.Email;
             txtUser.Text = u.Username;
             txtBio.Text = u.Bio;
-            txtUser.Text = u.Username;
             txtCatch.Text = u.Catchphrase;
             txtAge.Text = u.Age.ToString();
             lblName.Text = u.Fname;
@@ -86,17 +85,12 @@ namespace IceBreak
             Button clickedButton = (Button)sender;
             DBServerTools dbs = new DBServerTools();
             User user = new User();
-            
-            string usr = (string)Session["USER"];
-            
-            
 
             string name = txtName.Text;
             string lastname = txtSurname.Text;
             string email = txtEmail.Text;
             string usrname = txtUser.Text;
             string Bio = txtBio.Text;
-            string username = txtUser.Text;
             UInt16 age;
             try
             {
@@ -116,14 +110,14 @@ namespace IceBreak
             user.Fname = name;
             user.Lname = lastname;
             user.Email = email;
-            user.Username = username;
+            user.Username = usrname;
             user.Bio = Bio;
             user.Catchphrase = catchphrase;
             user.Age = (int)age;
-            user.Username = usrname;
 
-            
 
+            String check = dbs.userExists(user);
+            string usr = (string)Session["USER"];
             dbs.updateUserDetails(user);
 
             usrname = usr;
@@ -133,7 +127,6 @@ namespace IceBreak
             txtEmail.Text = u.Email;
             txtUser.Text = u.Username;
             txtBio.Text = u.Bio;
-            txtUser.Text = u.Username;
             txtCatch.Text = u.Catchphrase;
             txtAge.Text = u.Age.ToString();
             lblName.Text = u.Fname;
