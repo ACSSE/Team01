@@ -8,9 +8,6 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div id="page-content-wrapper">
 
-        
-             
-
         <div id="img-circle" class="img-circle" style="margin-top:5%">
             <asp:Label ID="lblName" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt;text-align:center;  margin-left: 50%"></asp:Label>
             <asp:Label ID="lblSurname" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align: center "></asp:Label>
@@ -47,7 +44,8 @@
                 <h2>Current details:</></h2>
                 <asp:Label ID="Label1" runat="server" Text="1.Name" Style="font-size: 11pt;"></asp:Label>
                 <span id="txtName_lbl" runat="server"></span>
-
+                
+               
                 <asp:TextBox ID="txtName" class="form-control" runat="server" Width="345px" Style="margin-right: 12%; height: 25px; border-color: black" Visible="True"></asp:TextBox>
                 
                 <asp:Label ID="Label2" runat="server" Text="2.Surname" Style="font-size: 11pt;"></asp:Label>
@@ -76,14 +74,8 @@
 
                 <asp:Button ID="update" runat="server" Text="Update User" OnClick="Updatebutton_click" Height="49px" Width="139px" style="border-radius:5px;border-color:black;margin:auto;margin-top:20px;background-color: #59D0F7"/>
 
-
             </div>
         </div>
-        <br />
-        <br />
-        <br />
-
-
 
     </div>
 

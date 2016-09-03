@@ -15,11 +15,20 @@ namespace IceBreak
        protected void Page_Load(object sender, EventArgs e)
         {
 
+            if (!IsPostBack)
+            {
+                getUser();
+
+                update.Click += new EventHandler(this.Updatebutton_click);
+            }
+            
+
+        }
+
+        protected void getUser()
+        {
             DBServerTools dbs = new DBServerTools();
             User user = new User();
-           
-
-            
 
             string name = txtName.Text;
             string lastname = txtSurname.Text;
@@ -28,10 +37,10 @@ namespace IceBreak
             string Bio = txtBio.Text;
             int Age = user.Age;
             string catchphrase = txtCatch.Text;
-            
+
 
             //string username = m.txtUsername.Value;
-            
+
             user.Username = usrname;
             user.Fname = name;
             user.Lname = lastname;
@@ -40,16 +49,17 @@ namespace IceBreak
             user.Age = Age;
             user.Catchphrase = catchphrase;
 
-            
-           String check = dbs.userExists(user);
+
+            String check = dbs.userExists(user);
             string usr = (string)Session["USER"];
             usrname = usr;
             String picUrl = "http://icebreak.azurewebsites.net/images/events/event_icons-" + usr + ".png";
 
 
-
+         
 
             IcebreakServices.User u = dbs.getUser(usrname);
+            
             txtName.Text = u.Fname;
             txtSurname.Text = u.Lname;
             txtEmail.Text = u.Email;
@@ -66,18 +76,20 @@ namespace IceBreak
             DIV.InnerHtml += "<a href = '#'>" +
                             "<img class='img-circle' src='http://icebreak.azurewebsites.net/images/profile/" + usr + ".png' alt=''/>" +
                         "</a>";
-
-            update.Click += new EventHandler(this.Updatebutton_click);
+            
 
         }
 
-       protected void Updatebutton_click(Object sender,EventArgs e)
+        protected void Updatebutton_click(Object sender,EventArgs e)
         {
-            //Button clickedButton = (Button)sender;
+            
+            Button clickedButton = (Button)sender;
             DBServerTools dbs = new DBServerTools();
             User user = new User();
             
             string usr = (string)Session["USER"];
+            
+            
 
             string name = txtName.Text;
             string lastname = txtSurname.Text;
@@ -109,11 +121,14 @@ namespace IceBreak
             user.Catchphrase = catchphrase;
             user.Age = (int)age;
             user.Username = usrname;
-            txtName.Text = "Testing";
+
+            
+
             dbs.updateUserDetails(user);
 
-            /*IcebreakServices.User u = dbs.getUser(usrname);
-            /txtName.Text = u.Fname;
+            usrname = usr;
+            IcebreakServices.User u = dbs.getUser(usrname);
+            txtName.Text = u.Fname;
             txtSurname.Text = u.Lname;
             txtEmail.Text = u.Email;
             txtUser.Text = u.Username;
@@ -122,7 +137,9 @@ namespace IceBreak
             txtCatch.Text = u.Catchphrase;
             txtAge.Text = u.Age.ToString();
             lblName.Text = u.Fname;
-            lblSurname.Text = u.Lname;*/
+            lblSurname.Text = u.Lname;
+
+           
         }
 
     }
