@@ -693,7 +693,10 @@ namespace IcebreakServices
                         Address = (string)dataReader.GetValue(3),
                         Radius = (int)dataReader.GetValue(4),
                         Gps_location = (string)dataReader.GetValue(5),
-                        AccessID = (int)dataReader.GetValue(6)
+                        AccessID = (int)dataReader.GetValue(6),
+                        Date = (string)dataReader.GetValue(7),
+                        Time = (string)dataReader.GetValue(8),
+                        Meeting_Places = (string)dataReader.GetValue(9)
                     };
                 }
 
@@ -832,7 +835,7 @@ namespace IcebreakServices
             {
                 conn = new SqlConnection(dbConnectionString);
                 conn.Open();
-                string query = "INSERT INTO dbo.Events(event_title,event_description,event_address,event_radius,event_gps_location,access_id,date,time) VALUES(@title,@desc,@addr,@radius,@loc_gps,@acc_id,@date,@time)";
+                string query = "INSERT INTO dbo.Events(event_title,event_description,event_address,event_radius,event_gps_location,access_id,date,time,event_meeting_places) VALUES(@title,@desc,@addr,@radius,@loc_gps,@acc_id,@date,@time,@meeting_places)";
                 cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue(@"title", ev.Title);
@@ -843,6 +846,7 @@ namespace IcebreakServices
                 cmd.Parameters.AddWithValue(@"acc_id", ev.AccessID);
                 cmd.Parameters.AddWithValue(@"date", ev.Date);
                 cmd.Parameters.AddWithValue(@"time", ev.Time);
+                cmd.Parameters.AddWithValue(@"meeting_places", ev.Meeting_Places);
 
                 //cmd.Prepare();
                 cmd.ExecuteNonQuery();
@@ -927,8 +931,9 @@ namespace IcebreakServices
                         Gps_location = (string)dataReader.GetValue(5),
                         AccessID = (int)dataReader.GetValue(6),
                         Date = (string)dataReader.GetValue(7),
-                        Time = (string)dataReader.GetValue(8)
-                                       
+                        Time = (string)dataReader.GetValue(8),
+                        Meeting_Places = (string)dataReader.GetValue(9)
+
                     });
                 }
                 

@@ -11,6 +11,19 @@
         private int access_id;
         private string time;
         private string date;
+        private string meeting_places;
+
+        public string Meeting_Places
+        {
+            get
+            {
+                return meeting_places;
+            }
+            set
+            {
+                meeting_places = value;
+            }
+        }
 
 
         public int AccessID
