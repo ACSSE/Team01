@@ -124,16 +124,16 @@ namespace IcebreakServices
             reader.Dispose();
 
             byte[] bytes = Convert.FromBase64String(inbound_payload);
-            if (name.Contains("|"))
+            if (name.Contains(">"))
             {
-                if (name[0] == '|')
+                if (name[0] == '>')
                     name = name.Substring(1);//Remove first slash if it exists
 
-                string[] dirs = name.Split('|');//get directory structure
+                string[] dirs = name.Split('>');//get directory structure
                 string dir = "";
                 for (int i = 0; i < dirs.Length - 1; i++)//last element would be the filename
                     dir += dirs[i] + '/';
-                var path = Path.Combine(HostingEnvironment.MapPath("~/images/" + dir), dirs[dirs.Length-1]);//Path.Combine(@"C:\UploadedImages\" + name);
+                var path = Path.Combine(HostingEnvironment.MapPath("~/images/" + dir), dirs[dirs.Length - 1]);//Path.Combine(@"C:\UploadedImages\" + name);
                 File.WriteAllBytes(path, bytes);
 
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
@@ -141,7 +141,12 @@ namespace IcebreakServices
 
                 return "Success";
             }
-            else return "Error: Cannot write to root";
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+                return "Error: Cannot write to root";
+            }
         }
 
         /*[OperationContract]

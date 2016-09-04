@@ -21,6 +21,10 @@ namespace IcebreakServices
         public static int CONN_CLOSED = 106;
         public static int EXISTS = 107;
         public static int DEXISTS = 108;
+        public static string NO_EMAIL = "<No email specified>";
+        public static string NO_OCC = "<No occupation specified>";
+        public static string NO_BIO = "<No bio specified>";
+        public static string NO_PHRASE = "<No catchphrase specified>";
 
         private string dbConnectionString = "Server=tcp:icebreak-server.database.windows.net,1433;Initial Catalog=IcebreakDB;Persist Security Info=False;User ID=superuser;Password=Breakingtheice42;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;";
         private SqlConnection conn;
@@ -29,7 +33,9 @@ namespace IcebreakServices
 
         public string updateUserDetails(User user)
         {
-            if(userExists(user).ToLower().Contains("exists=true"))
+            if(isEmpty(user.Username))
+                return "Error: Empty username";
+            if (userExists(user).ToLower().Contains("exists=true"))
             {
                 try
                 {
@@ -44,13 +50,12 @@ namespace IcebreakServices
                     }
                     if (user.Email!=null)
                     {
-                        if (!user.Email.Equals("NONE"))
-                        {
-                            cmd = new SqlCommand("UPDATE dbo.Users SET email=@email WHERE username=@usr", conn);
-                            cmd.Parameters.AddWithValue(@"email", user.Email);
-                            cmd.Parameters.AddWithValue(@"usr", user.Username);
-                            cmd.ExecuteNonQuery();
-                        }
+                        if (user.Email.Length <= 0)
+                            user.Email = NO_EMAIL;
+                        cmd = new SqlCommand("UPDATE dbo.Users SET email=@email WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"email", user.Email);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
                     }
                     if (user.Age > 0)
                     {
@@ -61,6 +66,8 @@ namespace IcebreakServices
                     }
                     if (user.Occupation != null)
                     {
+                        if (user.Occupation.Length <= 0)
+                            user.Occupation = NO_OCC;
                         cmd = new SqlCommand("UPDATE dbo.Users SET Occupation=@occupation WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"occupation", user.Occupation);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
@@ -68,6 +75,8 @@ namespace IcebreakServices
                     }
                     if (user.Bio != null)
                     {
+                        if (user.Bio.Length <= 0)
+                            user.Bio = NO_BIO;
                         cmd = new SqlCommand("UPDATE dbo.Users SET Bio=@bio WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"bio", user.Bio);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
@@ -75,6 +84,8 @@ namespace IcebreakServices
                     }
                     if (user.Catchphrase != null)
                     {
+                        if (user.Catchphrase.Length <= 0)
+                            user.Catchphrase = NO_PHRASE;
                         cmd = new SqlCommand("UPDATE dbo.Users SET Catchphrase=@cp WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"cp", user.Catchphrase);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
@@ -757,22 +768,21 @@ namespace IcebreakServices
         {
             if(s == null)
                 return true;
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(s, "\\s*$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+                return true;
+
             if (s.Length <= 0 || s.Equals(" "))
                 return true;
-            else
-                return false;
+            //Passes checks
+            return false;
         }
 
         public string registerUser(User user)
         {
-            if(user.Fb_token!=null && user.Fb_id!=null)//Facebook registration
-            {
-                string result = userFbIdExists(user);
-                if (!result.ToLower().Contains("exists=false"))//if ID exists
-                {
-                    user.Username = result;//update username of user to the one in the DB - in case they are trying to actually log in with Facebook not register
-                }
-            }
+            if(isEmpty(user.Username))
+               return "Error: Empty username";
+
             string exist_check = userExists(user);
             if (exist_check.ToLower().Contains("exists=false"))//insert new user if they don't exist in DB
             {
@@ -785,6 +795,25 @@ namespace IcebreakServices
                         "@password,@username,@access_lvl,@event_id,@age,@bio,@catchphrase,@occupation,@gender,@fb_token,@fb_id)";
                     cmd = new SqlCommand(query, conn);
 
+                    if (isEmpty(user.Password))
+                        return "Error: Empty password";
+                    if (isEmpty(user.Username))
+                        return "Error: Empty username";
+                    if (isEmpty(user.Gender))
+                        return "Error: Empty gender";
+                    if (isEmpty(user.Email))
+                        user.Email = NO_EMAIL;
+                    if (isEmpty(user.Catchphrase))
+                        user.Catchphrase = NO_PHRASE;
+                    if (isEmpty(user.Bio))
+                        user.Bio = NO_BIO;
+                    if (isEmpty(user.Occupation))
+                        user.Occupation = NO_OCC;
+                    if (isEmpty(user.Fname))
+                        user.Fname = " ";
+                    if (isEmpty(user.Lname))
+                        user.Lname = " ";
+
                     cmd.Parameters.AddWithValue(@"fname", user.Fname);
                     cmd.Parameters.AddWithValue(@"lname", user.Lname);
                     cmd.Parameters.AddWithValue(@"email", user.Email);
@@ -792,11 +821,11 @@ namespace IcebreakServices
                     cmd.Parameters.AddWithValue(@"username", user.Username);//Hash.HashString(user.Username));
                     cmd.Parameters.AddWithValue(@"access_lvl", user.Access_level);
                     cmd.Parameters.AddWithValue(@"event_id", user.Event_id);
-                    cmd.Parameters.AddWithValue(@"age", user.Event_id);
-                    cmd.Parameters.AddWithValue(@"bio", user.Event_id);
-                    cmd.Parameters.AddWithValue(@"catchphrase", user.Event_id);
-                    cmd.Parameters.AddWithValue(@"occupation", user.Event_id);
-                    cmd.Parameters.AddWithValue(@"gender", user.Event_id);
+                    cmd.Parameters.AddWithValue(@"age", user.Age);
+                    cmd.Parameters.AddWithValue(@"bio", user.Bio);
+                    cmd.Parameters.AddWithValue(@"catchphrase", user.Catchphrase);
+                    cmd.Parameters.AddWithValue(@"occupation", user.Occupation);
+                    cmd.Parameters.AddWithValue(@"gender", user.Gender);
                     cmd.Parameters.AddWithValue(@"fb_token", user.Fb_token);
                     cmd.Parameters.AddWithValue(@"fb_id", user.Fb_id);
 
@@ -857,12 +886,26 @@ namespace IcebreakServices
                 return e.Message;
             }
         }
+
         public User getUser(string username)
         {
             
             conn = new SqlConnection(dbConnectionString);
             try
             {
+                /*string usr = "";
+                if (username.Length > 5)
+                {
+                    if (username.Contains("_"))
+                    {
+                        if (username.Substring(0, username.IndexOf('_')).Equals("user_") && username.Substring(username.LastIndexOf('_'), username.Length).Equals("_fb"))
+                        {
+                            usr = username.Substring(username.IndexOf('_'), username.LastIndexOf('_') - 1);
+                            return getUserByFbId(usr);
+                        }
+                    }
+                }*/
+                //else return null;
                 conn.Open();
                 //Query user
                 cmd = new SqlCommand("SELECT * FROM dbo.Users WHERE username=@username", conn);
@@ -901,6 +944,48 @@ namespace IcebreakServices
             
         }
 
+        public User getUserByFbId(string id)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM dbo.Users WHERE fb_id=@id", conn);
+                cmd.Parameters.AddWithValue(@"id", id);
+
+                dataReader = cmd.ExecuteReader();
+                User user = new User();
+                while (dataReader.Read())
+                {
+                    user.Fname = (string)dataReader.GetValue(0);
+                    user.Lname = (string)dataReader.GetValue(1);
+                    user.Occupation = (string)dataReader.GetValue(10);
+                    user.Access_level = (int)dataReader.GetValue(5);
+                    user.Email = (string)dataReader.GetValue(2);
+                    user.Username = (string)dataReader.GetValue(4);
+                    user.Age = (int)dataReader.GetValue(7);
+                    user.Bio = (string)dataReader.GetValue(8);
+                    user.Gender = (string)dataReader.GetValue(11);
+                    user.Catchphrase = (string)dataReader.GetValue(9);
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+                return user;
+            }
+            catch (Exception e)
+            {
+                return new User
+                {
+                    Fname = "<Error>",
+                    Lname = e.Message
+                };
+                
+            }
+            
+        }
 
         public List<Event> getEvents()
         {

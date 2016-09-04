@@ -14,9 +14,9 @@ namespace IcebreakServices
         private string username;
         private string email;
         private string password;
-        private int access_level;
-        private int event_id;
-        private int age;
+        private int access_level = 0;
+        private int event_id = 0;
+        private int age = 0;
         private string gender;
         private string occupaton;
         private string bio;
