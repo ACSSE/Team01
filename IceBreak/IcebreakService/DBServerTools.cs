@@ -770,10 +770,12 @@ namespace IcebreakServices
             if(s == null)
                 return true;
 
-            if (System.Text.RegularExpressions.Regex.IsMatch(s, "\\s*$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
-                return true;
+            String temp = new String(s.ToCharArray());
+            temp = temp.Replace(" ", "");
+            //if (System.Text.RegularExpressions.Regex.IsMatch(s, "\\s*$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            //    return true;
 
-            if (s.Length <= 0 || s.Equals(" "))
+            if (temp.Length <= 0 || temp.Equals(" "))
                 return true;
             //Passes checks
             return false;

@@ -122,14 +122,14 @@ namespace IcebreakServices
             string inbound_payload = reader.ReadToEnd();
             reader.Close();
             reader.Dispose();
-
+            char delim = ';';
             byte[] bytes = Convert.FromBase64String(inbound_payload);
-            if (name.Contains(">"))
+            if (name.Contains(delim))
             {
-                if (name[0] == '>')
+                if (name[0] == delim)
                     name = name.Substring(1);//Remove first slash if it exists
 
-                string[] dirs = name.Split('>');//get directory structure
+                string[] dirs = name.Split(delim);//get directory structure
                 string dir = "";
                 for (int i = 0; i < dirs.Length - 1; i++)//last element would be the filename
                     dir += dirs[i] + '/';
