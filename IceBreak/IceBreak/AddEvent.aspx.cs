@@ -160,7 +160,7 @@ namespace IceBreak
             {
                 upload.InnerText = "Photo not chosen. Recommended size 700x300";
                 upload.Style.Add("display", "normal");
-                return;
+             //   return;
             }
                    
             IcebreakServices.Event evnt = new IcebreakServices.Event();
