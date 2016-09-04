@@ -123,6 +123,8 @@
     <Content Include="images\partyedit.jpg" />
     <Content Include="images\pattern.jpg" />
     <Content Include="images\pencil.png" />
+    <Content Include="images\profile.jpg" />
+    <Content Include="images\Tevin.jpg" />
     <Content Include="packages.config" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -134,6 +136,7 @@
     <None Include="compilerconfig.json.defaults">
       <DependentUpon>compilerconfig.json</DependentUpon>
     </None>
+    <Content Include="images\pattern.jpg.lnk" />
     <None Include="Properties\PublishProfiles\icebreak - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\icebreak - Web Deploy.pubxml" />
     <Content Include="scripts\jquery.backstretch.min.js" />
@@ -144,6 +147,8 @@
     <Content Include="stylesheets\addeventform.min.css">
       <DependentUpon>addeventform.css</DependentUpon>
     </Content>
+    <Content Include="Profile.aspx" />
+    <Content Include="stylesheets\profile.css" />
     <Content Include="stylesheets\style.css">
       <DependentUpon>style.scss</DependentUpon>
     </Content>
@@ -195,6 +200,13 @@
     <Compile Include="master.Master.designer.cs">
       <DependentUpon>master.Master</DependentUpon>
     </Compile>
+    <Compile Include="Profile.aspx.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Profile.aspx.designer.cs">
+      <DependentUpon>Profile.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -217,7 +229,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>3679</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

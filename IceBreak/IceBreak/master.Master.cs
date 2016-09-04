@@ -16,9 +16,10 @@ namespace IceBreak
 {
     public partial class master : System.Web.UI.MasterPage
     {
+    
         protected void Page_Load(object sender, EventArgs e)
         {
-                if (Session["USER"] != null)
+            if (Session["USER"] != null)
                 {
                 string check = (string)Session["USER"];
                 login.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
@@ -39,11 +40,11 @@ namespace IceBreak
 
         protected void Login(object sender, EventArgs e)
         {
-           
-
+              
             string username = txtUsername.Value;
             string password = txtPassword.Value;
-            if(String.IsNullOrEmpty(username))
+            
+            if (String.IsNullOrEmpty(username))
             {
                 usernameBox.Attributes.Add("class", "form-inline has-error has-feedback");
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "loginModal", "$('#loginModal').modal();", true);
@@ -64,6 +65,7 @@ namespace IceBreak
 
             if (check.ToLower().Contains("isvaliduser=true"))
             {
+               
                 Session["USER"] = username;
                 user = dbs.getUser(username);
                 int lvl  = user.Access_level;
@@ -77,6 +79,69 @@ namespace IceBreak
             }
 
         }
-       
+        protected void SignUp(object sender, EventArgs e)
+        {
+            string name = txtName.Value;
+            string lastname = txtLastName.Value;
+            string email = txtemail.Value;
+            string usrname = txtUsrname.Value;
+            string pass = txtPass.Value;
+            if (String.IsNullOrEmpty(name))
+            {
+                NameBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            if (String.IsNullOrEmpty(lastname))
+            {
+                lastNameBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            if (String.IsNullOrEmpty(email))
+            {
+                EmailBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            if (String.IsNullOrEmpty(usrname))
+            {
+                UsernameSignupBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            if (String.IsNullOrEmpty(pass))
+            {
+                PasswordSignupBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            User user = new User();
+            user.Fname = name;
+            user.Lname = lastname;
+            user.Email = email;
+            user.Username = usrname;
+            user.Password = pass;
+
+            DBServerTools dbs = new DBServerTools();
+            dbs.registerUser(user);
+            String check = dbs.signIn(user);
+
+            if (check.ToLower().Contains("isvaliduser=true"))
+            {
+                Session["USER"] = usrname;
+                login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + usrname + "</a>";
+            }
+            else
+            {
+                txtInvalid.Style.Clear();
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "loginModal", "$('#loginModal').modal();", true);
+            }
+
+
+
+        }
+
+    
     }
 }
