@@ -1,0 +1,54 @@
+﻿body {
+    background-image:url(../images/profile.jpg);
+    background-repeat:no-repeat;
+    background-size:2200px
+}
+
+.img-circleshaddow {
+    -webkit-border-radius: 150px;
+    -moz-border-radius: 150px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+    -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+    -moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+}
+
+.img-circle {
+  
+    margin-left:12%;
+    position: absolute;
+    background-size: auto;
+    width: 350px;
+    height:350px;
+    border-radius: 200px;   
+   
+}
+
+#con {
+    width: 30%;
+    height: auto;
+    background-size: cover;
+    position: relative;
+    top: 50px;
+    margin-bottom: 20%;
+     background-color:#fff;
+    margin-left: 45%;
+    box-shadow: #313131 0px 0px 8px 8px;
+    -webkit-box-shadow: #313131 0px 0px 8px 8px;
+    -moz-box-shadow: #313131 0px 0px 8px 8px;
+    padding-bottom: 50px;
+}
+
+    #con #inputs {
+        width: 70%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+#inputs input[type=text], input[type=date], select, input[type=password] {
+    margin-bottom: 30px;
+}
+
+#inputs p {
+    color: red;
+}
+
