@@ -1,6 +1,7 @@
 ﻿using IcebreakServices;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -12,18 +13,64 @@ namespace IceBreak
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["LEVEL"] == null)
+            //if (Session["LEVEL"] == null)
+            //{
+            //    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login');window.location ='index.aspx';", true);
+            //}
+            //else
+            //{
+            //    int check = (int)Session["LEVEL"];
+            //    if (check != 1)
+            //    {
+            //        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
+            //    }
+            //}
+            meeting_place_1.Style.Add("display", "none");
+            meeting_place_2.Style.Add("display", "none");
+            meeting_place_3.Style.Add("display", "none");
+            meeting_place_4.Style.Add("display", "none");
+            meeting_place_5.Style.Add("display", "none");
+            if (NumEvents.SelectedIndex > 0)
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login');window.location ='index.aspx';", true);
-            }
-            else
-            {
-                int check = (int)Session["LEVEL"];
-                if (check != 1)
+                int num = int.Parse(NumEvents.SelectedValue);
+                switch (num)
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
+                    case 1:
+                        meeting_place_1.Style.Add("display", "normal");
+                    break;
+                    case 2:
+                        meeting_place_1.Style.Add("display", "normal");
+                        meeting_place_2.Style.Add("display", "normal");
+                        break;
+                    case 3:
+                        meeting_place_1.Style.Add("display", "normal");
+                        meeting_place_2.Style.Add("display", "normal");
+                        meeting_place_3.Style.Add("display", "normal");
+                        break;
+                    case 4:
+                        meeting_place_1.Style.Add("display", "normal");
+                        meeting_place_2.Style.Add("display", "normal");
+                        meeting_place_3.Style.Add("display", "normal");
+                        meeting_place_4.Style.Add("display", "normal");
+                        break;
+                    case 5:
+                        meeting_place_1.Style.Add("display", "normal");
+                        meeting_place_2.Style.Add("display", "normal");
+                        meeting_place_3.Style.Add("display", "normal");
+                        meeting_place_4.Style.Add("display", "normal");
+                        meeting_place_5.Style.Add("display", "normal");
+                        break;
+                    default:
+                        meeting_place_1.Style.Add("display", "none");
+                        meeting_place_2.Style.Add("display", "none");
+                        meeting_place_3.Style.Add("display", "none");
+                        meeting_place_4.Style.Add("display", "none");
+                        meeting_place_5.Style.Add("display", "none");
+                        break;
                 }
+
             }
+
         }
         protected void btnAdd_Event(object sender, EventArgs e)
         {
@@ -32,6 +79,13 @@ namespace IceBreak
             string EventDescrip = eventdescrip.Value;
             string EventTime = time.Value;
             string EventDate = date.Value;
+            string mp1 = meeting_place_1.Value;
+            string mp2 = meeting_place_2.Value;
+            string mp3 = meeting_place_3.Value;
+            string mp4 = meeting_place_4.Value;
+            string mp5 = meeting_place_5.Value;
+            string[] mpArray = {mp1,mp2,mp3,mp4,mp5};
+
             if (String.IsNullOrEmpty(EventName))
             {
                 lbl_name.Style.Add("display", "normal");
@@ -77,12 +131,45 @@ namespace IceBreak
             {
                 time_span.Style.Add("display", "none");
             }
+            if(int.Parse(NumEvents.SelectedValue) < 0)
+            {
+                meeting_span.Style.Add("display", "normal");
+                return;
+            }
+            else
+            {
+                meeting_span.Style.Add("display", "none");
+            }
+            int num = int.Parse(NumEvents.SelectedValue);
+            string meetingplace = " ";
+            for(int i =0;i<num;i++)
+            {
+                if((String.IsNullOrEmpty(mpArray[i])))
+                {
+                    meeting_span.Style.Add("display", "normal");
+                    return;
+                }
+                else
+                {
+                    meeting_span.Style.Add("display", "none");
+                    meetingplace += mpArray[i] + ";";
+                }
+            }
+            string filename = Path.GetFileName(FileUpload.FileName);
+            if (String.IsNullOrEmpty(filename))
+            {
+                upload.InnerText = "Photo not chosen. Recommended size 700x300";
+                upload.Style.Add("display", "normal");
+             //   return;
+            }
+                   
             IcebreakServices.Event evnt = new IcebreakServices.Event();
             evnt.Title = EventName;
             evnt.Address = EventAddress;
             evnt.Description = EventDescrip;
             evnt.Date = EventDate;
             evnt.Time = EventTime;
+            evnt.Meeting_Places = meetingplace;
 
             DBServerTools dbs = new DBServerTools();
             string check = dbs.addEvent(evnt);
@@ -97,8 +184,6 @@ namespace IceBreak
             }
             
         }
-        protected void btnUpload(object sender, EventArgs e)
-        {
-        }
+      
      }
 }
