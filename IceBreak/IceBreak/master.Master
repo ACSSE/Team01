@@ -85,7 +85,9 @@
             </asp:ContentPlaceHolder>
         </div>
 
-    
+    <div class="hide">
+                 <asp:Button runat="server" OnClick="Logout" ID="logout"/>
+    </div>
 
              <%-- Login modal  --%>
         <div id ="loginModal" class="modal fade" role="dialog" runat="server">
@@ -122,8 +124,7 @@
         
              <%-- Login modal  --%>
       
-       <%-- </ContentTemplate>
-     </asp:UpdatePanel>--%>
+     
        
              <div id ="signUpModal" class="modal fade" role="dialog" runat="server">
             <div class="modal-dialog">
