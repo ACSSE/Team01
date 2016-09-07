@@ -49,6 +49,24 @@ namespace IceBreak {
         protected global::System.Web.UI.HtmlControls.HtmlInputText eventaddress;
         
         /// <summary>
+        /// gps_span control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl gps_span;
+        
+        /// <summary>
+        /// gps control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText gps;
+        
+        /// <summary>
         /// descrip_span control.
         /// </summary>
         /// <remarks>
