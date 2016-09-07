@@ -23,8 +23,10 @@ namespace IceBreak
                 {
                 string check = (string)Session["USER"];
                 login.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
+                
+            }
+            profilePic();
 
-                }
         }
 
         [ScriptMethod, WebMethod]
@@ -141,7 +143,21 @@ namespace IceBreak
 
 
         }
-
+        protected void profilePic()
+        {
+            DBServerTools dbs = new DBServerTools();
+            User user = new User();
+            string username = txtUsername.Value;
+            user.Username = username;
+            String check = dbs.userExists(user);
+            string usr = (string)Session["USER"];
+            username = usr;
+            dbs.getUser(username);
+            pp.InnerHtml += "<a href = '#'>" +
+                           "<img class='img-circle' src='http://icebreak.azurewebsites.net/images/profile/" + usr + ".png' alt=''/>" +
+                       "</a>";
+            
+        }
     
     }
 }

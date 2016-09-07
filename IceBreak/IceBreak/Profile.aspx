@@ -8,7 +8,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div id="page-content-wrapper">
         <div class="background" >
-            <img src="images/profile.jpg" style="position:absolute;background-size:2200px"/>
+            <img src="images/profile.jpg" style="position:absolute;background-size:5000px"/>
        
         <div id="img-circle" class="img-circle" style="margin-top:5%">
             <div style="text-align:center;width:500px">
@@ -54,7 +54,7 @@
                 <span id="txtName_lbl" runat="server"></span>
                 
                
-                <asp:TextBox ID="txtName" class="form-control" runat="server" Width="345px" Style="margin-right: 12%; height: 25px; border-color: black" Visible="True"></asp:TextBox>
+                <asp:TextBox ID="txtName" class="form-control" runat="server" Width="100%" Style="margin-right: 12%; height: 25px; border-color: black" Visible="True"></asp:TextBox>
                 
                 <asp:Label ID="Label2" runat="server" Text="2.Surname" Style="font-size: 11pt;"></asp:Label>
                 <span id="txtSurname_lbl" runat="server"></span>
