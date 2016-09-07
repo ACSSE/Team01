@@ -19,15 +19,23 @@ namespace IceBreak
     
         protected void Page_Load(object sender, EventArgs e)
         {
+            
             if (Session["USER"] != null)
                 {
                 string check = (string)Session["USER"];
+                string checkName = (string)Session["NAME"];
+                string checkLastName = (string)Session["LASTNAME"];
                 login.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
+                DIV.InnerHtml += "<a href = '#'>" +
+                        "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + check + ".png' alt=''/>" +
+                    "</a>";
+                name.InnerHtml += "<label class='Sidebarname'>" + checkName + " " + checkLastName + "</label>";
+
                 
             }
-            profilePic();
+           
 
-        }
+            }
 
         [ScriptMethod, WebMethod]
         protected void Logout(object sender, EventArgs e)
@@ -61,18 +69,29 @@ namespace IceBreak
             User user = new User();
             user.Username = username;
             user.Password = password;
+            
 
             DBServerTools dbs = new DBServerTools();
             String check =  dbs.signIn(user);
+
+            IcebreakServices.User u = dbs.getUser(username);
+            String firstname = u.Fname;
+            String lastname = u.Lname;
 
             if (check.ToLower().Contains("isvaliduser=true"))
             {
                
                 Session["USER"] = username;
+                Session["NAME"] = firstname;
+                Session["LASTNAME"] = lastname;
                 user = dbs.getUser(username);
                 int lvl  = user.Access_level;
                 Session["LEVEL"] = lvl;
                 login.InnerHtml = "<a href='javascript:Logout()'  runat='server' >Logout " + username + "</a>";
+                DIV.InnerHtml += "<a href = '#'>" +
+                        "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + username + ".png' alt=''/>" +
+                    "</a>";
+               name.InnerHtml += "<label class='Sidebarname'>" + firstname +" "+ lastname + "</label>";
             }
             else
             {
@@ -143,21 +162,7 @@ namespace IceBreak
 
 
         }
-        protected void profilePic()
-        {
-            DBServerTools dbs = new DBServerTools();
-            User user = new User();
-            string username = txtUsername.Value;
-            user.Username = username;
-            String check = dbs.userExists(user);
-            string usr = (string)Session["USER"];
-            username = usr;
-            dbs.getUser(username);
-            pp.InnerHtml += "<a href = '#'>" +
-                           "<img class='img-circle' src='http://icebreak.azurewebsites.net/images/profile/" + usr + ".png' alt=''/>" +
-                       "</a>";
-            
-        }
+    
     
     }
 }

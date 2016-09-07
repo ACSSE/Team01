@@ -24,7 +24,17 @@ body, html {
     width:100%;
 
 }
-
+ .image-circle {
+  
+    
+    position: absolute;
+    width: 70px;
+    height:70px;
+    border-radius: 200px;  
+    margin-left:10%;
+    margin-top:2%
+   
+}
 #wrapper.menuDisplayed #sidebar{
     width:250px;
     -webkit-transition:width 1s;
@@ -52,13 +62,4 @@ body, html {
  background:#079ff7;
 }
 
-  .img-circle {
-  
-    margin-left:12%;
-    position: absolute;
-    background-size: auto;
-    width: 350px;
-    height:350px;
-    border-radius: 200px;   
-   
-}
+ 
