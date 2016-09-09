@@ -1,20 +1,21 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/master.Master" AutoEventWireup="true" CodeBehind="AddEvent.aspx.cs" Inherits="IceBreak.AddEvent" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/master.Master" ClientIDMode="Static" AutoEventWireup="true" CodeBehind="AddEvent.aspx.cs" Inherits="IceBreak.AddEvent" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <script src="scripts/scripts.js"></script>
     <script src="scripts/jquery.backstretch.min.js"></script>
      <script async="async" defer="defer" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAAQZBI76K_oRkxy-1qAyMC2w8AnfimZM&libraries=places"></script>
-    <link rel="stylesheet" href="stylesheets/addeventform.css"/>
+   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+     <link rel="stylesheet" href="stylesheets/addeventform.css"/>
     
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
     
-    <div id="page-content-wrapper">
+    <div id="page-content-wrapper" ng-app="">
         
         <div class="register-container container">
             <div class="row">
                  <div class="maps span5">
-                     <input id="pac-input" class="controls" type="text" placeholder="Enter a location"/>
+                     <input id="pac-input" ng-model="Address" class="controls" type="text" placeholder="Enter a location"/>
                         <div id="type-selector" class="controls">
                           <input type="radio" name="type" id="changetype-all" checked="checked"/>
                           <label for="changetype-all">All</label>
@@ -39,7 +40,11 @@
                        </div>
                         <div class="form-group" style="text-align:left">
                              <label for="EventAddress">Event Address</label><span id="address_span" runat="server" style="color:red; display:none"> - Please enter your event address.</span>
-                             <input type="text" id="eventaddress" name="eventaddress" placeholder="enter your event address..."  runat="server"/>
+                             <input type="text" id="eventaddress" name="eventaddress" ng-model="Address" placeholder="enter your event address..." value="{{Address}}" runat="server"/>
+                       </div>
+                         <div class="form-group" style="text-align:left">
+                             <label for="gps">GPS Coordinates</label><span id="gps_span" runat="server" style="color:red; display:none"> - Please enter your gps coordinates.</span>
+                             <input id="gps" type="text" name="gps" placeholder="enter your gps coordinates..." runat="server"/>
                        </div>
                         <div class="form-group" style="text-align:left">
                             <label for="EventDescription">Event Description</label><span id="descrip_span" runat="server" style="color:red; display:none"> - Please enter your event description.</span>
@@ -50,8 +55,12 @@
                             <input type="date" id="date" name="date" runat="server"/>
                         </div>
                         <div class="form-group" style="text-align:left">
-                            <label for="Event Time">Event Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event name.</span>
+                            <label for="Event Time">Event Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event time.</span>
                             <input type="time" id="time" name="time" runat="server"/>
+                        </div>
+                         <div class="form-group" style="text-align:left">
+                            <label for="Event end time">Event End Time</label><span id="end_time_span" runat="server" style="color:red; display:none"> - Please enter your event end time.</span>
+                            <input type="time" id="end_time" name="Event end time" runat="server"/>
                         </div>
                         <div class="form-group" style="text-align:left">
                             <label for="Meeting Places">Meeting Places at Event</label><span id="meeting_span" runat="server" style="color:red; display:none"> - Please enter all event meeting places.</span>
@@ -81,7 +90,8 @@
                              <div class="form-group"style="text-align:left">
                                   <input type="text" id="meeting_place_5" placeholder="enter meeting place 5" runat="server"/>
                              </div>
-                        <div class="form-group" style="text-align:left">                            
+                        <div class="form-group" style="text-align:left">  
+                         <label>Upload Photo</label>                         
                         <asp:FileUpload id="FileUpload" runat="server" CssClass="UploadButton AddButton" /> <span id="upload" runat="server" style="color:red;display:none"></span>
                      
                         </div>
@@ -115,10 +125,12 @@
            var autocomplete = new google.maps.places.Autocomplete(input);
            autocomplete.bindTo('bounds', map);
 
+
            var infowindow = new google.maps.InfoWindow();
            var marker = new google.maps.Marker({
                map: map,
                anchorPoint: new google.maps.Point(0, -29)
+
            });
 
            autocomplete.addListener('place_changed', function () {
@@ -144,8 +156,11 @@
                    anchor: new google.maps.Point(17, 34),
                    scaledSize: new google.maps.Size(35, 35)
                }));
+              
                marker.setPosition(place.geometry.location);
                marker.setVisible(true);
+
+               document.getElementById('gps').value = place.geometry.location;
 
                var address = '';
                if (place.address_components) {
@@ -173,6 +188,7 @@
            setupClickListener('changetype-address', ['address']);
            setupClickListener('changetype-establishment', ['establishment']);
            setupClickListener('changetype-geocode', ['geocode']);
+
        }
        google.maps.event.addDomListener(window, "load", initMap);
 

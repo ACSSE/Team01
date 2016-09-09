@@ -10,6 +10,7 @@
         private string gps_location;
         private int access_code;
         private string time;
+        private string end_time;
         private string date;
         private string meeting_places;
 
@@ -110,6 +111,17 @@
             set
             {
                 time = value;
+            }
+        }
+        public string EndTime
+        {
+            get
+            {
+                return end_time;
+            }
+            set
+            {
+                end_time = value;
             }
         }
         public string Date
