@@ -705,7 +705,7 @@ namespace IcebreakServices
                         Address = (string)dataReader.GetValue(3),
                         Radius = (int)dataReader.GetValue(4),
                         Gps_location = (string)dataReader.GetValue(5),
-                        AccessID = (int)dataReader.GetValue(6),
+                        AccessCode = (int)dataReader.GetValue(6),
                         Date = (string)dataReader.GetValue(7),
                         Time = (string)dataReader.GetValue(8),
                         Meeting_Places = (string)dataReader.GetValue(9)
@@ -862,7 +862,7 @@ namespace IcebreakServices
         {
             Random rnd = new Random();
             ev.Radius = 0;
-            ev.AccessID = rnd.Next(1,100000);
+            ev.AccessCode = rnd.Next(1,100000);
             try
             {
                 conn = new SqlConnection(dbConnectionString);
@@ -875,7 +875,7 @@ namespace IcebreakServices
                 cmd.Parameters.AddWithValue(@"addr", ev.Address);//Hash.HashString(user.Username));
                 cmd.Parameters.AddWithValue(@"radius", ev.Radius);
                 cmd.Parameters.AddWithValue(@"loc_gps", ev.Gps_location);
-                cmd.Parameters.AddWithValue(@"acc_id", ev.AccessID);
+                cmd.Parameters.AddWithValue(@"acc_id", ev.AccessCode);
                 cmd.Parameters.AddWithValue(@"date", ev.Date);
                 cmd.Parameters.AddWithValue(@"time", ev.Time);
                 cmd.Parameters.AddWithValue(@"meeting_places", ev.Meeting_Places);
@@ -1019,9 +1019,10 @@ namespace IcebreakServices
                         Address = (string)dataReader.GetValue(3),
                         Radius = (int)dataReader.GetValue(4),
                         Gps_location = (string)dataReader.GetValue(5),
-                        AccessID = (int)dataReader.GetValue(6),
+                        AccessCode = (int)dataReader.GetValue(6),
                         Date = (string)dataReader.GetValue(7),
                         Time = (string)dataReader.GetValue(8),
+                        EndTime =(string)dataReader.GetValue(10),
                         Meeting_Places = (string)dataReader.GetValue(9)
 
                     });
