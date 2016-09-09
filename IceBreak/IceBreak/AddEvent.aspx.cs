@@ -78,6 +78,7 @@ namespace IceBreak
             string EventAddress = eventaddress.Value;
             string EventDescrip = eventdescrip.Value;
             string EventTime = time.Value;
+            string EventEndTime = end_time.Value;
             string EventDate = date.Value;
             string EventGps = gps.Value;
             string mp1 = meeting_place_1.Value;
@@ -141,7 +142,16 @@ namespace IceBreak
             {
                 time_span.Style.Add("display", "none");
             }
-            if(int.Parse(NumEvents.SelectedValue) < 0)
+            if (String.IsNullOrEmpty(EventEndTime))
+            {
+                end_time_span.Style.Add("display", "normal");
+                return;
+            }
+            else
+            {
+                end_time_span.Style.Add("display", "none");
+            }
+            if (int.Parse(NumEvents.SelectedValue) < 0)
             {
                 meeting_span.Style.Add("display", "normal");
                 return;
@@ -180,6 +190,7 @@ namespace IceBreak
             evnt.Description = EventDescrip;
             evnt.Date = EventDate;
             evnt.Time = EventTime;
+            evnt.EndTime = EventEndTime;
             evnt.Meeting_Places = meetingplace;
 
             DBServerTools dbs = new DBServerTools();

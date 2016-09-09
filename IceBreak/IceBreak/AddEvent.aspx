@@ -55,8 +55,12 @@
                             <input type="date" id="date" name="date" runat="server"/>
                         </div>
                         <div class="form-group" style="text-align:left">
-                            <label for="Event Time">Event Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event name.</span>
+                            <label for="Event Time">Event Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event time.</span>
                             <input type="time" id="time" name="time" runat="server"/>
+                        </div>
+                         <div class="form-group" style="text-align:left">
+                            <label for="Event end time">Event End Time</label><span id="end_time_span" runat="server" style="color:red; display:none"> - Please enter your event end time.</span>
+                            <input type="time" id="end_time" name="Event end time" runat="server"/>
                         </div>
                         <div class="form-group" style="text-align:left">
                             <label for="Meeting Places">Meeting Places at Event</label><span id="meeting_span" runat="server" style="color:red; display:none"> - Please enter all event meeting places.</span>
