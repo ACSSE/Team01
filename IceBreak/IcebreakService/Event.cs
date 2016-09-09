@@ -8,21 +8,21 @@
         private string address;
         private int radius;
         private string gps_location;
-        private int access_id;
+        private int access_code;
         private string time;
         private string date;
 
 
-        public int AccessID
+        public int AccessCode
         {
             get
             {
-                return access_id;
+                return access_code;
             }
 
             set
             {
-                access_id = value;
+                access_code = value;
             }
         }
         public string Title

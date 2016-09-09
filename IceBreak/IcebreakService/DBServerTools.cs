@@ -705,7 +705,9 @@ namespace IcebreakServices
                         Address = (string)dataReader.GetValue(3),
                         Radius = (int)dataReader.GetValue(4),
                         Gps_location = (string)dataReader.GetValue(5),
-                        AccessID = (int)dataReader.GetValue(6)
+                        AccessCode = (int)dataReader.GetValue(6),
+                        Date = (string)dataReader.GetValue(7),
+                        Time = (string)dataReader.GetValue(8)
                     };
                 }
 
@@ -859,7 +861,7 @@ namespace IcebreakServices
         {
             ev.Radius = 0;
             ev.Gps_location = "0";
-            ev.AccessID = 12;
+            ev.AccessCode = 12;
             try
             {
                 conn = new SqlConnection(dbConnectionString);
@@ -872,7 +874,7 @@ namespace IcebreakServices
                 cmd.Parameters.AddWithValue(@"addr", ev.Address);//Hash.HashString(user.Username));
                 cmd.Parameters.AddWithValue(@"radius", ev.Radius);
                 cmd.Parameters.AddWithValue(@"loc_gps", ev.Gps_location);
-                cmd.Parameters.AddWithValue(@"acc_id", ev.AccessID);
+                cmd.Parameters.AddWithValue(@"acc_id", ev.AccessCode);
                 cmd.Parameters.AddWithValue(@"date", ev.Date);
                 cmd.Parameters.AddWithValue(@"time", ev.Time);
 
@@ -1013,7 +1015,7 @@ namespace IcebreakServices
                         Address = (string)dataReader.GetValue(3),
                         Radius = (int)dataReader.GetValue(4),
                         Gps_location = (string)dataReader.GetValue(5),
-                        AccessID = (int)dataReader.GetValue(6),
+                        AccessCode = (int)dataReader.GetValue(6),
                         Date = (string)dataReader.GetValue(7),
                         Time = (string)dataReader.GetValue(8)
                                        
