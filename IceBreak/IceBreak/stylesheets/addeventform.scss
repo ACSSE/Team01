@@ -9,21 +9,60 @@
 strong { font-weight: 700; }
 
 .register-container {
-    margin-top: 50px;
+    margin-top: 8%;
 }
 
-
-.iphone {
-    text-align: right;
-    width:27vw;
+.maps {
     float:left;
+     width:50%;
+}
+.maps #map {
+    height:800px;
+}
+.controls {
+  margin-top: 10px;
+  border: 1px solid transparent;
+  border-radius: 2px 0 0 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  height: 32px;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
-.iphone img { margin-right: 10px; }
+.maps #pac-input {
+  background-color: #fff;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  margin-left: 12px;
+  padding: 0 11px 0 13px;
+  text-overflow: ellipsis;
+  width: 300px;
+}
 
+.maps #pac-input:focus {
+  border-color: #4d90fe;
+}
+
+.pac-container {
+  font-family: Roboto;
+}
+
+.maps #type-selector {
+  color: #fff;
+  background-color: #4d90fe;
+  padding: 5px 11px 0px 11px;
+}
+
+.maps #type-selector label {
+  font-family: Roboto;
+  font-size: 13px;
+  font-weight: 300;
+}
 
 .form {
-    width: 45vw;
+    width:50%;
     float:left;
     margin:0 0 20px;
     padding: 20px 50px 40px 50px;

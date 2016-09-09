@@ -20,8 +20,8 @@ body, html {
 
 #page-content-wrapper
 {
-    width:100%;
     position:absolute;
+    width:100%;
 
 }
 
@@ -50,4 +50,15 @@ body, html {
 }
   .sidebar-nav li a:hover{
  background:#079ff7;
+}
+
+  .img-circle {
+  
+    margin-left:12%;
+    position: absolute;
+    background-size: auto;
+    width: 350px;
+    height:350px;
+    border-radius: 200px;   
+   
 }

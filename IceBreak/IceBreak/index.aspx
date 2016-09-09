@@ -3,9 +3,10 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div id="page-content-wrapper">
-            <div class="container-fluid">
-                        <img src="images/partyedit.jpg" style="width:100%;height:100%"/>
+            <div class="container-fluid" style="overflow:hidden">
+                        <img src="images/partyedit.jpg" style="width:100%;height:95.2vh"/>
                  
              </div>
     </div>
+   
 </asp:Content>

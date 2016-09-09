@@ -7,6 +7,9 @@
   letter-spacing: 1px;
   text-transform: uppercase; }
 
+.img-responsive {
+  background-size: 100%; }
+
 .btn:focus, .btn:active:focus, .btn.active:focus {
   outline: 0 none; }
 

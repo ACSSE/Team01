@@ -14,14 +14,17 @@ namespace IceBreak
 
        protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["LEVEL"] == null)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login');window.location ='index.aspx';", true);
 
-            if (!IsPostBack)
+            }
+           else if (!IsPostBack)
             {
                 getUser();
 
                 update.Click += new EventHandler(this.Updatebutton_click);
             }
-            
 
         }
 
