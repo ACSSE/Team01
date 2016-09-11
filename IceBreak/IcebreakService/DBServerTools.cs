@@ -708,6 +708,7 @@ namespace IcebreakServices
                         AccessCode = (int)dataReader.GetValue(6),
                         Date = (string)dataReader.GetValue(7),
                         Time = (string)dataReader.GetValue(8),
+                        EndTime = (string)dataReader.GetValue(10),
                         Meeting_Places = (string)dataReader.GetValue(9)
                     };
                 }
