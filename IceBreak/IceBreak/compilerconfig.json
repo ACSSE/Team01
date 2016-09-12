@@ -6,5 +6,9 @@
   {
     "outputFile": "stylesheets/addeventform.css",
     "inputFile": "stylesheets/addeventform.scss"
+  },
+  {
+    "outputFile": "stylesheets/ViewEvent.css",
+    "inputFile": "stylesheets/ViewEvent.scss"
   }
 ]

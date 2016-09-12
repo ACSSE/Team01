@@ -146,9 +146,9 @@ namespace IceBreak
 
             DBServerTools dbs = new DBServerTools();
             dbs.registerUser(user);
-            String check = dbs.signIn(user);
+            String check = dbs.registerUser(user);
 
-            if (check.ToLower().Contains("isvaliduser=true"))
+            if (check.ToLower().Contains("Sucess"))
             {
                 Session["USER"] = usrname;
                 login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + usrname + "</a>";
@@ -162,7 +162,22 @@ namespace IceBreak
 
 
         }
-    
-    
+        //protected void profilePic()
+        //{
+        //    DBServerTools dbs = new DBServerTools();
+        //    User user = new User();
+        //    string username = txtUsername.Value;
+        //    user.Username = username;
+        //    String check = dbs.userExists(user);
+        //    string usr = (string)Session["USER"];
+        //    username = usr;
+
+        //    dbs.getUser(username);
+        //    pp.InnerHtml += "<a href = '#'>" +
+        //                   "<img class='img-circle' src='http://icebreak.azurewebsites.net/images/profile/" + usr + ".png' alt=''/>" +
+        //               "</a>";
+
+        //}
+
     }
 }

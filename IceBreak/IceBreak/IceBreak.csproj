@@ -116,6 +116,7 @@
   <ItemGroup>
     <Content Include="AddEvent.aspx" />
     <Content Include="Event.aspx" />
+    <Content Include="images\blurred_lines.jpeg" />
     <Content Include="images\favicon.png" />
     <Content Include="images\image1.jpg" />
     <Content Include="images\image2.jpg" />
@@ -125,6 +126,7 @@
     <Content Include="images\pencil.png" />
     <Content Include="images\profile.jpg" />
     <Content Include="images\Tevin.jpg" />
+    <Content Include="images\view.JPG" />
     <Content Include="packages.config" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -156,6 +158,13 @@
       <DependentUpon>style.css</DependentUpon>
     </Content>
     <Content Include="stylesheets\addeventform.scss" />
+    <Content Include="stylesheets\ViewEvent.css">
+      <DependentUpon>ViewEvent.scss</DependentUpon>
+    </Content>
+    <Content Include="stylesheets\ViewEvent.min.css">
+      <DependentUpon>ViewEvent.css</DependentUpon>
+    </Content>
+    <Content Include="stylesheets\ViewEvent.scss" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -169,6 +178,7 @@
     <Content Include="scripts\ai.0.15.0-build58334.min.js" />
     <Content Include="stylesheets\sidebar.css" />
     <None Include="stylesheets\style.scss" />
+    <Content Include="ViewEvent.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +218,13 @@
       <DependentUpon>Profile.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewEvent.aspx.cs">
+      <DependentUpon>ViewEvent.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ViewEvent.aspx.designer.cs">
+      <DependentUpon>ViewEvent.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IcebreakService\IcebreakServices.csproj">

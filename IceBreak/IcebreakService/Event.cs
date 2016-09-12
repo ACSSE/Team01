@@ -8,8 +8,9 @@
         private string address;
         private int radius;
         private string gps_location;
-        private int access_id;
+        private int access_code;
         private string time;
+        private string end_time;
         private string date;
         private string meeting_places;
 
@@ -26,16 +27,16 @@
         }
 
 
-        public int AccessID
+        public int AccessCode
         {
             get
             {
-                return access_id;
+                return access_code;
             }
 
             set
             {
-                access_id = value;
+                access_code = value;
             }
         }
         public string Title
@@ -110,6 +111,17 @@
             set
             {
                 time = value;
+            }
+        }
+        public string EndTime
+        {
+            get
+            {
+                return end_time;
+            }
+            set
+            {
+                end_time = value;
             }
         }
         public string Date
