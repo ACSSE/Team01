@@ -28,10 +28,10 @@ namespace IceBreak
                 login.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
                 DIV.InnerHtml = "<a href = '#'>" +
                         "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + check + ".png' alt=''/>" +
-                    "</a>";
-                name.InnerHtml = "<label class='Sidebarname'>" + checkName + " " + checkLastName + "</label>";
+                    "</a>" + "<label class='Sidebarname'>" + checkName + " " + checkLastName + "</label>";
+                //DIV.InnerHtml = "<label class='Sidebarname'>" + checkName + " " + checkLastName + "</label>";
 
-                
+
             }
            
 
@@ -90,8 +90,8 @@ namespace IceBreak
                 login.InnerHtml = "<a href='javascript:Logout()'  runat='server' >Logout " + username + "</a>";
                 DIV.InnerHtml = "<a href = '#'>" +
                         "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + username + ".png' alt=''/>" +
-                    "</a>";
-               name.InnerHtml = "<label class='Sidebarname'>" + firstname +" "+ lastname + "</label>";
+                    "</a>" + "<label class='Sidebarname'>" + firstname + " " + lastname + "</label>";
+              // DIV.InnerHtml = "<label class='Sidebarname'>" + firstname +" "+ lastname + "</label>";
             }
             else
             {

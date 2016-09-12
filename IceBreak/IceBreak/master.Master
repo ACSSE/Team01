@@ -66,10 +66,9 @@
     </div>
 
         <div id="sidebar">  
-          <div id="DIV" class="img-circle" style="align-content:center" runat="server">
+          <div id="DIV" class="img-circle" style="align-content:center;color:white" runat="server">
                <img class="img-circle"  />
-               <label id="name" class="Sidebarname" runat="server" style="font-family: 'Bookman Old Style'; font-size: 10pt;margin-right:10%;color:white "></label>
-                
+               <label class="Sidebarname" runat="server" style="font-family: 'Bookman Old Style';font-size: 10pt;margin-bottom:5%;margin-left:8%;"></label>
          </div>
             
           
