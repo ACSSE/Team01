@@ -10,7 +10,7 @@
         <div class="background" >
             <img src="images/profile.jpg" style="position:absolute;background-size:5000px"/>
        
-        <div id="img-circle" class="img-circle" style="margin-top:5%">
+        <div id="img-circle" class="img-circle" style="margin-top:5%;position:absolute">
             <div style="text-align:center;width:500px">
              <asp:Label ID="lblName" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt;text-align:center"></asp:Label>
             <asp:Label ID="lblSurname" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align: center "></asp:Label>

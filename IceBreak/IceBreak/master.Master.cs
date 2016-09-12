@@ -26,10 +26,10 @@ namespace IceBreak
                 string checkName = (string)Session["NAME"];
                 string checkLastName = (string)Session["LASTNAME"];
                 login.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
-                DIV.InnerHtml += "<a href = '#'>" +
+                DIV.InnerHtml = "<a href = '#'>" +
                         "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + check + ".png' alt=''/>" +
                     "</a>";
-                name.InnerHtml += "<label class='Sidebarname'>" + checkName + " " + checkLastName + "</label>";
+                name.InnerHtml = "<label class='Sidebarname'>" + checkName + " " + checkLastName + "</label>";
 
                 
             }
@@ -88,10 +88,10 @@ namespace IceBreak
                 int lvl  = user.Access_level;
                 Session["LEVEL"] = lvl;
                 login.InnerHtml = "<a href='javascript:Logout()'  runat='server' >Logout " + username + "</a>";
-                DIV.InnerHtml += "<a href = '#'>" +
+                DIV.InnerHtml = "<a href = '#'>" +
                         "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + username + ".png' alt=''/>" +
                     "</a>";
-               name.InnerHtml += "<label class='Sidebarname'>" + firstname +" "+ lastname + "</label>";
+               name.InnerHtml = "<label class='Sidebarname'>" + firstname +" "+ lastname + "</label>";
             }
             else
             {

@@ -68,10 +68,13 @@
         <div id="sidebar">  
           <div id="DIV" class="img-circle" style="align-content:center" runat="server">
                <img class="img-circle"  />
+               <label id="name" class="Sidebarname" runat="server" style="font-family: 'Bookman Old Style'; font-size: 10pt;margin-right:10%;color:white "></label>
+                
          </div>
-            <label id="name" class="Sidebarname" runat="server" style="font-family: 'Bookman Old Style'; font-size: 10pt; text-align: right;margin-left:40%;color:white "></label>
-            <ul class="sidebar-nav" style="position:relative;margin-top:7%">              
-                <li><span class=""></span></li>               
+            
+          
+            <ul class="sidebar-nav" style="position:inherit">              
+                 <%--<li id="DIV" class="img-circle" runat="server"><img class="img-circle"  /></li>   --%>     
                 <li><a href="Profile.aspx"><span class="glyphicon glyphicon-user"></span> View Full Profile</a></li>
                 <li><a href="#"><span class="glyphicon glyphicon-book"></span> History</a></li>
                  <li><a href="#"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>

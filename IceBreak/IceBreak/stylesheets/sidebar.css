@@ -27,12 +27,13 @@ body, html {
  .image-circle {
   
     
-    position: absolute;
+    position:inherit;
     width: 70px;
     height:70px;
     border-radius: 200px;  
-    margin-left:10%;
-    margin-top:2%
+    margin-top:3%;
+    margin-left:5%
+  
    
 }
 #wrapper.menuDisplayed #sidebar{
