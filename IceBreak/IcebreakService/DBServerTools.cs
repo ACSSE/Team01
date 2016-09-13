@@ -625,12 +625,11 @@ namespace IcebreakServices
                 {
                     if(m.Message_status!=ICEBREAK && m.Message_status != SENT)
                     {
-                        string query = "UPDATE [Messages] SET Message_status=@status WHERE Message_id=@message_id";
+                        string query = "UPDATE [Messages] SET Message_status=@status,Message=@message WHERE Message_id=@message_id";
                         cmd = new SqlCommand(query, conn);
                         cmd.Parameters.AddWithValue(@"message_id", m.Message_id);
                         cmd.Parameters.AddWithValue(@"status", m.Message_status);
-
-                        //cmd.Prepare();
+                        cmd.Parameters.AddWithValue(@"message", m.Msg);
                         cmd.ExecuteNonQuery();
 
                         cmd.Dispose();
@@ -1021,7 +1020,6 @@ namespace IcebreakServices
                         Date = (string)dataReader.GetValue(7),
                         Time = (string)dataReader.GetValue(8),
                         Meeting_Places = (string)dataReader.GetValue(9)
-
                     });
                 }
                 
