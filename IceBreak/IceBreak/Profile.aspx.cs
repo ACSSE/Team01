@@ -56,10 +56,7 @@ namespace IceBreak
             String check = dbs.userExists(user);
             string usr = (string)Session["USER"];
             usrname = usr;
-            String picUrl = "http://icebreak.azurewebsites.net/images/events/event_icons-" + usr + ".png";
 
-
-         
 
             IcebreakServices.User u = dbs.getUser(usrname);
             

@@ -65,11 +65,15 @@
       </nav> 
     </div>
 
-        <div id="sidebar">
-            <ul class="sidebar-nav">
-                <li><span class=""></span></li>
-              
-                <li id="pp" class="img-circle" runat="server" style="color:white"><img class="img-circle" style="width:60px;height:60px;position:relative;margin-top:5px" />Tevin Moodley</li>
+        <div id="sidebar">  
+          <div id="DIV" class="img-circle" style="align-content:center;color:white" runat="server">
+               <img class="img-circle"  />
+               <label class="Sidebarname" runat="server" style="font-family: 'Bookman Old Style';font-size: 10pt;margin-bottom:5%;margin-left:8%;"></label>
+         </div>
+            
+          
+            <ul class="sidebar-nav" style="position:inherit">              
+                 <%--<li id="DIV" class="img-circle" runat="server"><img class="img-circle"  /></li>   --%>     
                 <li><a href="Profile.aspx"><span class="glyphicon glyphicon-user"></span> View Full Profile</a></li>
                 <li><a href="#"><span class="glyphicon glyphicon-book"></span> History</a></li>
                  <li><a href="#"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>

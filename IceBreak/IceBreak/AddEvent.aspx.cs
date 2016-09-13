@@ -13,18 +13,18 @@ namespace IceBreak
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            //if (Session["LEVEL"] == null)
-            //{
-            //    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login');window.location ='index.aspx';", true);
-            //}
-            //else
-            //{
-            //    int check = (int)Session["LEVEL"];
-            //    if (check != 1)
-            //    {
-            //        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
-            //    }
-            //}
+            if (Session["LEVEL"] == null)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login');window.location ='index.aspx';", true);
+            }
+            else
+            {
+                int check = (int)Session["LEVEL"];
+                if (check != 1)
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
+                }
+            }
             meeting_place_1.Style.Add("display", "none");
             meeting_place_2.Style.Add("display", "none");
             meeting_place_3.Style.Add("display", "none");
@@ -78,7 +78,9 @@ namespace IceBreak
             string EventAddress = eventaddress.Value;
             string EventDescrip = eventdescrip.Value;
             string EventTime = time.Value;
+            string EventEndTime = end_time.Value;
             string EventDate = date.Value;
+            string EventGps = gps.Value;
             string mp1 = meeting_place_1.Value;
             string mp2 = meeting_place_2.Value;
             string mp3 = meeting_place_3.Value;
@@ -103,6 +105,15 @@ namespace IceBreak
             else
             {
                 address_span.Style.Add("display", "none");
+            }
+            if (String.IsNullOrEmpty(EventGps))
+            {
+                gps_span.Style.Add("display", "normal");
+                return;
+            }
+            else
+            {
+                gps_span.Style.Add("display", "none");
             }
             if (String.IsNullOrEmpty(EventDescrip))
             {
@@ -131,7 +142,16 @@ namespace IceBreak
             {
                 time_span.Style.Add("display", "none");
             }
-            if(int.Parse(NumEvents.SelectedValue) < 0)
+            if (String.IsNullOrEmpty(EventEndTime))
+            {
+                end_time_span.Style.Add("display", "normal");
+                return;
+            }
+            else
+            {
+                end_time_span.Style.Add("display", "none");
+            }
+            if (int.Parse(NumEvents.SelectedValue) < 0)
             {
                 meeting_span.Style.Add("display", "normal");
                 return;
@@ -166,9 +186,11 @@ namespace IceBreak
             IcebreakServices.Event evnt = new IcebreakServices.Event();
             evnt.Title = EventName;
             evnt.Address = EventAddress;
+            evnt.Gps_location = EventGps;
             evnt.Description = EventDescrip;
             evnt.Date = EventDate;
             evnt.Time = EventTime;
+            evnt.EndTime = EventEndTime;
             evnt.Meeting_Places = meetingplace;
 
             DBServerTools dbs = new DBServerTools();
