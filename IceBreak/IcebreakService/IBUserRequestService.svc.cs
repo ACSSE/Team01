@@ -783,5 +783,17 @@ namespace IcebreakServices
         {
             return db.getEvent(event_id);
         }
+
+        [WebGet(ResponseFormat = WebMessageFormat.Json)]
+        public void getUsersIcebreakCount()
+        {
+            //if(HttpContext.Current.Request["getUsersIcebreakCountCallback"]!=null)
+                
+            //string response = "getUsersIcebreakCount([{" + db.getUsersIcebreakCount() + "}])";
+            string response = "getUsersIcebreakCount({var1:0,var2:1,var3:2});";
+            //WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+            HttpContext.Current.Response.ContentType = "text/plain";
+            HttpContext.Current.Response.Write(response);
+        }
     }
 }

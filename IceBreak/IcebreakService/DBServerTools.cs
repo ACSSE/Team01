@@ -1074,5 +1074,85 @@ namespace IcebreakServices
             }
             return "isValidUser=" + isValidUser;
         }
+
+        //Stats stuff
+        public string getUsersIcebreakCount()
+        {
+            string graph_data="";
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM dbo.Users", conn);
+                dataReader = cmd.ExecuteReader();
+
+                List<string> users = new List<string>();
+
+                while (dataReader.Read())
+                {
+                    string name = "";
+                    string fname = Convert.IsDBNull(dataReader.GetValue(0)) ? "X" : Convert.ToString(dataReader.GetValue(0));
+                    string lname = Convert.IsDBNull(dataReader.GetValue(1)) ? "X" : Convert.ToString(dataReader.GetValue(1));
+                    string username = Convert.IsDBNull(dataReader.GetValue(4)) ? "X" : Convert.ToString(dataReader.GetValue(4));
+                    
+                    //Get rid of empties
+                    fname = isEmpty(fname) ? "X" : fname;
+                    lname = isEmpty(lname) ? "X" : lname;
+                    if (fname.Equals("X") || lname.Equals("X"))
+                        name = username;
+                    else
+                        name = fname + " " + lname;
+
+                    users.Add(username + ";" + name);
+                }
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                foreach (string usr in users)
+                {
+                    string username = usr.Split(';')[0];
+                    string name = usr.Split(';')[1];
+                    graph_data += name + ":" + getUserIcebreakCount(username) + ";";
+                }
+
+                if (graph_data.Contains(";"))
+                    return graph_data.Substring(0, graph_data.Length - 1);//remove last ;
+                else return graph_data;
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        public int getUserIcebreakCount(string username)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM dbo.Messages WHERE Message_sender=@usr AND Message_status>100", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd.Parameters.AddWithValue(@"usr", username);
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while(dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                return 0;
+            }
+        }
     }
 }

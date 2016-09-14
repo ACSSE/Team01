@@ -126,5 +126,13 @@ namespace IcebreakServices
         [OperationContract]
         [WebGet(UriTemplate = "/getUserContacts", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         List<User> getUserContacts();
+
+        //Stats
+        [OperationContract]
+        [WebGet(
+            UriTemplate = "/getUsersIcebreakCount",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.WrappedResponse)]
+        void getUsersIcebreakCount();
     }
 }

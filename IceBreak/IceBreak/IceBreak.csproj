@@ -143,6 +143,7 @@
     <None Include="Properties\PublishProfiles\icebreak - Web Deploy.pubxml" />
     <Content Include="scripts\jquery.backstretch.min.js" />
     <Content Include="scripts\scripts.js" />
+    <Content Include="stats.aspx" />
     <Content Include="stylesheets\addeventform.css">
       <DependentUpon>addeventform.scss</DependentUpon>
     </Content>
@@ -179,7 +180,9 @@
     <Content Include="stylesheets\sidebar.css" />
     <None Include="stylesheets\style.scss" />
     <Content Include="ViewEvent.aspx" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddEvent.aspx.cs">
@@ -218,6 +221,13 @@
       <DependentUpon>Profile.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="stats.aspx.cs">
+      <DependentUpon>stats.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="stats.aspx.designer.cs">
+      <DependentUpon>stats.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ViewEvent.aspx.cs">
       <DependentUpon>ViewEvent.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
