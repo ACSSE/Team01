@@ -1154,5 +1154,95 @@ namespace IcebreakServices
                 return 0;
             }
         }
+
+        public bool addMeta(Metadata metadata)
+        {
+            try
+            {
+                conn = new SqlConnection(dbConnectionString);
+
+                string query = "INSERT INTO [dbo].[Metadata] VALUES(@entry_name,@entry_data)";
+                SqlCommand cmd = new SqlCommand(query,conn);
+
+                cmd.Parameters.AddWithValue(@"entry_name", metadata.Entry);
+                cmd.Parameters.AddWithValue(@"entry_data", metadata.Meta);
+
+                cmd.ExecuteNonQuery();
+
+                cmd.Dispose();
+                conn.Close();
+                return true;
+            }
+            catch(Exception e)
+            {
+                addError(ErrorCodes.EMETA_ADD, e.Message, "addMeta");
+            }
+            return false;
+        }
+
+        public bool updateMeta(Metadata meta)
+        {
+            try
+            {
+                conn = new SqlConnection(dbConnectionString);
+
+                string query = "UPDATE [dbo].[Metadata] SET Metadata_entry_name=@entry,Metadata_entry_data=@data WHERE "+
+                    "Metadata_entry_name=@entry";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue(@"entry",meta.Entry);
+                cmd.Parameters.AddWithValue(@"data", meta.Meta);
+
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+                conn.Close();
+                return true;
+            }
+            catch(Exception e)
+            {
+                addError(ErrorCodes.EMETA_UPD, e.Message, "updateMeta");
+            }
+            return false;
+        }
+
+        public Metadata getMeta(string record)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Metadata] WHERE Metadata_entry_name=@entry", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd.Parameters.AddWithValue(@"entry", record);
+                
+                dataReader = cmd.ExecuteReader();
+                dataReader.Read();
+
+                string entry="", meta="";
+                var entr = dataReader.GetValue(0);
+                if (Convert.IsDBNull(entr))
+                {
+                    return new Metadata() { Entry = "null", Meta = "Error:" + Convert.ToString(ErrorCodes.EDMD_NOT_SET) };
+                }else entry = Convert.ToString(entr);
+                var data = dataReader.GetValue(1);
+                if (Convert.IsDBNull(data))
+                {
+                    return new Metadata() { Entry = "null", Meta = "Error:" + Convert.ToString(ErrorCodes.EDMD_NOT_SET) };
+                }else meta = Convert.ToString(data);
+
+                Metadata metadata = new Metadata();
+                metadata.Entry = entry;
+                metadata.Meta = meta;
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return metadata;
+            }
+            catch (Exception e)
+            {
+                return new Metadata() { Entry="null",Meta=e.Message};
+            }
+        }
     }
 }

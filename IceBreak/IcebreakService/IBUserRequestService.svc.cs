@@ -129,12 +129,19 @@ namespace IcebreakServices
                 if (name[0] == delim)
                     name = name.Substring(1);//Remove first slash if it exists
 
+                //Write file data
                 string[] dirs = name.Split(delim);//get directory structure
                 string dir = "";
                 for (int i = 0; i < dirs.Length - 1; i++)//last element would be the filename
                     dir += dirs[i] + '/';
                 var path = Path.Combine(HostingEnvironment.MapPath("~/images/" + dir), dirs[dirs.Length - 1]);//Path.Combine(@"C:\UploadedImages\" + name);
                 File.WriteAllBytes(path, bytes);
+
+                //Write Metadata
+                TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                int since_epoch = (int)t.TotalSeconds;
+                Metadata meta = new Metadata() { Entry=dir+'/'+dirs[dirs.Length-1],Meta=Convert.ToString(since_epoch)};
+                db.addMeta(meta);
 
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
                 WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
@@ -794,6 +801,12 @@ namespace IcebreakServices
             //WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
             HttpContext.Current.Response.ContentType = "text/plain";
             HttpContext.Current.Response.Write(response);
+        }
+
+        public Metadata getMeta(string record)
+        {
+            record = record.Replace('|','/');
+            return db.getMeta(record);
         }
     }
 }
