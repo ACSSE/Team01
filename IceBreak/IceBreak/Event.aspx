@@ -25,6 +25,9 @@
 	</div>
 </div>
 </a>
+<a id="EditButton" href="YourEvents.aspx" runat="server">
+
+</a>
 
     <script>
         function startTime() {

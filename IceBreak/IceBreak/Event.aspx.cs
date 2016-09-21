@@ -13,7 +13,20 @@ namespace IceBreak
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-           // Page.ClientScript.RegisterStartupScript(this.GetType(),"onLoad", "<script type='text/javascript'> startTime();</script>", true);
+
+            if (Session["LEVEL"] != null)
+            {
+                int check = (int)Session["LEVEL"];
+                if (check == 1)
+                {
+                    EditButton.InnerHtml = "<div class='floatingEditContainer'> " +
+                       " <div class='actionButton'>" +
+                          "<span class='glyphicon glyphicon-pencil glyphicon-center' style='font-size:x-large;color:white;'></span>" +
+                         "</div>" +
+                        "</div>";
+                }
+            }
+            // Page.ClientScript.RegisterStartupScript(this.GetType(),"onLoad", "<script type='text/javascript'> startTime();</script>", true);
 
             DBServerTools dbs = new DBServerTools();
 

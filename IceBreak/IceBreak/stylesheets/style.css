@@ -30,10 +30,15 @@
   padding-right: 0px;
   padding-left: 0px; }
 
-.floatingContainer {
+.floatingEditContainer {
   bottom: 2em;
   position: fixed;
   right: 6em; }
+
+.floatingContainer {
+  bottom: 2em;
+  position: fixed;
+  right: 12em; }
 
 .actionButton {
   background-color: #59D0F7;

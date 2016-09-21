@@ -28,11 +28,11 @@
                        </div>
                         <div class="form-group" style="text-align:left">
                              <label for="EventAddress">Event Address</label><span id="address_span" runat="server" style="color:red; display:none"> - Please enter your event address.</span>
-                             <input type="text" id="eventaddress" name="eventaddress"  placeholder="Use Google Map to enter a location" runat="server" disabled="disabled"/>
+                             <input type="text" id="eventaddress" name="eventaddress" disabled placeholder="Use Google Map to enter a location" runat="server"/>
                        </div>
                          <div class="form-group" style="text-align:left">
                              <label for="gps">GPS Coordinates</label><span id="gps_span" runat="server" style="color:red; display:none"> - Please enter your gps coordinates.</span>
-                             <input id="gps" type="text" name="gps" placeholder="enter your gps coordinates..." runat="server" disabled="disabled"/>
+                             <input id="gps" type="text" name="gps" disabled placeholder="enter your gps coordinates..." runat="server" />
                        </div>
                         <div class="form-group" style="text-align:left">
                             <label for="EventDescription">Event Description</label><span id="descrip_span" runat="server" style="color:red; display:none"> - Please enter your event description.</span>
@@ -149,9 +149,10 @@
                marker.setVisible(true);
 
                document.getElementById('gps').value = place.geometry.location;
-               document.getElementById('eventaddress').value = place.address_components;
+
+               document.getElementById('eventaddress').value = place.formatted_address;
+
                var address = '';
-               var address2 = '';
                if (place.address_components) {
                    address = [
                      (place.address_components[0] && place.address_components[0].short_name || ''),
@@ -160,7 +161,6 @@
                    ].join(' ');
                }
                
-               document.getElementById('eventaddress').value = place.formatted_address;
                infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
                infowindow.open(map, marker);
            });
