@@ -13,18 +13,19 @@ namespace IceBreak
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["LEVEL"] == null)
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login');window.location ='index.aspx';", true);
-            }
-            else
-            {
-                int check = (int)Session["LEVEL"];
-                if (check != 1)
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
-                }
-            }
+            //if (Session["LEVEL"] == null)
+            //{
+            //    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login');window.location ='index.aspx';", true);
+            //}
+            //else
+            //{
+            //    int check = (int)Session["LEVEL"];
+            //    if (check != 1)
+            //    {
+            //        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
+            //    }
+            //}
+            eventname.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
             meeting_place_1.Style.Add("display", "none");
             meeting_place_2.Style.Add("display", "none");
             meeting_place_3.Style.Add("display", "none");

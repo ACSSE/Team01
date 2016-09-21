@@ -10,25 +10,13 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
     
-    <div id="page-content-wrapper" ng-app="">
+    <div id="page-content-wrapper">
         
         <div class="register-container container">
             <div class="row">
                  <div class="maps span5">
-                     <input id="pac-input" ng-model="Address" class="controls" type="text" placeholder="Enter a location"/>
-                        <div id="type-selector" class="controls">
-                          <input type="radio" name="type" id="changetype-all" checked="checked"/>
-                          <label for="changetype-all">All</label>
-
-                          <input type="radio" name="type" id="changetype-establishment"/>
-                          <label for="changetype-establishment">Establishments</label>
-
-                          <input type="radio" name="type" id="changetype-address"/>
-                          <label for="changetype-address">Addresses</label>
-
-                          <input type="radio" name="type" id="changetype-geocode"/>
-                          <label for="changetype-geocode">Geocodes</label>
-                        </div>
+                     <input id="pac-input" " class="controls" type="text" placeholder="Enter a location"/>
+                       
                         <div id="map"></div>
                       
                  </div>
@@ -36,15 +24,15 @@
                         <h2>Add Event To <strong style="color:#59D0F7">IceBreak</strong></></h2>
                         <div class="form-group" style="text-align:left">
                             <label for="eventname"  runat="server">Event Name</label><span id="lbl_name" runat="server" style="color:red; display:none"> - Please enter your event name.</span>
-                            <input type="text" id="eventname" name="eventname" placeholder="enter your event name..." runat="server"/>
+                            <input type="text" id="eventname" name="eventname" placeholder="enter your event name..." runat="server" onkeydown = "return (event.keyCode!=13);"/>
                        </div>
                         <div class="form-group" style="text-align:left">
                              <label for="EventAddress">Event Address</label><span id="address_span" runat="server" style="color:red; display:none"> - Please enter your event address.</span>
-                             <input type="text" id="eventaddress" name="eventaddress" ng-model="Address" placeholder="enter your event address..." value="{{Address}}" runat="server"/>
+                             <input type="text" id="eventaddress" name="eventaddress"  placeholder="Use Google Map to enter a location" runat="server" disabled="disabled"/>
                        </div>
                          <div class="form-group" style="text-align:left">
                              <label for="gps">GPS Coordinates</label><span id="gps_span" runat="server" style="color:red; display:none"> - Please enter your gps coordinates.</span>
-                             <input id="gps" type="text" name="gps" placeholder="enter your gps coordinates..." runat="server"/>
+                             <input id="gps" type="text" name="gps" placeholder="enter your gps coordinates..." runat="server" disabled="disabled"/>
                        </div>
                         <div class="form-group" style="text-align:left">
                             <label for="EventDescription">Event Description</label><span id="descrip_span" runat="server" style="color:red; display:none"> - Please enter your event description.</span>
@@ -161,8 +149,9 @@
                marker.setVisible(true);
 
                document.getElementById('gps').value = place.geometry.location;
-
+               document.getElementById('eventaddress').value = place.address_components;
                var address = '';
+               var address2 = '';
                if (place.address_components) {
                    address = [
                      (place.address_components[0] && place.address_components[0].short_name || ''),
@@ -170,7 +159,8 @@
                      (place.address_components[2] && place.address_components[2].short_name || '')
                    ].join(' ');
                }
-
+               
+               document.getElementById('eventaddress').value = place.formatted_address;
                infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
                infowindow.open(map, marker);
            });
