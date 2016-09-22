@@ -819,6 +819,10 @@ namespace IcebreakServices
                         user.Fname = " ";
                     if (isEmpty(user.Lname))
                         user.Lname = " ";
+                    if (isEmpty(user.Fb_token))
+                        user.Fb_token = "";
+                    if (isEmpty(user.Fb_id))
+                        user.Fb_id = "";
 
                     cmd.Parameters.AddWithValue(@"fname", user.Fname);
                     cmd.Parameters.AddWithValue(@"lname", user.Lname);
@@ -1134,8 +1138,9 @@ namespace IcebreakServices
             {
                 conn.Open();
                 //Query user
-                cmd = new SqlCommand("SELECT * FROM dbo.Messages WHERE Message_sender=@usr AND Message_status>100", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd = new SqlCommand("SELECT * FROM dbo.Messages WHERE Message_sender=@usr AND Message_status>@stat", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
                 cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
                 int count = 0;
                 dataReader = cmd.ExecuteReader();
                 while(dataReader.Read())
@@ -1155,13 +1160,15 @@ namespace IcebreakServices
             }
         }
 
+
         public bool addMeta(Metadata metadata)
         {
             try
             {
                 conn = new SqlConnection(dbConnectionString);
+                conn.Open();
 
-                string query = "INSERT INTO [dbo].[Metadata] VALUES(@entry_name,@entry_data)";
+                string query = "INSERT INTO [dbo].[Metadata](Metadata_entry_name,Metadata_entry_data) VALUES(@entry_name,@entry_data)";
                 SqlCommand cmd = new SqlCommand(query,conn);
 
                 cmd.Parameters.AddWithValue(@"entry_name", metadata.Entry);
@@ -1185,6 +1192,7 @@ namespace IcebreakServices
             try
             {
                 conn = new SqlConnection(dbConnectionString);
+                conn.Open();
 
                 string query = "UPDATE [dbo].[Metadata] SET Metadata_entry_name=@entry,Metadata_entry_data=@data WHERE "+
                     "Metadata_entry_name=@entry";

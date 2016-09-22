@@ -140,7 +140,11 @@ namespace IcebreakServices
                 //Write Metadata
                 TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
                 int since_epoch = (int)t.TotalSeconds;
-                Metadata meta = new Metadata() { Entry=dir+'/'+dirs[dirs.Length-1],Meta=Convert.ToString(since_epoch)};
+                Metadata meta = new Metadata()
+                {
+                    Entry=(dir+dirs[dirs.Length-1]).Replace("/","|"),
+                    Meta ="dmd="+Convert.ToString(since_epoch)
+                };
                 db.addMeta(meta);
 
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
@@ -218,7 +222,7 @@ namespace IcebreakServices
 
             inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
             string[] usr_details = inbound_payload.Split('&');
-            if (usr_details.Length >= 5)
+            if (usr_details.Length >= 3)
             {
                 foreach (string kv_pair in usr_details)
                 {
@@ -805,7 +809,6 @@ namespace IcebreakServices
 
         public Metadata getMeta(string record)
         {
-            record = record.Replace('|','/');
             return db.getMeta(record);
         }
     }

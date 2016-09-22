@@ -130,8 +130,7 @@ namespace IcebreakServices
         [OperationContract]
         [WebGet(
             UriTemplate = "/getMeta/{record}",
-            ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.WrappedResponse)]
+            ResponseFormat = WebMessageFormat.Json)]
         Metadata getMeta(string record);
 
         //Stats
@@ -139,7 +138,7 @@ namespace IcebreakServices
         [WebGet(
             UriTemplate = "/getUsersIcebreakCount",
             ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.WrappedResponse)]
+            BodyStyle = WebMessageBodyStyle.WrappedResponse)] 
         void getUsersIcebreakCount();
     }
 }
