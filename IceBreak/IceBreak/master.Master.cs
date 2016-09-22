@@ -148,7 +148,7 @@ namespace IceBreak
             dbs.registerUser(user);
             String check = dbs.registerUser(user);
 
-            if (check.ToLower().Contains("Sucess"))
+            if (check.ToLower().Contains("success"))
             {
                 Session["USER"] = usrname;
                 login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + usrname + "</a>";

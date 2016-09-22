@@ -27,7 +27,7 @@ namespace IcebreakServices
             db = new DBServerTools();
         }
 
-        public void addEvent(Stream streamdata)
+        public string addEvent(Stream streamdata)
         {
             Event ev = new Event();
             StreamReader reader = new StreamReader(streamdata);
@@ -47,8 +47,33 @@ namespace IcebreakServices
                         string var = kv_pair.Split('=')[0];
                         string val = kv_pair.Split('=')[1];
 
-                        switch (var)
+                        switch (var.ToLower())
                         {
+                            case "access_code":
+                                int code;
+                                if (int.TryParse(val, out code))
+                                {
+                                    ev.AccessCode = int.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to integer.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
+                            case "date":
+                                ev.Date = val;
+                                break;
+                            case "end_time":
+                                ev.EndTime = val;
+                                break;
+                            case "time":
+                                ev.Time = val;
+                                break;
+                            case "meeting_places":
+                                ev.Meeting_Places = val;
+                                break;
                             case "title":
                                 ev.Title = val;
                                 break;
@@ -72,7 +97,7 @@ namespace IcebreakServices
                                 {
                                     response = "Error: Cannot convert " + val + " to integer.";
                                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
-                                    return;
+                                    return response;
                                 }
                         }
                     }
@@ -83,23 +108,26 @@ namespace IcebreakServices
                         break;
                     }
                 }
-                //Add event to DB
+                //Add Event to DB
                 string exec_res = db.addEvent(ev);
 
-                List<Event> events = db.getEvents();
-                string eventId = "";
-                foreach(Event e in events)
-                {
-                    //TODO: validate with user admin attribute for event
-                    if(e.Title.Equals(ev.Title) && e.Gps_location.Equals(ev.Gps_location) && e.Radius==ev.Radius)
-                    {
-                        eventId = Convert.ToString(e.Id);
-                    }
-                }
                 if(exec_res.ToLower().Contains("success"))
                 {
-                    response = "Success: " + exec_res.ToString();
-                    WebOperationContext.Current.OutgoingResponse.Headers.Add("req_event_icon", eventId);
+
+                    List<Event> events = db.getEvents();
+                    string eventId = "";
+                    foreach (Event e in events)
+                    {
+                        //TODO: validate with user admin attribute for event
+                        //if(e.Title.Equals(ev.Title) && e.Gps_location.Equals(ev.Gps_location) && e.Radius==ev.Radius)
+                        if (e.isEqualTo(ev))
+                        {
+                            eventId = Convert.ToString(e.Id);
+                        }
+                    }
+
+                    response = exec_res;
+                    WebOperationContext.Current.OutgoingResponse.Headers.Add("event_id", eventId);
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
                 }
                 else
@@ -113,6 +141,111 @@ namespace IcebreakServices
                 response = "Error: Invalid token count";
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
             }
+            return response;
+        }
+
+        public string updateEvent(Stream streamdata)
+        {
+            Event ev = new Event();
+            StreamReader reader = new StreamReader(streamdata);
+            string inbound_payload = reader.ReadToEnd();
+            string response = "";
+            reader.Close();
+            reader.Dispose();
+
+            inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
+            string[] usr_details = inbound_payload.Split('&');
+            if (usr_details.Length == 5)
+            {
+                foreach (string kv_pair in usr_details)
+                {
+                    if (kv_pair.Contains('='))
+                    {
+                        string var = kv_pair.Split('=')[0];
+                        string val = kv_pair.Split('=')[1];
+
+                        switch (var.ToLower())
+                        {
+                            case "access_code":
+                                int code;
+                                if (int.TryParse(val, out code))
+                                {
+                                    ev.AccessCode = int.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to integer.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
+                            case "date":
+                                ev.Date = val;
+                                break;
+                            case "end_time":
+                                ev.EndTime = val;
+                                break;
+                            case "time":
+                                ev.Time = val;
+                                break;
+                            case "meeting_places":
+                                ev.Meeting_Places = val;
+                                break;
+                            case "title":
+                                ev.Title = val;
+                                break;
+                            case "description":
+                                ev.Description = val;
+                                break;
+                            case "address":
+                                ev.Address = val;
+                                break;
+                            case "gps":
+                                ev.Gps_location = val;
+                                break;
+                            case "radius":
+                                int radius;
+                                if (int.TryParse(val, out radius))
+                                {
+                                    ev.Radius = int.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to integer.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
+                        }
+                    }
+                    else
+                    {
+                        response = "Error: Broken key-value pair";
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                        break;
+                    }
+                }
+                //Update Event on DB
+                string exec_res = db.updateEvent(ev);
+                
+                if (exec_res.ToLower().Contains("success"))
+                {
+                    response = exec_res;
+                    //WebOperationContext.Current.OutgoingResponse.Headers.Add("req_event_icon", eventId);
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                }
+                else
+                {
+                    response = "Query Execution Error: " + exec_res;
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                }
+            }
+            else
+            {
+                response = "Error: Invalid token count";
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+            }
+            return response;
         }
 
         public string imageUpload(string name, Stream fileStream)

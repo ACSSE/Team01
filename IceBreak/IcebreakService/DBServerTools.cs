@@ -26,6 +26,7 @@ namespace IcebreakServices
         public static string NO_OCC = "<No occupation specified>";
         public static string NO_BIO = "<No bio specified>";
         public static string NO_PHRASE = "<No catchphrase specified>";
+        public static string NO_GENDER = "Unspecified";
 
         private string dbConnectionString = "Server=tcp:icebreak-server.database.windows.net,1433;Initial Catalog=IcebreakDB;Persist Security Info=False;User ID=superuser;Password=Breakingtheice42;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;";
         private SqlConnection conn;
@@ -806,7 +807,7 @@ namespace IcebreakServices
                     if (isEmpty(user.Username))
                         return "Error: Empty username";
                     if (isEmpty(user.Gender))
-                        return "Error: Empty gender";
+                        user.Gender = NO_GENDER;
                     if (isEmpty(user.Email))
                         user.Email = NO_EMAIL;
                     if (isEmpty(user.Catchphrase))
@@ -816,9 +817,9 @@ namespace IcebreakServices
                     if (isEmpty(user.Occupation))
                         user.Occupation = NO_OCC;
                     if (isEmpty(user.Fname))
-                        user.Fname = " ";
+                        user.Fname = "";
                     if (isEmpty(user.Lname))
-                        user.Lname = " ";
+                        user.Lname = "";
                     if (isEmpty(user.Fb_token))
                         user.Fb_token = "";
                     if (isEmpty(user.Fb_id))
@@ -859,6 +860,118 @@ namespace IcebreakServices
                     return updateUserDetails(user);//update user info instead
                 }
                 return exist_check;//most likely an exception was thrown if it gets here
+            }
+        }
+
+        public string updateEvent(Event ev)
+        {
+            try
+            {
+                conn = new SqlConnection(dbConnectionString);
+                SqlCommand cmd = null;
+
+                if(ev.Id<=0 || ev.AccessCode<=0)
+                {
+                    return "Error:Invalid event ID or access code.";
+                }
+                if(ev.AccessCode>0)
+                {
+                    string query = "UPDATE [dbo].[Events] SET access_id=@code WHERE event_id=@id AND access_id=@code";
+                    cmd = new SqlCommand(query,conn);
+                    cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
+                    cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.ExecuteNonQuery();
+                }
+                if (!isEmpty(ev.Address))
+                {
+                    string query = "UPDATE [dbo].[Events] SET event_address=@address  WHERE event_id=@id AND access_id=@code";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"address", ev.Address);
+                    cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
+                    cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.ExecuteNonQuery();
+                }
+                if (!isEmpty(ev.Date))
+                {
+                    string query = "UPDATE [dbo].[Events] SET date=@date  WHERE event_id=@id AND access_id=@code";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"date", ev.Date);
+                    cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
+                    cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.ExecuteNonQuery();
+                }
+                if (!isEmpty(ev.Description))
+                {
+                    string query = "UPDATE [dbo].[Events] SET event_description=@description  WHERE event_id=@id AND access_id=@code";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"description", ev.Description);
+                    cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
+                    cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.ExecuteNonQuery();
+                }
+                if (!isEmpty(ev.EndTime))
+                {
+                    string query = "UPDATE [dbo].[Events] SET event_end_time=@end_time  WHERE event_id=@id AND access_id=@code";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"end_time", ev.EndTime);
+                    cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
+                    cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.ExecuteNonQuery();
+                }
+                if (!isEmpty(ev.Gps_location))
+                {
+                    string query = "UPDATE [dbo].[Events] SET event_gps_location=@gps_location  WHERE event_id=@id AND access_id=@code";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"gps_location", ev.Gps_location);
+                    cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
+                    cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.ExecuteNonQuery();
+                }
+                if (!isEmpty(ev.Meeting_Places))
+                {
+                    string query = "UPDATE [dbo].[Events] SET event_meeting_places=@meeting_places  WHERE event_id=@id AND access_id=@code";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"meeting_places", ev.Meeting_Places);
+                    cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
+                    cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.ExecuteNonQuery();
+                }
+                if (ev.Radius>0)
+                {
+                    string query = "UPDATE [dbo].[Events] SET event_radius=@radius  WHERE event_id=@id AND access_id=@code";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"radius", ev.Radius);
+                    cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
+                    cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.ExecuteNonQuery();
+                }
+                if (!isEmpty(ev.Time))
+                {
+                    string query = "UPDATE [dbo].[Events] SET time=@time  WHERE event_id=@id AND access_id=@code";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"time", ev.Time);
+                    cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
+                    cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.ExecuteNonQuery();
+                }
+                if (!isEmpty(ev.Title))
+                {
+                    string query = "UPDATE [dbo].[Events] SET event_title=@title  WHERE event_id=@id AND access_id=@code";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"title", ev.Title);
+                    cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
+                    cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                cmd.Dispose();
+                conn.Close();
+
+                return "Success";
+            }
+            catch(Exception e)
+            {
+                return "Error:"+e.Message;
             }
         }
 

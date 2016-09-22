@@ -106,8 +106,14 @@ namespace IcebreakServices
             Method = "POST",
             UriTemplate = "/addEvent",
             BodyStyle = WebMessageBodyStyle.Bare)]
-        void addEvent(Stream streamdata);
+        string addEvent(Stream streamdata);
 
+        [OperationContract]
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "/updateEvent",
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        string updateEvent(Stream streamdata);
         /*[OperationContract]
         [WebInvoke(
             Method = "POST",

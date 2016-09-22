@@ -14,6 +14,33 @@
         private string date;
         private string meeting_places;
 
+        public bool isEqualTo(Event e)
+        {
+            bool equal = true;
+            if (!title.Equals(e.Title))
+                equal = false;
+            if (!description.Equals(e.Description))
+                equal = false;
+            if (!address.Equals(e.Address))
+                equal = false;
+            if (!radius.Equals(e.Radius))
+                equal = false;
+            if (!gps_location.Equals(e.Gps_location))
+                equal = false;
+            if (!access_code.Equals(e.AccessCode))
+                equal = false;
+            if (!time.Equals(e.Time))
+                equal = false;
+            if (!end_time.Equals(e.EndTime))
+                equal = false;
+            if (!date.Equals(e.Date))
+                equal = false;
+            if (!meeting_places.Equals(e.Meeting_Places))
+                equal = false;
+
+            return equal;
+        }
+
         public string Meeting_Places
         {
             get
