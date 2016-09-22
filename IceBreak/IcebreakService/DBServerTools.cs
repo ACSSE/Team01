@@ -26,6 +26,7 @@ namespace IcebreakServices
         public static string NO_OCC = "<No occupation specified>";
         public static string NO_BIO = "<No bio specified>";
         public static string NO_PHRASE = "<No catchphrase specified>";
+        public static string NO_GENDER = "Unspecified";
 
         private string dbConnectionString = "Server=tcp:icebreak-server.database.windows.net,1433;Initial Catalog=IcebreakDB;Persist Security Info=False;User ID=superuser;Password=Breakingtheice42;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;";
         private SqlConnection conn;
@@ -806,7 +807,7 @@ namespace IcebreakServices
                     if (isEmpty(user.Username))
                         return "Error: Empty username";
                     if (isEmpty(user.Gender))
-                        return "Error: Empty gender";
+                        user.Gender = NO_GENDER;
                     if (isEmpty(user.Email))
                         user.Email = NO_EMAIL;
                     if (isEmpty(user.Catchphrase))

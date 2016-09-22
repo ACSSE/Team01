@@ -102,82 +102,70 @@ namespace IceBreak
         }
         protected void SignUp(object sender, EventArgs e)
         {
-            string name = txtName.Value;
-            string lastname = txtLastName.Value;
-            string email = txtemail.Value;
-            string usrname = txtUsrname.Value;
-            string pass = txtPass.Value;
-            if (String.IsNullOrEmpty(name))
-            {
-                NameBox.Attributes.Add("class", "form-inline has-error has-feedback");
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
-                return;
-            }
-            if (String.IsNullOrEmpty(lastname))
-            {
-                lastNameBox.Attributes.Add("class", "form-inline has-error has-feedback");
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
-                return;
-            }
-            if (String.IsNullOrEmpty(email))
-            {
-                EmailBox.Attributes.Add("class", "form-inline has-error has-feedback");
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
-                return;
-            }
-            if (String.IsNullOrEmpty(usrname))
-            {
-                UsernameSignupBox.Attributes.Add("class", "form-inline has-error has-feedback");
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
-                return;
-            }
-            if (String.IsNullOrEmpty(pass))
-            {
-                PasswordSignupBox.Attributes.Add("class", "form-inline has-error has-feedback");
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
-                return;
-            }
-            User user = new User();
-            user.Fname = name;
-            user.Lname = lastname;
-            user.Email = email;
-            user.Username = usrname;
-            user.Password = pass;
-
-            DBServerTools dbs = new DBServerTools();
-            dbs.registerUser(user);
-            String check = dbs.registerUser(user);
-
-            if (check.ToLower().Contains("Sucess"))
-            {
-                Session["USER"] = usrname;
-                login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + usrname + "</a>";
-            }
-            else
-            {
-                txtInvalid.Style.Clear();
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "loginModal", "$('#loginModal').modal();", true);
-            }
+                DBServerTools dbs = new DBServerTools();
+                string name = txtName.Value;
+                string lastname = txtLastName.Value;
+                string email = txtemail.Value;
+                string usrname = txtUsrname.Value;
+                string pass = txtPass.Value;
+                if (String.IsNullOrEmpty(name))
+                {
+                    NameBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                    return;
+                }
+                if (String.IsNullOrEmpty(lastname))
+                {
+                    lastNameBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                    return;
+                }
+                if (String.IsNullOrEmpty(email))
+                {
+                    EmailBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                    return;
+                }
+                if (String.IsNullOrEmpty(usrname))
+                {
+                    UsernameSignupBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                    return;
+                }
+                if (String.IsNullOrEmpty(pass))
+                {
+                    PasswordSignupBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                    return;
+                }
 
 
+                User user = new User();
+                user.Fname = name;
+                user.Lname = lastname;
+                user.Email = email;
+                user.Username = usrname;
+                user.Password = pass;
+
+
+            String check=dbs.registerUser(user);
+            
+                
+              
+
+                if (check.ToLower().Contains("success"))
+                {
+                    Session["USER"] = usrname;
+                    login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + usrname + "</a>";
+                }
+                else
+                {
+                    txtInvalid.Style.Clear();
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "loginModal", "$('#loginModal').modal();", true);
+                }
+            }
 
         }
-        //protected void profilePic()
-        //{
-        //    DBServerTools dbs = new DBServerTools();
-        //    User user = new User();
-        //    string username = txtUsername.Value;
-        //    user.Username = username;
-        //    String check = dbs.userExists(user);
-        //    string usr = (string)Session["USER"];
-        //    username = usr;
-
-        //    dbs.getUser(username);
-        //    pp.InnerHtml += "<a href = '#'>" +
-        //                   "<img class='img-circle' src='http://icebreak.azurewebsites.net/images/profile/" + usr + ".png' alt=''/>" +
-        //               "</a>";
-
-        //}
+     
 
     }
-}
