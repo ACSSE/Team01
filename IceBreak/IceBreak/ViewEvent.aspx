@@ -4,6 +4,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
+    <div id="page-content-wrapper">
      <header class="image-bg-fluid-height" id ="EventImage" runat="server">
         
     </header>
@@ -27,5 +28,5 @@
     <!-- Fixed Height Image Aside -->
     <!-- Image backgrounds are set within the full-width-pics.css file. -->
     <aside class="image-bg-fixed-height"></aside>
-
+    </div>
 </asp:Content>

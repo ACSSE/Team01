@@ -451,6 +451,47 @@ namespace IcebreakServices
                 return "Exception: " + e.Message;
             }
         }
+        public List<Event> getEventsforUser(string username)
+        {
+            conn = new SqlConnection(dbConnectionString);
+
+            List<Event> events = new List<Event>();
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM dbo.Events WHERE username=@username", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd.Parameters.AddWithValue(@"username", username);
+
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    events.Add(new Event()
+                    {
+                        Id = (int)dataReader.GetValue(0),
+                        Title = (string)dataReader.GetValue(1),
+                        Description = (string)dataReader.GetValue(2),
+                        Address = (string)dataReader.GetValue(3),
+                        Radius = (int)dataReader.GetValue(4),
+                        Gps_location = (string)dataReader.GetValue(5),
+                        AccessCode = (int)dataReader.GetValue(6),
+                        Date = (string)dataReader.GetValue(7),
+                        Time = (string)dataReader.GetValue(8),
+                        EndTime = (string)dataReader.GetValue(10),
+                        Meeting_Places = (string)dataReader.GetValue(9)
+                    });
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                File.WriteAllLines(Path.Combine(HostingEnvironment.MapPath("~/logs/"), new DateTime() + ".log"), new String[] { e.Message });
+            }
+            return events;
+        }
 
         public List<User> getUsersAtEvent(int id)
         {
