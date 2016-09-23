@@ -1,6 +1,7 @@
 ﻿using IcebreakServices;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -13,16 +14,18 @@ namespace IceBreak
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["LEVEL"] == null)
+            if (Session["LEVEL"] == null || Session["USER"]==null)
             {
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login');window.location ='index.aspx';", true);
+                return;
             }
             else
             {
-                int check = (int)Session["LEVEL"];
-                if (check != 1)
+                int lvl = (int)Session["LEVEL"];
+                if (lvl < DBServerTools.CAN_EDIT_EVENTS)
                 {
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
+                    return;
                 }
             }
             meeting_place_1.Style.Add("display", "none");
@@ -30,6 +33,7 @@ namespace IceBreak
             meeting_place_3.Style.Add("display", "none");
             meeting_place_4.Style.Add("display", "none");
             meeting_place_5.Style.Add("display", "none");
+
             if (NumEvents.SelectedIndex > 0)
             {
                 int num = int.Parse(NumEvents.SelectedValue);
@@ -74,11 +78,24 @@ namespace IceBreak
         }
         protected void btnAdd_Event(object sender, EventArgs e)
         {
+            if (Session["LEVEL"] == null || Session["USER"] == null)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login to view this page.');window.location ='index.aspx';", true);
+                return;
+            }
+            int lvl = (int)Session["LEVEL"];
+            if (lvl < DBServerTools.CAN_EDIT_EVENTS)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have the necessary permissions to view this page.');window.location ='index.aspx';", true);
+                return;
+            }
+
             string EventName = eventname.Value;
             string EventAddress = eventaddress.Value;
             string EventDescrip = eventdescrip.Value;
             string EventTime = time.Value;
             string EventEndTime = end_time.Value;
+            string EventEndDate = event_end_date.Value;
             string EventDate = date.Value;
             string EventGps = gps.Value;
             string mp1 = meeting_place_1.Value;
@@ -142,6 +159,15 @@ namespace IceBreak
             {
                 time_span.Style.Add("display", "none");
             }
+            if (String.IsNullOrEmpty(EventEndDate))
+            {
+                end_date_span.Style.Add("display", "normal");
+                return;
+            }
+            else
+            {
+                end_date_span.Style.Add("display", "none");
+            }
             if (String.IsNullOrEmpty(EventEndTime))
             {
                 end_time_span.Style.Add("display", "normal");
@@ -182,27 +208,59 @@ namespace IceBreak
                 upload.Style.Add("display", "normal");
              //   return;
             }
-                   
+
+            /*EventDate = EventDate.Replace(" ","");//Remove whitespaces
+            EventDate = EventDate.Replace("/", "-");
+            EventDate = EventDate.Replace("\\", "-");
+            //EventDate = EventDate.Replace(":", "-");
+            //EventDate = EventDate.Replace("\\|", "-");
+            string[] date = EventDate.Split('-');*/
+            string str_start_date = EventDate + " " + EventTime;
+            ulong start_date = (ulong)(DateTime.ParseExact(str_start_date, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) - new DateTime(1970, 1, 1)).TotalSeconds;
+
+            string str_end_date = EventEndDate + " " + EventEndTime;
+            ulong end_date = (ulong)(DateTime.ParseExact(str_end_date, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) - new DateTime(1970, 1, 1)).TotalSeconds;
+
+            //ulong start_date = (ulong)(DateTime.Parse(EventDate) - new DateTime(1970, 1, 1)).TotalSeconds;//convert to seconds since epoch
+            //ulong end_date = (ulong)(DateTime.Parse(EventEndTime) - new DateTime(1970, 1, 1)).TotalSeconds;//convert to seconds since epoch
+            ulong now = (ulong)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+            if (start_date <= 0 || end_date<=0)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Start date and/or end date is invalid. Date must be in the future.');window.location ='index.aspx';", true);
+                return;
+            }
+            if (start_date <= now || end_date <= now)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Start date and/or end date is invalid. Date must be in the future.');window.location ='index.aspx';", true);
+                return;
+            }
+            if (start_date > end_date)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Start date and/or end date is invalid. End date must be after start date.');window.location ='index.aspx';", true);
+                return;
+            }
+
             IcebreakServices.Event evnt = new IcebreakServices.Event();
             evnt.Title = EventName;
             evnt.Address = EventAddress;
             evnt.Gps_location = EventGps;
             evnt.Description = EventDescrip;
-            evnt.Date = EventDate;
-            evnt.Time = EventTime;
-            evnt.EndTime = EventEndTime;
+            evnt.Date = Convert.ToUInt32(start_date);
+            evnt.AccessCode = 12345;//Fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            evnt.End_Date = Convert.ToUInt32(end_date);
             evnt.Meeting_Places = meetingplace;
+            evnt.Manager = Convert.ToString(Session["USER"]);
 
             DBServerTools dbs = new DBServerTools();
-            string check = dbs.addEvent(evnt);
+            string check = dbs.addEvent(evnt,lvl);
            
-            if(check.Contains("Success"))
+            if(check.ToLower().Contains("success"))
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You have successfully added an event');window.location ='Event.aspx';", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You have successfully created an event!');window.location ='Event.aspx';", true);
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You are not sucessful try again');", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Event creation unsuccessful. Try again.');", true);
             }
             
         }

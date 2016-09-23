@@ -36,6 +36,7 @@ namespace IceBreak
             }
             catch (WebException ex)
             {
+                dbs.addError(ErrorCodes.EEVENT, ex.Message, "ViewEvent.aspx[Page_Load]");
                 pageExists = false;
             }
 
@@ -50,9 +51,7 @@ namespace IceBreak
 
             EventDate.InnerHtml = "Date: "+evnt.Date;
 
-            EventStart.InnerHtml = "Start Time: " + evnt.Time;
-
-            EventEnd.InnerHtml = "End Time: " + evnt.EndTime;
+            EventEnd.InnerHtml = "End Date: " + evnt.End_Date;
 
             EventAddress.InnerHtml = "Address: " + evnt.Address;
 

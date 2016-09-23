@@ -21,6 +21,8 @@ namespace IcebreakServices
     public class IBUserRequestService : IIBUserRequestService
     {
         private DBServerTools db;
+        private static double _eQuatorialEarthRadius = 6378.1370D;
+        private static double _d2r = (Math.PI / 180D);
 
         public IBUserRequestService()
         {
@@ -63,14 +65,31 @@ namespace IcebreakServices
                                     return response;
                                 }
                             case "date":
-                                ev.Date = val;
-                                break;
-                            case "end_time":
-                                ev.EndTime = val;
-                                break;
-                            case "time":
-                                ev.Time = val;
-                                break;
+                                UInt32 date;
+                                if (UInt32.TryParse(val, out date))
+                                {
+                                    ev.Date = UInt32.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to long.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
+                            case "end_date":
+                                UInt32 end_date;
+                                if (UInt32.TryParse(val, out end_date))
+                                {
+                                    ev.End_Date = UInt32.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to long.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
                             case "meeting_places":
                                 ev.Meeting_Places = val;
                                 break;
@@ -86,7 +105,7 @@ namespace IcebreakServices
                             case "gps":
                                 ev.Gps_location = val;
                                 break;
-                            case "radius":
+                            /*case "radius":
                                 int radius;
                                 if (int.TryParse(val, out radius))
                                 {
@@ -98,7 +117,10 @@ namespace IcebreakServices
                                     response = "Error: Cannot convert " + val + " to integer.";
                                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                                     return response;
-                                }
+                                }*/
+                            case "manager":
+                                ev.Manager = val;
+                                break;
                         }
                     }
                     else
@@ -108,32 +130,44 @@ namespace IcebreakServices
                         break;
                     }
                 }
-                //Add Event to DB
-                string exec_res = db.addEvent(ev);
-
-                if(exec_res.ToLower().Contains("success"))
+                //Attempt to add Event to DB
+                if (!String.IsNullOrEmpty(ev.Manager))
                 {
+                    User mgr = db.getUser(ev.Manager);
+                    string exec_res = db.addEvent(ev,mgr.Access_level);
 
-                    List<Event> events = db.getEvents();
-                    string eventId = "";
-                    foreach (Event e in events)
+                    if (exec_res.ToLower().Contains("success"))
                     {
-                        //TODO: validate with user admin attribute for event
-                        //if(e.Title.Equals(ev.Title) && e.Gps_location.Equals(ev.Gps_location) && e.Radius==ev.Radius)
-                        if (e.isEqualTo(ev))
+                        List<Event> events = db.getAllEvents();
+                        string eventId = "";
+                        foreach (Event e in events)
                         {
-                            eventId = Convert.ToString(e.Id);
-                        }
-                    }
+                            //if(e.Title.Equals(ev.Title) && e.Gps_location.Equals(ev.Gps_location) && e.Radius==ev.Radius)
+                            if (e.isEqualTo(ev))
+                            {
+                                eventId = Convert.ToString(e.Id);
 
-                    response = exec_res;
-                    WebOperationContext.Current.OutgoingResponse.Headers.Add("event_id", eventId);
-                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
-                }
-                else
-                {
-                    response = "Query Execution Error: " + exec_res;
-                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                //Write Metadata
+                                TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                                ulong since_epoch = (ulong)t.TotalSeconds;
+                                Metadata meta = new Metadata()
+                                {
+                                    Entry = eventId,
+                                    Meta = "dmd=" + Convert.ToString(since_epoch)
+                                };
+                                db.addMeta(meta);
+                            }
+                        }
+
+                        response = exec_res;
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add("event_id", eventId);
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                    }
+                    else
+                    {
+                        response = "Query Execution Error: " + exec_res;
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                    }
                 }
             }
             else
@@ -166,6 +200,19 @@ namespace IcebreakServices
 
                         switch (var.ToLower())
                         {
+                            case "id":
+                                UInt32 id;
+                                if (UInt32.TryParse(val, out id))
+                                {
+                                    ev.Id = UInt32.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to long.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
                             case "access_code":
                                 int code;
                                 if (int.TryParse(val, out code))
@@ -180,14 +227,31 @@ namespace IcebreakServices
                                     return response;
                                 }
                             case "date":
-                                ev.Date = val;
-                                break;
-                            case "end_time":
-                                ev.EndTime = val;
-                                break;
-                            case "time":
-                                ev.Time = val;
-                                break;
+                                UInt32 date;
+                                if (UInt32.TryParse(val, out date))
+                                {
+                                    ev.Date = UInt32.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to long.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
+                            case "end_date":
+                                UInt32 end_date;
+                                if (UInt32.TryParse(val, out end_date))
+                                {
+                                    ev.End_Date = UInt32.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to long.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
                             case "meeting_places":
                                 ev.Meeting_Places = val;
                                 break;
@@ -203,7 +267,7 @@ namespace IcebreakServices
                             case "gps":
                                 ev.Gps_location = val;
                                 break;
-                            case "radius":
+                            /*case "radius":
                                 int radius;
                                 if (int.TryParse(val, out radius))
                                 {
@@ -215,7 +279,10 @@ namespace IcebreakServices
                                     response = "Error: Cannot convert " + val + " to integer.";
                                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                                     return response;
-                                }
+                                }*/
+                            case "manager":
+                                ev.Manager = val;
+                                break;
                         }
                     }
                     else
@@ -226,17 +293,33 @@ namespace IcebreakServices
                     }
                 }
                 //Update Event on DB
-                string exec_res = db.updateEvent(ev);
-                
-                if (exec_res.ToLower().Contains("success"))
+                if(!String.IsNullOrEmpty(ev.Manager))
                 {
-                    response = exec_res;
-                    //WebOperationContext.Current.OutgoingResponse.Headers.Add("req_event_icon", eventId);
-                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
-                }
-                else
+                    User mgr = db.getUser(ev.Manager);
+                    string exec_res = db.updateEvent(ev, mgr.Access_level);
+                    if (exec_res.ToLower().Contains("success"))
+                    {
+                        response = exec_res;
+                        //Write Metadata
+                        TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                        ulong since_epoch = (ulong)t.TotalSeconds;
+                        Metadata meta = new Metadata()
+                        {
+                            Entry = Convert.ToString(ev.Id),
+                            Meta = "dmd=" + Convert.ToString(since_epoch)
+                        };
+                        db.updateMeta(meta);
+                        //WebOperationContext.Current.OutgoingResponse.Headers.Add("req_event_icon", eventId);
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                    }
+                    else
+                    {
+                        response = "Query Execution Error: " + exec_res;
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                    }
+                }else
                 {
-                    response = "Query Execution Error: " + exec_res;
+                    response = "Error:Invalid Manager.";
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                 }
             }
@@ -508,7 +591,7 @@ namespace IcebreakServices
             //Process form submission
             Message new_msg = new Message();
             DateTime d = DateTime.Now;
-            new_msg.Message_time = String.Format("{0:yyyy-MM-dd H-mm-ss}",d); //d.Year + "/" + d.Month + "/" + d.Day + " " + d.TimeOfDay ;
+            new_msg.Message_time = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds; //d.Year + "/" + d.Month + "/" + d.Day + " " + d.TimeOfDay ;
             //Set other fields
             inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
             string[] msg_details = inbound_payload.Split('&');
@@ -716,9 +799,9 @@ namespace IcebreakServices
             }
         }
 
-        public List<Event> readEvents()
+        public List<Event> getAllEvents()
         {
-            return db.getEvents();
+            return db.getAllEvents();
         }
 
         public List<User> getUsersAtEvent(string eventId)
@@ -943,6 +1026,68 @@ namespace IcebreakServices
         public Metadata getMeta(string record)
         {
             return db.getMeta(record);
+        }
+
+        public static double HaversineInKM(double lat1, double long1, double lat2, double long2)
+        {
+            double dlong = (long2 - long1) * _d2r;
+            double dlat = (lat2 - lat1) * _d2r;
+            double a = Math.Pow(Math.Sin(dlat / 2D), 2D) + Math.Cos(lat1 * _d2r) * Math.Cos(lat2 * _d2r) * Math.Pow(Math.Sin(dlong / 2D), 2D);
+            double c = 2D * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1D - a));
+            double d = _eQuatorialEarthRadius * c;
+
+            return d;
+        }
+
+        public List<Event> getNearbyEvents(string lat, string lng, string strRange)
+        {
+            double meLat = 0.0, meLng=0.0, range=0.0;
+            if (double.TryParse(lat, out meLat))
+            {
+                meLat = double.Parse(lat);
+            }
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return null;
+            }
+            
+            if (double.TryParse(lng, out meLng))
+            {
+                meLng = double.Parse(lng);
+            }
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return null;
+            }
+            
+            if (double.TryParse(strRange, out range))
+            {
+                range = double.Parse(strRange);
+            }
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return null;
+            }
+
+            List<Event> valid_events = new List<Event>();
+            if(meLat!=0.0 && meLng!=0.0 && range!=0.0)
+            {
+                List<Event> events = db.getAllEvents();
+                foreach(Event e in events)
+                {
+                    Point ep = e.getOrigin();
+                    if (!ep.isZero())
+                    {
+                        double distance_km = HaversineInKM(meLat, meLng, ep.Lat, ep.Lng);
+                        if (distance_km <= range)
+                            valid_events.Add(e);
+                    }
+                }
+            }
+            return valid_events;
         }
     }
 }

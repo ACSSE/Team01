@@ -51,12 +51,16 @@
                             <textarea class="form-control" rows="4" id="eventdescrip" name="eventdescrip" placeholder="enter your event description..."  runat="server"></textarea>
                         </div>
                         <div class="form-group" style="text-align:left">
-                            <label for="Event Date ">Event Date</label><span id="date_span" runat="server" style="color:red; display:none"> - Please enter your event date.</span>
+                            <label for="Event Date ">Event Start Date</label><span id="date_span" runat="server" style="color:red; display:none"> - Please enter your event start date.</span>
                             <input type="date" id="date" name="date" runat="server"/>
                         </div>
                         <div class="form-group" style="text-align:left">
-                            <label for="Event Time">Event Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event time.</span>
+                            <label for="Event Time">Event Start Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event time.</span>
                             <input type="time" id="time" name="time" runat="server"/>
+                        </div>
+                        <div class="form-group" style="text-align:left">
+                            <label for="Event End Date ">Event End Date</label><span id="end_date_span" runat="server" style="color:red; display:none"> - Please enter your event end date.</span>
+                            <input type="date" id="event_end_date" name="event_end_date" runat="server"/>
                         </div>
                          <div class="form-group" style="text-align:left">
                             <label for="Event end time">Event End Time</label><span id="end_time_span" runat="server" style="color:red; display:none"> - Please enter your event end time.</span>

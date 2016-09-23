@@ -40,7 +40,7 @@
                   <ul class ="nav navbar-nav" id="list">
                       <li><a href="index.aspx">Home</a></li>
                       <li><a href="Event.aspx">Events</a></li>
-                      <li><a href="stats.aspx"></a>Statistics</li>
+                      <li><a href="stats.aspx">Statistics</a></li>
                   </ul>
 
                    <%--Right side of nav bar/menu  --%>

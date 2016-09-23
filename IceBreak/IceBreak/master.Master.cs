@@ -21,7 +21,7 @@ namespace IceBreak
         {
             
             if (Session["USER"] != null)
-                {
+            {
                 string check = (string)Session["USER"];
                 string checkName = (string)Session["NAME"];
                 string checkLastName = (string)Session["LASTNAME"];
@@ -30,18 +30,15 @@ namespace IceBreak
                         "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + check + ".png' alt=''/>" +
                     "</a>" + "<label class='Sidebarname'>" + checkName + " " + checkLastName + "</label>";
                 //DIV.InnerHtml = "<label class='Sidebarname'>" + checkName + " " + checkLastName + "</label>";
-
-
             }
-           
-
-            }
+        }
 
         [ScriptMethod, WebMethod]
         protected void Logout(object sender, EventArgs e)
         {
             if (Session["USER"] != null)
             {
+                Session["LEVEL"] = 0;
                 Session.Clear();
                 Response.Redirect("index.aspx");
             }

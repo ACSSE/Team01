@@ -22,6 +22,7 @@ namespace IcebreakServices
         public static int CONN_CLOSED = 106;
         public static int EXISTS = 107;
         public static int DEXISTS = 108;
+        public static int CAN_EDIT_EVENTS = 1;
         public static string NO_EMAIL = "<No email specified>";
         public static string NO_OCC = "<No occupation specified>";
         public static string NO_BIO = "<No bio specified>";
@@ -43,6 +44,7 @@ namespace IcebreakServices
                 {
                     conn = new SqlConnection(dbConnectionString);
                     conn.Open();
+
                     if(user.Access_level>=0)
                     {
                         cmd = new SqlCommand("UPDATE dbo.Users SET access_level=@lvl WHERE username=@usr", conn);
@@ -177,7 +179,7 @@ namespace IcebreakServices
                 }
                 catch (Exception e)
                 {
-                    //TODO: Store exception to logs
+                    addError(ErrorCodes.EUSR, e.Message, "updateUserDetails");
                     return "Error: " + e.Message;
                 }
             }
@@ -215,7 +217,7 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                //TODO: Store exception to logs
+                addError(ErrorCodes.EUSR, e.Message, "userFbIdExists");
                 return e.Message;
             }
             return "Exists=false";
@@ -229,7 +231,7 @@ namespace IcebreakServices
             {
                 conn.Open();
                 //Query user
-                cmd = new SqlCommand("SELECT * FROM dbo.Users WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Users] WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
                 cmd.Parameters.AddWithValue(@"usr", user.Username);
 
                 dataReader = cmd.ExecuteReader();
@@ -248,7 +250,7 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                //TODO: Store exception to logs
+                addError(ErrorCodes.EUSR, e.Message, "removeUser");
                 return e.Message;
             }
             return "Exists=false";
@@ -261,7 +263,7 @@ namespace IcebreakServices
             {
                 conn.Open();
                 //Query user
-                cmd = new SqlCommand("DELETE FROM dbo.Users WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd = new SqlCommand("DELETE FROM [dbo].[Users] WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
                 cmd.Parameters.AddWithValue(@"usr", handle);
                 cmd.ExecuteNonQuery();
                 cmd.Dispose();
@@ -270,8 +272,8 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                //TODO: Store exception to logs
-                return e.Message;
+                addError(ErrorCodes.EUSR, e.Message, "removeUser");
+                return "Error:"+e.Message;
             }
         }
 
@@ -283,7 +285,7 @@ namespace IcebreakServices
             {
                 conn.Open();
                 //Get user's unread messages and Icebreaks
-                cmd = new SqlCommand("SELECT * FROM [Messages] WHERE Message_receiver=@usr AND NOT "
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_receiver=@usr AND NOT "
                     + "Message_status=@read AND NOT "
                     + "Message_status=@done", conn);
                 cmd.Parameters.AddWithValue(@"read", READ);
@@ -293,17 +295,17 @@ namespace IcebreakServices
                 dataReader = cmd.ExecuteReader();
                 while (dataReader.Read())
                 {
-                    string date = Convert.ToString(dataReader.GetValue(5));
-                    date = date.Replace('/', '-');
-                    date = date.Replace(':', '-');
+                    string event_date = Convert.ToString(dataReader.GetValue(5));
+                    event_date = event_date.Replace('/', '-');
+                    event_date = event_date.Replace(':', '-');
                     messages.Add(new Message()
                     {
                         Message_id = Convert.ToString(dataReader.GetValue(0)),
-                        Message_receiver = Convert.ToString(dataReader.GetValue(4)),
-                        Message_sender = Convert.ToString(dataReader.GetValue(3)),
-                        Message_time = date,
-                        Message_status = Convert.ToInt16(dataReader.GetValue(2)),
                         Msg = Convert.ToString(dataReader.GetValue(1)),
+                        Message_status = Convert.ToInt16(dataReader.GetValue(2)),
+                        Message_sender = Convert.ToString(dataReader.GetValue(3)),
+                        Message_receiver = Convert.ToString(dataReader.GetValue(4)),
+                        Message_time = (long)(dataReader.GetValue(5))
                     });
                 }
                 
@@ -314,12 +316,12 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                //TODO: Store exception to logs
+                addError(ErrorCodes.EUSR, e.Message, "checkUserInbox");
                 messages.Add(new Message()
                 {
                     Message_receiver = Convert.ToString("YOU["+user+"]"),
                     Message_sender = Convert.ToString("SERVER"),
-                    Message_time = Convert.ToString(DateTime.Now),
+                    Message_time = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds,
                     Message_status = -1,
                     Msg = e.Message,
                 });
@@ -335,30 +337,25 @@ namespace IcebreakServices
             {
                 conn.Open();
                 //Get user's unread messages and Icebreaks
-                cmd = new SqlCommand("SELECT * FROM [Messages] WHERE Message_sender=@sender "
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_sender=@sender "
                     + "AND NOT Message_status=@read "
                     + "AND NOT Message_status=@done", conn);
-                /*cmd.Parameters.AddWithValue(@"read", READ);
-                cmd.Parameters.AddWithValue(@"done", ICEBREAK_DONE);
-                cmd.Parameters.AddWithValue(@"receiver", receiver);*/
+
                 cmd.Parameters.AddWithValue(@"sender", sender);
-                cmd.Parameters.AddWithValue(@"read", sender);
-                cmd.Parameters.AddWithValue(@"done", sender);
+                cmd.Parameters.AddWithValue(@"read", READ);
+                cmd.Parameters.AddWithValue(@"done", ICEBREAK_DONE);
 
                 dataReader = cmd.ExecuteReader();
                 while (dataReader.Read())
                 {
-                    string date = Convert.ToString(dataReader.GetValue(5));
-                    date = date.Replace('/', '-');
-                    date = date.Replace(':', '-');
                     messages.Add(new Message()
                     {
                         Message_id = Convert.ToString(dataReader.GetValue(0)),
-                        Message_receiver = Convert.ToString(dataReader.GetValue(4)),
-                        Message_sender = Convert.ToString(dataReader.GetValue(3)),
-                        Message_time = date,
+                        Msg = Convert.ToString(dataReader.GetValue(1)),
                         Message_status = Convert.ToInt16(dataReader.GetValue(2)),
-                        Msg = Convert.ToString(dataReader.GetValue(1))
+                        Message_sender = Convert.ToString(dataReader.GetValue(3)),
+                        Message_receiver = Convert.ToString(dataReader.GetValue(4)),
+                        Message_time = (long)(dataReader.GetValue(5))
                     });
                 }
 
@@ -369,12 +366,12 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                //TODO: Store exception to logs
+                addError(ErrorCodes.EUSR, e.Message, "checkUserOutbox");
                 messages.Add(new Message()
                 {
                     Message_receiver = Convert.ToString("YOU[" + sender + "]"),
                     Message_sender = Convert.ToString("SERVER"),
-                    Message_time = Convert.ToString(DateTime.Now),
+                    Message_time = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds,
                     Message_status = -1,
                     Msg = e.Message,
                 });
@@ -437,7 +434,7 @@ namespace IcebreakServices
                 conn.Open();
                 string token = "";
                 //Query user
-                cmd = new SqlCommand("SELECT user_token FROM dbo.Users WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd = new SqlCommand("SELECT [user_token] FROM [dbo].[Users] WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
                 cmd.Parameters.AddWithValue(@"usr", username);
 
                 dataReader = cmd.ExecuteReader();
@@ -449,7 +446,8 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                return "Exception: " + e.Message;
+                addError(ErrorCodes.EUSR, e.Message, "getUserToken");
+                return "Error:" + e.Message;
             }
         }
 
@@ -464,7 +462,7 @@ namespace IcebreakServices
             {
                 conn.Open();
                 //Query user
-                cmd = new SqlCommand("SELECT * FROM dbo.Users WHERE event_id=@id", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Users] WHERE event_id=@id", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
                 cmd.Parameters.AddWithValue(@"id", id);
 
                 dataReader = cmd.ExecuteReader();
@@ -509,28 +507,29 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                //TODO: Store exception to logs
-                return new List<User>
+                addError(ErrorCodes.EUSR, e.Message, "getUsersAtEvent");
+                /*return new List<User>
                 { new User
                     {
                         Fname = "<Error>",
                         Lname = e.Message
                     }
-                };
+                };*/
+                return null;
             }
         }
 
         public int msgIdExists(string id, SqlConnection conn)
         {
-            /*try
-            {
-                conn = new SqlConnection(dbConnectionString);
-                conn.Open();*/
+            /* try
+             {
+                 conn = new SqlConnection(dbConnectionString);
+                 conn.Open();*/
             if (conn != null)
             {
                 if (conn.State == System.Data.ConnectionState.Open)
                 {
-                    string query = "SELECT * FROM [Messages] WHERE Message_id=@message_id";
+                    string query = "SELECT * FROM [dbo].[Messages] WHERE Message_id=@message_id";
                     cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue(@"message_id", id);
 
@@ -542,50 +541,46 @@ namespace IcebreakServices
                     if (hasRows)
                     {
                         return EXISTS;
-                    }
-                    else
-                        return DEXISTS;
-                }
-                else
-                {
-                    return CONN_CLOSED;
-                }
-            }
-            else
+                    }else return DEXISTS;
+                }else return CONN_CLOSED;
+            }else return CONN_CLOSED;
+            /*catch (Exception e)
             {
-                return CONN_CLOSED;
-            }
-            /*}
-            catch (Exception e)
-            {
-                //TODO: Logging
-                return false;
+                addError(ErrorCodes.EMSG, e.Message, "msgIdExists");
+                return -1;
             }*/
         }
 
         public string setUniqueUserToken(string username, string token)
         {
-            if (userExists(new User() { Username = username }).ToLower().Contains("exists=true"))
+            try
             {
-                //update user entry - add id
-                conn = new SqlConnection(dbConnectionString);
-                conn.Open();
+                if (userExists(new User() { Username = username }).ToLower().Contains("exists=true"))
+                {
+                    //update user entry - add id
+                    conn = new SqlConnection(dbConnectionString);
+                    conn.Open();
 
-                string query = "UPDATE dbo.Users SET user_token=@token WHERE username=@user";
-                cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue(@"token", token);
-                cmd.Parameters.AddWithValue(@"user", username);
+                    string query = "UPDATE [dbo].[Users] SET user_token=@token WHERE username=@user";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"token", token);
+                    cmd.Parameters.AddWithValue(@"user", username);
 
-                //cmd.Prepare();
-                cmd.ExecuteNonQuery();
+                    //cmd.Prepare();
+                    cmd.ExecuteNonQuery();
 
-                cmd.Dispose();
-                conn.Close();
-                return "SUPD";
-            }
-            else
+                    cmd.Dispose();
+                    conn.Close();
+                    return "SUPD";
+                }
+                else
+                {
+                    return "EUDNE";
+                }
+            }catch(Exception e)
             {
-                return "EUDNE";
+                addError(ErrorCodes.EUSR, e.Message, "setUniqueUserToken");
+                return "Error:" + e.Message;
             }
         }
 
@@ -596,20 +591,21 @@ namespace IcebreakServices
                 conn = new SqlConnection(dbConnectionString);
                 conn.Open();
 
-                string query = "INSERT INTO dbo.Exceptions VALUES(@ex_code,@ex_msg,@ex_method)";
+                string query = "INSERT INTO [dbo].[Exceptions] VALUES(@ex_code,@ex_msg,@ex_method,@timestamp)";
                 cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue(@"ex_code", code);
                 cmd.Parameters.AddWithValue(@"ex_msg", error);
                 cmd.Parameters.AddWithValue(@"ex_method", method);
+                cmd.Parameters.AddWithValue(@"timestamp", (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds);
 
                 cmd.ExecuteNonQuery();
                 cmd.Dispose();
                 conn.Close();
-                return "SINS";
+                return "Success";
             }
             catch (Exception e)
             {
-                return "Exception: " + e.Message;
+                return "Error:" + e.Message;
             }
         }
 
@@ -626,7 +622,7 @@ namespace IcebreakServices
                 {
                     if(m.Message_status!=ICEBREAK && m.Message_status != SENT)
                     {
-                        string query = "UPDATE [Messages] SET Message_status=@status,Message=@message WHERE Message_id=@message_id";
+                        string query = "UPDATE [dbo].[Messages] SET Message_status=@status,Message=@message WHERE Message_id=@message_id";
                         cmd = new SqlCommand(query, conn);
                         cmd.Parameters.AddWithValue(@"message_id", m.Message_id);
                         cmd.Parameters.AddWithValue(@"status", m.Message_status);
@@ -645,7 +641,7 @@ namespace IcebreakServices
                 }
                 else if(msgState == DEXISTS)
                 {
-                    string query = "INSERT INTO [Messages] VALUES(@message_id,@message,@status,@sender,@receiver,@time)";
+                    string query = "INSERT INTO [dbo].[Messages] VALUES(@message_id,@message,@status,@sender,@receiver,@time)";
                     cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue(@"message_id", m.Message_id);
                     cmd.Parameters.AddWithValue(@"message", m.Msg);
@@ -669,18 +665,19 @@ namespace IcebreakServices
 
                     cmd.Dispose();
                     conn.Close();
-                    return "Success: Inserted";
+                    return "Success";
                 }
                 else if(msgState == CONN_CLOSED)
                 {
-                    return "Exception: Connection closed.";
+                    return "Error:Connection closed.";
                 }
             }
             catch (Exception e)
             {
-                return "Exception: " + e.Message;
+                addError(ErrorCodes.EMSG, e.Message, "addMessage");
+                return "Error:" + e.Message;
             }
-            return "Exception: Unknown Response.";
+            return "Error:Unknown Response.";
         }
 
         public Event getEvent(string event_id)
@@ -690,7 +687,7 @@ namespace IcebreakServices
             {
                 conn.Open();
                 //Query user
-                cmd = new SqlCommand("SELECT * FROM dbo.Events WHERE event_id=@event_id", conn);
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Events] WHERE event_id=@event_id", conn);
                 cmd.Parameters.AddWithValue(@"event_id", event_id);
 
                 dataReader = cmd.ExecuteReader();
@@ -699,17 +696,16 @@ namespace IcebreakServices
                 {
                     e = new Event()
                     {
-                        Id = (int)dataReader.GetValue(0),
+                        Id = Convert.ToUInt32(dataReader.GetValue(0)),
                         Title = (string)dataReader.GetValue(1),
                         Description = (string)dataReader.GetValue(2),
                         Address = (string)dataReader.GetValue(3),
-                        Radius = (int)dataReader.GetValue(4),
-                        Gps_location = (string)dataReader.GetValue(5),
-                        AccessCode = (int)dataReader.GetValue(6),
-                        Date = (string)dataReader.GetValue(7),
-                        Time = (string)dataReader.GetValue(8),
-                        EndTime = (string)dataReader.GetValue(10),
-                        Meeting_Places = (string)dataReader.GetValue(9)
+                        //Radius = (int)dataReader.GetValue(4),
+                        Gps_location = (string)dataReader.GetValue(4),
+                        AccessCode = Convert.ToUInt16(dataReader.GetValue(5)),
+                        Date = Convert.ToUInt32(dataReader.GetValue(6)),
+                        Meeting_Places = (string)dataReader.GetValue(7),
+                        End_Date = Convert.ToUInt32(dataReader.GetValue(8))
                     };
                 }
 
@@ -720,11 +716,13 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                return new Event
+                addError(ErrorCodes.EEVENT, e.Message, "getEvent");
+                /*return new Event
                 {
                     Title = "<Error>",
                     Description = e.Message
-                };
+                };*/
+                return null;
             }
         }
 
@@ -736,7 +734,7 @@ namespace IcebreakServices
             {
                 conn.Open();
                 //Get user's unread messages and Icebreaks
-                cmd = new SqlCommand("SELECT * FROM dbo.Messages WHERE Message_id=@id", conn);
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_id=@id", conn);
                 cmd.Parameters.AddWithValue(@"id", msg_id);
 
                 dataReader = cmd.ExecuteReader();
@@ -744,17 +742,13 @@ namespace IcebreakServices
                 {
                     m = new Message();
                     dataReader.Read();
-        
-                    string date = Convert.ToString(dataReader.GetValue(5));
-                    date = date.Replace('/', '-');
-                    date = date.Replace(':', '-');
 
                     m.Message_id = Convert.ToString(dataReader.GetValue(0));
-                    m.Message_receiver = Convert.ToString(dataReader.GetValue(4));
-                    m.Message_sender = Convert.ToString(dataReader.GetValue(3));
-                    m.Message_time = date;
-                    m.Message_status = Convert.ToInt16(dataReader.GetValue(2));
                     m.Msg = Convert.ToString(dataReader.GetValue(1));
+                    m.Message_status = Convert.ToInt16(dataReader.GetValue(2));
+                    m.Message_sender = Convert.ToString(dataReader.GetValue(3));
+                    m.Message_receiver = Convert.ToString(dataReader.GetValue(4));
+                    m.Message_time = (long)(dataReader.GetValue(5));
                 }
 
                 dataReader.Close();
@@ -765,6 +759,7 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
+                addError(ErrorCodes.EMSG, e.Message, "getMessageById");
                 return null;
             }
         }
@@ -788,9 +783,10 @@ namespace IcebreakServices
         public string registerUser(User user)
         {
             if(isEmpty(user.Username))
-               return "Error: Empty username";
+               return "Error:Empty username";
 
             string exist_check = userExists(user);
+
             if (exist_check.ToLower().Contains("exists=false"))//insert new user if they don't exist in DB
             {
                 try
@@ -803,9 +799,7 @@ namespace IcebreakServices
                     cmd = new SqlCommand(query, conn);
 
                     if (isEmpty(user.Password))
-                        return "Error: Empty password";
-                    if (isEmpty(user.Username))
-                        return "Error: Empty username";
+                        return "Error:Empty password";
                     if (isEmpty(user.Gender))
                         user.Gender = NO_GENDER;
                     if (isEmpty(user.Email))
@@ -829,7 +823,7 @@ namespace IcebreakServices
                     cmd.Parameters.AddWithValue(@"lname", user.Lname);
                     cmd.Parameters.AddWithValue(@"email", user.Email);
                     cmd.Parameters.AddWithValue(@"password", Hash.HashString(user.Password));
-                    cmd.Parameters.AddWithValue(@"username", user.Username);//Hash.HashString(user.Username));
+                    cmd.Parameters.AddWithValue(@"username", user.Username);
                     cmd.Parameters.AddWithValue(@"access_lvl", user.Access_level);
                     cmd.Parameters.AddWithValue(@"event_id", user.Event_id);
                     cmd.Parameters.AddWithValue(@"age", user.Age);
@@ -850,7 +844,8 @@ namespace IcebreakServices
                 }
                 catch (Exception e)
                 {
-                    return e.Message;
+                    addError(ErrorCodes.EUSR, e.Message, "registerUser");
+                    return "Error:"+e.Message;
                 }
             }
             else//User exists or there was an exception
@@ -858,107 +853,145 @@ namespace IcebreakServices
                 if (exist_check.ToLower().Contains("exists=true"))
                 {
                     return updateUserDetails(user);//update user info instead
-                }
-                return exist_check;//most likely an exception was thrown if it gets here
+                }else return exist_check;//most likely an exception was thrown if it gets here
             }
         }
 
-        public string updateEvent(Event ev)
+        public string updateEvent(Event ev, int access_lvl)
         {
             try
             {
+                //Security checks
+                if (access_lvl<CAN_EDIT_EVENTS)
+                    return "Error:You do not have the necessary permissions to execute this action.";
+                if (ev.Id<=0 || ev.AccessCode<=0)
+                    return "Error:Invalid Event ID or access code.";
+                if(isEmpty(ev.Manager))
+                    return "Error:Invalid Event Manager.";
+
                 conn = new SqlConnection(dbConnectionString);
+                conn.Open();
+
                 SqlCommand cmd = null;
 
-                if(ev.Id<=0 || ev.AccessCode<=0)
+                string q = "SELECT * FROM [dbo].[Events] WHERE event_id=@id AND event_access_code=@code AND username=@manager";
+                cmd = new SqlCommand(q,conn);
+                cmd.Parameters.AddWithValue(@"id", ev.Id);
+                cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
+                cmd.Parameters.AddWithValue(@"manager", ev.Manager);
+                SqlDataReader readr = cmd.ExecuteReader();
+                readr.Read();
+                if(!readr.HasRows)
                 {
-                    return "Error:Invalid event ID or access code.";
+                    //Clean up
+                    cmd.Dispose();
+                    readr.Close();
+                    conn.Close();
+                    return "Error:No Event found matching the provided credentials [i.e. event id, access code, manager]";
                 }
-                if(ev.AccessCode>0)
+                //Clean up
+                cmd.Dispose();
+                readr.Close();
+
+                if(conn==null)
+                    conn = new SqlConnection(dbConnectionString);
+                if(conn.State==System.Data.ConnectionState.Closed)
+                    conn.Open();
+
+                if (ev.AccessCode>0)
                 {
-                    string query = "UPDATE [dbo].[Events] SET access_id=@code WHERE event_id=@id AND access_id=@code";
+                    string query = "UPDATE [dbo].[Events] SET event_access_code=@code WHERE event_id=@id AND event_access_code=@code AND username=@manager";
                     cmd = new SqlCommand(query,conn);
                     cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
                     cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.Parameters.AddWithValue(@"manager", ev.Manager);
                     cmd.ExecuteNonQuery();
                 }
                 if (!isEmpty(ev.Address))
                 {
-                    string query = "UPDATE [dbo].[Events] SET event_address=@address  WHERE event_id=@id AND access_id=@code";
+                    string query = "UPDATE [dbo].[Events] SET event_address=@address  WHERE event_id=@id AND event_access_code=@code AND username=@manager";
                     cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue(@"address", ev.Address);
                     cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
                     cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.Parameters.AddWithValue(@"manager", ev.Manager);
                     cmd.ExecuteNonQuery();
                 }
-                if (!isEmpty(ev.Date))
+                if (ev.Date>0)
                 {
-                    string query = "UPDATE [dbo].[Events] SET date=@date  WHERE event_id=@id AND access_id=@code";
+                    string query = "UPDATE [dbo].[Events] SET event_date=@event_date  WHERE event_id=@id AND event_access_code=@code AND username=@manager";
                     cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue(@"date", ev.Date);
+                    cmd.Parameters.AddWithValue(@"event_date", ev.Date);
                     cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
                     cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.Parameters.AddWithValue(@"manager", ev.Manager);
                     cmd.ExecuteNonQuery();
                 }
                 if (!isEmpty(ev.Description))
                 {
-                    string query = "UPDATE [dbo].[Events] SET event_description=@description  WHERE event_id=@id AND access_id=@code";
+                    string query = "UPDATE [dbo].[Events] SET event_description=@description  WHERE event_id=@id AND event_access_code=@code AND username=@manager";
                     cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue(@"description", ev.Description);
                     cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
                     cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.Parameters.AddWithValue(@"manager", ev.Manager);
                     cmd.ExecuteNonQuery();
                 }
-                if (!isEmpty(ev.EndTime))
+                if (ev.End_Date>0)
                 {
-                    string query = "UPDATE [dbo].[Events] SET event_end_time=@end_time  WHERE event_id=@id AND access_id=@code";
+                    string query = "UPDATE [dbo].[Events] SET event_end_date=@event_end_date  WHERE event_id=@id AND event_access_code=@code AND username=@manager";
                     cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue(@"end_time", ev.EndTime);
+                    cmd.Parameters.AddWithValue(@"event_end_date", ev.End_Date);
                     cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
                     cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.Parameters.AddWithValue(@"manager", ev.Manager);
                     cmd.ExecuteNonQuery();
                 }
                 if (!isEmpty(ev.Gps_location))
                 {
-                    string query = "UPDATE [dbo].[Events] SET event_gps_location=@gps_location  WHERE event_id=@id AND access_id=@code";
+                    string query = "UPDATE [dbo].[Events] SET event_gps_location=@gps_location  WHERE event_id=@id AND event_access_code=@code AND username=@manager";
                     cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue(@"gps_location", ev.Gps_location);
                     cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
                     cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.Parameters.AddWithValue(@"manager", ev.Manager);
                     cmd.ExecuteNonQuery();
                 }
                 if (!isEmpty(ev.Meeting_Places))
                 {
-                    string query = "UPDATE [dbo].[Events] SET event_meeting_places=@meeting_places  WHERE event_id=@id AND access_id=@code";
+                    string query = "UPDATE [dbo].[Events] SET event_meeting_places=@meeting_places  WHERE event_id=@id AND event_access_code=@code AND username=@manager";
                     cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue(@"meeting_places", ev.Meeting_Places);
                     cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
                     cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.Parameters.AddWithValue(@"manager", ev.Manager);
                     cmd.ExecuteNonQuery();
                 }
-                if (ev.Radius>0)
+                /*if (ev.Radius>0)
                 {
-                    string query = "UPDATE [dbo].[Events] SET event_radius=@radius  WHERE event_id=@id AND access_id=@code";
+                    string query = "UPDATE [dbo].[Events] SET event_radius=@radius  WHERE event_id=@id AND event_access_code=@code AND username=@manager";
                     cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue(@"radius", ev.Radius);
                     cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
                     cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.Parameters.AddWithValue(@"manager", ev.Manager);
                     cmd.ExecuteNonQuery();
-                }
-                if (!isEmpty(ev.Time))
-                {
-                    string query = "UPDATE [dbo].[Events] SET time=@time  WHERE event_id=@id AND access_id=@code";
-                    cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue(@"time", ev.Time);
-                    cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
-                    cmd.Parameters.AddWithValue(@"id", ev.Id);
-                    cmd.ExecuteNonQuery();
-                }
+                }*/
                 if (!isEmpty(ev.Title))
                 {
-                    string query = "UPDATE [dbo].[Events] SET event_title=@title  WHERE event_id=@id AND access_id=@code";
+                    string query = "UPDATE [dbo].[Events] SET event_title=@title  WHERE event_id=@id AND event_access_code=@code AND username=@manager";
                     cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue(@"title", ev.Title);
+                    cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
+                    cmd.Parameters.AddWithValue(@"id", ev.Id);
+                    cmd.Parameters.AddWithValue(@"manager", ev.Manager);
+                    cmd.ExecuteNonQuery();
+                }
+                if (!isEmpty(ev.Manager))
+                {
+                    string query = "UPDATE [dbo].[Events] SET username=@manager  WHERE event_id=@id AND event_access_code=@code AND username=@manager";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"manager", ev.Manager);
                     cmd.Parameters.AddWithValue(@"code", ev.AccessCode);
                     cmd.Parameters.AddWithValue(@"id", ev.Id);
                     cmd.ExecuteNonQuery();
@@ -971,45 +1004,53 @@ namespace IcebreakServices
             }
             catch(Exception e)
             {
+                addError(ErrorCodes.EEVENT, e.Message, "updateEvent");
                 return "Error:"+e.Message;
             }
         }
 
-        public string addEvent(Event ev)
+        public string addEvent(Event ev, int access_lvl)
         {
-            Random rnd = new Random();
-            ev.Radius = 0;
-            ev.AccessCode = rnd.Next(1,100000);
+            if (access_lvl < CAN_EDIT_EVENTS)
+                return "Error:You do not have the necessary permissions to execute this action.";
+
             try
             {
-                conn = new SqlConnection(dbConnectionString);
-                conn.Open();
-                string query = "INSERT INTO dbo.Events(event_title,event_description,event_address,event_radius,event_gps_location,access_id,date,time,event_meeting_places,event_end_time) VALUES(@title,@desc,@addr,@radius,@loc_gps,@acc_id,@date,@time,@meeting_places,@endtime)";
-                cmd = new SqlCommand(query, conn);
+                if (ev.isValidForAdding())
+                {
+                    conn = new SqlConnection(dbConnectionString);
+                    conn.Open();
 
-                cmd.Parameters.AddWithValue(@"title", ev.Title);
-                cmd.Parameters.AddWithValue(@"desc", ev.Description);
-                cmd.Parameters.AddWithValue(@"addr", ev.Address);//Hash.HashString(user.Username));
-                cmd.Parameters.AddWithValue(@"radius", ev.Radius);
-                cmd.Parameters.AddWithValue(@"loc_gps", ev.Gps_location);
-                cmd.Parameters.AddWithValue(@"acc_id", ev.AccessCode);
-                cmd.Parameters.AddWithValue(@"date", ev.Date);
-                cmd.Parameters.AddWithValue(@"time", ev.Time);
-                cmd.Parameters.AddWithValue(@"meeting_places", ev.Meeting_Places);
-                cmd.Parameters.AddWithValue(@"endtime", ev.EndTime);
+                    string query = "INSERT INTO [dbo].[Events](event_title,event_description,event_address," +
+                        "event_gps_location,event_access_code,event_date,event_meeting_places,event_end_date,username) " +
+                        "VALUES(@title,@desc,@addr,@loc_gps,@acc_code,@event_date,@meeting_places,@end_date,@manager)";
+                    cmd = new SqlCommand(query, conn);
+
+                    cmd.Parameters.AddWithValue(@"title", ev.Title);
+                    cmd.Parameters.AddWithValue(@"desc", ev.Description);
+                    cmd.Parameters.AddWithValue(@"addr", ev.Address);
+                    //cmd.Parameters.AddWithValue(@"radius", ev.Radius);
+                    cmd.Parameters.AddWithValue(@"loc_gps", ev.Gps_location);
+                    cmd.Parameters.AddWithValue(@"acc_code", ev.AccessCode);
+                    cmd.Parameters.AddWithValue(@"event_date", ev.Date);
+                    cmd.Parameters.AddWithValue(@"meeting_places", ev.Meeting_Places);
+                    cmd.Parameters.AddWithValue(@"end_date", ev.End_Date);
+                    cmd.Parameters.AddWithValue(@"manager", ev.Manager);
 
 
-                //cmd.Prepare();
-                cmd.ExecuteNonQuery();
+                    //cmd.Prepare();
+                    cmd.ExecuteNonQuery();
 
-                cmd.Dispose();
-                conn.Close();
+                    cmd.Dispose();
+                    conn.Close();
 
-                return "Success";
+                    return "Success";
+                }else return "Error:Invalid Event. Remember that the access code has to be >= 4 chars and no fields can be null.";
             }
             catch (Exception e)
             {
-                return e.Message;
+                addError(ErrorCodes.EEVENT, e.Message, "addEvent");
+                return "Error:"+e.Message;
             }
         }
 
@@ -1019,22 +1060,9 @@ namespace IcebreakServices
             conn = new SqlConnection(dbConnectionString);
             try
             {
-                /*string usr = "";
-                if (username.Length > 5)
-                {
-                    if (username.Contains("_"))
-                    {
-                        if (username.Substring(0, username.IndexOf('_')).Equals("user_") && username.Substring(username.LastIndexOf('_'), username.Length).Equals("_fb"))
-                        {
-                            usr = username.Substring(username.IndexOf('_'), username.LastIndexOf('_') - 1);
-                            return getUserByFbId(usr);
-                        }
-                    }
-                }*/
-                //else return null;
                 conn.Open();
                 //Query user
-                cmd = new SqlCommand("SELECT * FROM dbo.Users WHERE username=@username", conn);
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Users] WHERE username=@username", conn);
                 cmd.Parameters.AddWithValue(@"username", username);
 
                 dataReader = cmd.ExecuteReader();
@@ -1043,14 +1071,14 @@ namespace IcebreakServices
                 {
                     user.Fname = (string)dataReader.GetValue(0);
                     user.Lname = (string)dataReader.GetValue(1);
-                    user.Occupation = (string)dataReader.GetValue(10);
-                    user.Access_level = (int)dataReader.GetValue(5);
                     user.Email = (string)dataReader.GetValue(2);
                     user.Username = (string)dataReader.GetValue(4);
+                    user.Access_level = (int)dataReader.GetValue(5);
                     user.Age = (int)dataReader.GetValue(7);
                     user.Bio = (string)dataReader.GetValue(8);
-                    user.Gender = (string)dataReader.GetValue(11);
                     user.Catchphrase = (string)dataReader.GetValue(9);
+                    user.Occupation = (string)dataReader.GetValue(10);
+                    user.Gender = (string)dataReader.GetValue(11);
                 }
 
                 dataReader.Close();
@@ -1060,12 +1088,13 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                return new User
+                addError(ErrorCodes.EUSR, e.Message, "getUser");
+                /*return new User
                 {
                     Fname = "<Error>",
                     Lname = e.Message
-                };
-                
+                };*/
+                return null;
             }
             
         }
@@ -1077,7 +1106,7 @@ namespace IcebreakServices
             {
                 conn.Open();
                 //Query user
-                cmd = new SqlCommand("SELECT * FROM dbo.Users WHERE fb_id=@id", conn);
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Users] WHERE fb_id=@id", conn);
                 cmd.Parameters.AddWithValue(@"id", id);
 
                 dataReader = cmd.ExecuteReader();
@@ -1103,45 +1132,47 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                return new User
+                addError(ErrorCodes.EUSR, e.Message, "getUserByFbId");
+                /*return new User
                 {
                     Fname = "<Error>",
                     Lname = e.Message
-                };
-                
+                };*/
+                return null;
             }
             
         }
 
-        public List<Event> getEvents()
+        public List<Event> getAllEvents()
         {
+            int i = 0;
             List<Event> events = new List<Event>();
             conn = new SqlConnection(dbConnectionString);
             try
             {
                 conn.Open();
                 //Query user
-                cmd = new SqlCommand("SELECT * FROM dbo.Events", conn);
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Events]", conn);
                 //cmd.Parameters.AddWithValue(@"id", id);
                 //cmd.Parameters.AddWithValue(@"pwd", hashed_input_pwd);
-
                 dataReader = cmd.ExecuteReader();
                 while (dataReader.Read())
                 {
+                    addError(0,"ID:"+ dataReader.GetValue(0) + ", sdate: "+ dataReader.GetValue(6) + ", edate: " + dataReader.GetValue(8),">getAllEvents");
                     events.Add(new Event()
                     {
-                        Id = (int)dataReader.GetValue(0),
+                        Id =  Convert.ToUInt32(dataReader.GetValue(0)),
                         Title = (string)dataReader.GetValue(1),
                         Description = (string)dataReader.GetValue(2),
                         Address = (string)dataReader.GetValue(3),
-                        Radius = (int)dataReader.GetValue(4),
-                        Gps_location = (string)dataReader.GetValue(5),
-                        AccessCode = (int)dataReader.GetValue(6),
-                        Date = (string)dataReader.GetValue(7),
-                        Time = (string)dataReader.GetValue(8),
-                        EndTime =(string)dataReader.GetValue(10),
-                        Meeting_Places = (string)dataReader.GetValue(9)
+                        //Radius = (int)dataReader.GetValue(4),
+                        Gps_location = (string)dataReader.GetValue(4),
+                        AccessCode = Convert.ToUInt16(dataReader.GetValue(5)),
+                        Date = Convert.ToUInt32(dataReader.GetValue(6)),
+                        Meeting_Places = (string)dataReader.GetValue(7),
+                        End_Date = Convert.ToUInt32(dataReader.GetValue(8))
                     });
+                    i++;
                 }
                 
                 dataReader.Close();
@@ -1150,7 +1181,8 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                File.WriteAllLines(Path.Combine(HostingEnvironment.MapPath("~/logs/"), new DateTime()+".log"),new String[] { e.Message});
+                addError(ErrorCodes.EEVENT, e.Message, "getAllEvents:" + i);
+                //File.WriteAllLines(Path.Combine(HostingEnvironment.MapPath("~/logs/"), new DateTime()+".log"),new String[] { e.Message});
             }
             return events;
         }
@@ -1187,6 +1219,7 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
+                addError(ErrorCodes.EUSR, e.Message, "signIn");
                 return e.Message;
             }
             return "isValidUser=" + isValidUser;
@@ -1240,7 +1273,8 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                return e.Message;
+                addError(ErrorCodes.ESTATS, e.Message, "getUsersIcebreakCount");
+                return "Error:"+e.Message;
             }
         }
 
@@ -1269,11 +1303,12 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                return 0;
+                addError(ErrorCodes.ESTATS, e.Message, "getUserIcebreakCount");
+                return -1;
             }
         }
 
-
+        //Metadata stuff
         public bool addMeta(Metadata metadata)
         {
             try
@@ -1295,7 +1330,7 @@ namespace IcebreakServices
             }
             catch(Exception e)
             {
-                addError(ErrorCodes.EMETA_ADD, e.Message, "addMeta");
+                addError(ErrorCodes.EMETA, e.Message, "addMeta");
             }
             return false;
         }
@@ -1320,7 +1355,7 @@ namespace IcebreakServices
             }
             catch(Exception e)
             {
-                addError(ErrorCodes.EMETA_UPD, e.Message, "updateMeta");
+                addError(ErrorCodes.EMETA, e.Message, "updateMeta");
             }
             return false;
         }
@@ -1331,7 +1366,7 @@ namespace IcebreakServices
             try
             {
                 conn.Open();
-                //Query user
+                //Query record
                 cmd = new SqlCommand("SELECT * FROM [dbo].[Metadata] WHERE Metadata_entry_name=@entry", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
                 cmd.Parameters.AddWithValue(@"entry", record);
                 
@@ -1362,6 +1397,7 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
+                addError(ErrorCodes.EMETA, e.Message, "getMeta");
                 return new Metadata() { Entry="null",Meta=e.Message};
             }
         }
