@@ -65,10 +65,10 @@ namespace IcebreakServices
                                     return response;
                                 }
                             case "date":
-                                UInt32 date;
-                                if (UInt32.TryParse(val, out date))
+                                long date;
+                                if (long.TryParse(val, out date))
                                 {
-                                    ev.Date = UInt32.Parse(val);
+                                    ev.Date = long.Parse(val);
                                     break;
                                 }
                                 else
@@ -78,10 +78,10 @@ namespace IcebreakServices
                                     return response;
                                 }
                             case "end_date":
-                                UInt32 end_date;
-                                if (UInt32.TryParse(val, out end_date))
+                                long end_date;
+                                if (long.TryParse(val, out end_date))
                                 {
-                                    ev.End_Date = UInt32.Parse(val);
+                                    ev.End_Date = long.Parse(val);
                                     break;
                                 }
                                 else
@@ -201,15 +201,15 @@ namespace IcebreakServices
                         switch (var.ToLower())
                         {
                             case "id":
-                                UInt32 id;
-                                if (UInt32.TryParse(val, out id))
+                                long id;
+                                if (long.TryParse(val, out id))
                                 {
-                                    ev.Id = UInt32.Parse(val);
+                                    ev.Id = long.Parse(val);
                                     break;
                                 }
                                 else
                                 {
-                                    response = "Error: Cannot convert " + val + " to long.";
+                                    response = "Error: Cannot convert " + val + " to UInt16.";
                                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                                     return response;
                                 }
@@ -227,10 +227,10 @@ namespace IcebreakServices
                                     return response;
                                 }
                             case "date":
-                                UInt32 date;
-                                if (UInt32.TryParse(val, out date))
+                                long date;
+                                if (long.TryParse(val, out date))
                                 {
-                                    ev.Date = UInt32.Parse(val);
+                                    ev.Date = long.Parse(val);
                                     break;
                                 }
                                 else
@@ -240,10 +240,10 @@ namespace IcebreakServices
                                     return response;
                                 }
                             case "end_date":
-                                UInt32 end_date;
-                                if (UInt32.TryParse(val, out end_date))
+                                long end_date;
+                                if (long.TryParse(val, out end_date))
                                 {
-                                    ev.End_Date = UInt32.Parse(val);
+                                    ev.End_Date = long.Parse(val);
                                     break;
                                 }
                                 else

@@ -47,15 +47,15 @@ namespace IcebreakServices
 
     public class Event
     {
-        private UInt32 _id;
+        private long _id;
         private string _title;
         private string _description;
         private string _address;
         //private int _radius;
         private string _gps_location;
         private int _access_code;
-        private UInt32 _end_date;
-        private UInt32 _date;
+        private long _end_date;
+        private long _date;
         private string _meeting_places;
         private string _manager;
 
@@ -249,7 +249,7 @@ namespace IcebreakServices
             }
         }
         
-        public UInt32 End_Date
+        public long End_Date
         {
             get
             {
@@ -260,7 +260,7 @@ namespace IcebreakServices
                 _end_date = value;
             }
         }
-        public UInt32 Date
+        public long Date
         {
             get
             {
@@ -271,7 +271,7 @@ namespace IcebreakServices
                 _date = value;
             }
         }
-        public UInt32 Id
+        public long Id
         {
             get
             {

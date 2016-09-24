@@ -474,7 +474,7 @@ namespace IcebreakServices
                     string fname = Convert.IsDBNull(dataReader.GetValue(0)) ? "X" : Convert.ToString(dataReader.GetValue(0));
                     string lname = Convert.IsDBNull(dataReader.GetValue(1)) ? "X" : Convert.ToString(dataReader.GetValue(1));
                     string username = Convert.IsDBNull(dataReader.GetValue(4)) ? "X" : Convert.ToString(dataReader.GetValue(4));
-                    int age = Convert.IsDBNull(dataReader.GetValue(7)) ? 0 : Convert.ToUInt16(dataReader.GetValue(7));
+                    int age = Convert.IsDBNull(dataReader.GetValue(7)) ? 0 : int.Parse(Convert.ToString(dataReader.GetValue(7)));
                     string bio = Convert.IsDBNull(dataReader.GetValue(8)) ? "X" : Convert.ToString(dataReader.GetValue(8));
                     string catchphrase = Convert.IsDBNull(dataReader.GetValue(9)) ? "X" : Convert.ToString(dataReader.GetValue(9));
                     string occupation = Convert.IsDBNull(dataReader.GetValue(10)) ? "X" : Convert.ToString(dataReader.GetValue(10));
@@ -696,16 +696,16 @@ namespace IcebreakServices
                 {
                     e = new Event()
                     {
-                        Id = Convert.ToUInt32(dataReader.GetValue(0)),
+                        Id = long.Parse(Convert.ToString(dataReader.GetValue(0))),
                         Title = (string)dataReader.GetValue(1),
                         Description = (string)dataReader.GetValue(2),
                         Address = (string)dataReader.GetValue(3),
                         //Radius = (int)dataReader.GetValue(4),
                         Gps_location = (string)dataReader.GetValue(4),
-                        AccessCode = Convert.ToUInt16(dataReader.GetValue(5)),
-                        Date = Convert.ToUInt32(dataReader.GetValue(6)),
+                        AccessCode = int.Parse(Convert.ToString(dataReader.GetValue(5))),
+                        Date = long.Parse(Convert.ToString(dataReader.GetValue(6))),
                         Meeting_Places = (string)dataReader.GetValue(7),
-                        End_Date = Convert.ToUInt32(dataReader.GetValue(8))
+                        End_Date = long.Parse(Convert.ToString(dataReader.GetValue(8)))
                     };
                 }
 
@@ -1145,7 +1145,6 @@ namespace IcebreakServices
 
         public List<Event> getAllEvents()
         {
-            int i = 0;
             List<Event> events = new List<Event>();
             conn = new SqlConnection(dbConnectionString);
             try
@@ -1153,26 +1152,22 @@ namespace IcebreakServices
                 conn.Open();
                 //Query user
                 cmd = new SqlCommand("SELECT * FROM [dbo].[Events]", conn);
-                //cmd.Parameters.AddWithValue(@"id", id);
-                //cmd.Parameters.AddWithValue(@"pwd", hashed_input_pwd);
                 dataReader = cmd.ExecuteReader();
                 while (dataReader.Read())
                 {
-                    addError(0,"ID:"+ dataReader.GetValue(0) + ", sdate: "+ dataReader.GetValue(6) + ", edate: " + dataReader.GetValue(8),">getAllEvents");
                     events.Add(new Event()
                     {
-                        Id =  Convert.ToUInt32(dataReader.GetValue(0)),
+                        Id = long.Parse(Convert.ToString(dataReader.GetValue(0))),
                         Title = (string)dataReader.GetValue(1),
                         Description = (string)dataReader.GetValue(2),
                         Address = (string)dataReader.GetValue(3),
                         //Radius = (int)dataReader.GetValue(4),
                         Gps_location = (string)dataReader.GetValue(4),
-                        AccessCode = Convert.ToUInt16(dataReader.GetValue(5)),
-                        Date = Convert.ToUInt32(dataReader.GetValue(6)),
+                        AccessCode = int.Parse(Convert.ToString(dataReader.GetValue(5))),
+                        Date = long.Parse(Convert.ToString(dataReader.GetValue(6))),
                         Meeting_Places = (string)dataReader.GetValue(7),
-                        End_Date = Convert.ToUInt32(dataReader.GetValue(8))
+                        End_Date = long.Parse(Convert.ToString(dataReader.GetValue(8)))
                     });
-                    i++;
                 }
                 
                 dataReader.Close();
@@ -1181,7 +1176,7 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                addError(ErrorCodes.EEVENT, e.Message, "getAllEvents:" + i);
+                addError(ErrorCodes.EEVENT, e.Message, "getAllEvents");
                 //File.WriteAllLines(Path.Combine(HostingEnvironment.MapPath("~/logs/"), new DateTime()+".log"),new String[] { e.Message});
             }
             return events;
