@@ -36,19 +36,19 @@
                        </div>
                         <div class="form-group" style="text-align:left">
                             <label for="EventDescription">Event Description</label><span id="descrip_span" runat="server" style="color:red; display:none"> - Please enter your event description.</span>
-                            <textarea class="form-control" rows="4" id="eventdescrip" name="eventdescrip" placeholder="enter your event description..."  runat="server"></textarea>
+                            <textarea class="form-control" rows="4" id="eventdescrip" name="eventdescrip" placeholder="enter your event description..."  runat="server" onkeydown = "return (event.keyCode!=13);"></textarea>
                         </div>
                         <div class="form-group" style="text-align:left">
                             <label for="Event Date ">Event Date</label><span id="date_span" runat="server" style="color:red; display:none"> - Please enter your event date.</span>
-                            <input type="date" id="date" name="date" runat="server"/>
+                            <input type="date" id="date" name="date" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                         </div>
                         <div class="form-group" style="text-align:left">
                             <label for="Event Time">Event Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event time.</span>
-                            <input type="time" id="time" name="time" runat="server"/>
+                            <input type="time" id="time" name="time" runat="server" onkeydown = "return (event.keyCode!=13);" />
                         </div>
                          <div class="form-group" style="text-align:left">
                             <label for="Event end time">Event End Time</label><span id="end_time_span" runat="server" style="color:red; display:none"> - Please enter your event end time.</span>
-                            <input type="time" id="end_time" name="Event end time" runat="server"/>
+                            <input type="time" id="end_time" name="Event end time" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                         </div>
                         <div class="form-group" style="text-align:left">
                             <label for="Meeting Places">Meeting Places at Event</label><span id="meeting_span" runat="server" style="color:red; display:none"> - Please enter all event meeting places.</span>
@@ -64,19 +64,19 @@
                             </asp:DropDownList>      
                             </div>                 
                            <div class="form-group"style="text-align:left">
-                             <input type="text" id="meeting_place_1" placeholder="enter meeting place 1" runat="server"/>
+                             <input type="text" id="meeting_place_1" placeholder="enter meeting place 1" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                            </div>
                              <div class="form-group"style="text-align:left">
-                                <input type="text" id="meeting_place_2" placeholder="enter meeting place 2" runat="server"/>
+                                <input type="text" id="meeting_place_2" placeholder="enter meeting place 2" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                              </div>
                              <div class="form-group"style="text-align:left">
-                                 <input type="text" id="meeting_place_3" placeholder="enter meeting place 3" runat="server"/>
+                                 <input type="text" id="meeting_place_3" placeholder="enter meeting place 3" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                             </div>
                              <div class="form-group"style="text-align:left">
-                                  <input type="text" id="meeting_place_4" placeholder="enter meeting place 4" runat="server"/>
+                                  <input type="text" id="meeting_place_4" placeholder="enter meeting place 4" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                             </div>
                              <div class="form-group"style="text-align:left">
-                                  <input type="text" id="meeting_place_5" placeholder="enter meeting place 5" runat="server"/>
+                                  <input type="text" id="meeting_place_5" placeholder="enter meeting place 5" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                              </div>
                         <div class="form-group" style="text-align:left">  
                          <label>Upload Photo</label>                         

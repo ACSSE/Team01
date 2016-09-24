@@ -26,6 +26,15 @@ namespace IceBreak
                 }
             }
             eventname.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+            eventdescrip.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+            time.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+            end_time.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+            meeting_place_1.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+            meeting_place_2.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+            meeting_place_3.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+            meeting_place_4.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+            meeting_place_5.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+
             meeting_place_1.Style.Add("display", "none");
             meeting_place_2.Style.Add("display", "none");
             meeting_place_3.Style.Add("display", "none");
