@@ -45,8 +45,8 @@ namespace IceBreak
             eventaddress.Value = evnt.Address;
             gps.Value = evnt.Gps_location;
             eventdescrip.Value = evnt.Description;
-            time.Value = evnt.Time;
-            end_time.Value = evnt.EndTime;
+            //time.Value = evnt.Time;
+            //end_time.Value = evnt.EndTime;
 
 
             meeting_place_1.Style.Add("display", "none");
@@ -214,22 +214,22 @@ namespace IceBreak
             evnt.Address = EventAddress;
             evnt.Gps_location = EventGps;
             evnt.Description = EventDescrip;
-            evnt.Date = EventDate;
-            evnt.Time = EventTime;
-            evnt.EndTime = EventEndTime;
+            evnt.Date = long.Parse(EventDate);
+            //evnt.Time = EventTime;
+            //evnt.EndTime = EventEndTime;
             evnt.Meeting_Places = meetingplace;
 
             DBServerTools dbs = new DBServerTools();
-            string check = dbs.addEvent(evnt);
+            //string check = dbs.addEvent(evnt);
 
-            if (check.Contains("Success"))
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You have successfully added an event');window.location ='Event.aspx';", true);
-            }
-            else
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You are not sucessful try again');", true);
-            }
+            //if (check.Contains("Success"))
+            //{
+            //    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You have successfully added an event');window.location ='Event.aspx';", true);
+            //}
+            //else
+            //{
+            //    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You are not sucessful try again');", true);
+            //}
 
         }
 

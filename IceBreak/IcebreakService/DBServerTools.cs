@@ -467,17 +467,15 @@ namespace IcebreakServices
                 {
                     events.Add(new Event()
                     {
-                        Id = (int)dataReader.GetValue(0),
+                        Id = long.Parse(Convert.ToString(dataReader.GetValue(0))),
                         Title = (string)dataReader.GetValue(1),
                         Description = (string)dataReader.GetValue(2),
                         Address = (string)dataReader.GetValue(3),
-                        Radius = (int)dataReader.GetValue(4),
-                        Gps_location = (string)dataReader.GetValue(5),
-                        AccessCode = (int)dataReader.GetValue(6),
-                        Date = (string)dataReader.GetValue(7),
-                        Time = (string)dataReader.GetValue(8),
-                        EndTime = (string)dataReader.GetValue(10),
-                        Meeting_Places = (string)dataReader.GetValue(9)
+                        Gps_location = (string)dataReader.GetValue(4),
+                        AccessCode = int.Parse(Convert.ToString(dataReader.GetValue(5))),
+                        Date = long.Parse(Convert.ToString(dataReader.GetValue(6))),
+                        Meeting_Places = (string)dataReader.GetValue(7),
+                        End_Date = long.Parse(Convert.ToString(dataReader.GetValue(8)))
                     });
                 }
 

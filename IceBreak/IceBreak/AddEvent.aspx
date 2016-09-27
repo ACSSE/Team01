@@ -42,14 +42,15 @@
                             <label for="Event Date ">Event Start Date</label><span id="date_span" runat="server" style="color:red; display:none"> - Please enter your event start date.</span>
                             <input type="date" id="date" name="date" runat="server"/>
                         </div>
+                         <div class="form-group" style="text-align:left">
+                            <label for="Event End Date ">Event End Date</label><span id="end_date_span" runat="server" style="color:red; display:none"> - Please enter your event end date.</span>
+                            <input type="date" id="event_end_date" name="event_end_date" runat="server"/>
+                        </div>
                         <div class="form-group" style="text-align:left">
                             <label for="Event Time">Event Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event time.</span>
                             <input type="time" id="time" name="time" runat="server"/>
                         </div>
-                        <div class="form-group" style="text-align:left">
-                            <label for="Event End Date ">Event End Date</label><span id="end_date_span" runat="server" style="color:red; display:none"> - Please enter your event end date.</span>
-                            <input type="date" id="event_end_date" name="event_end_date" runat="server"/>
-                        </div>
+                       
                          <div class="form-group" style="text-align:left">
                             <label for="Event end time">Event End Time</label><span id="end_time_span" runat="server" style="color:red; display:none"> - Please enter your event end time.</span>
                             <input type="time" id="end_time" name="Event end time" runat="server" onkeydown = "return (event.keyCode!=13);"/>

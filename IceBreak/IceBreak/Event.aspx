@@ -18,12 +18,8 @@
     </div>
 </div>
    
-<a href="AddEvent.aspx">
-<div class="floatingContainer">
-	<div class="actionButton">
-		<span class="glyphicon glyphicon-plus glyphicon-center" style="font-size:x-large;color:white;"></span>
-	</div>
-</div>
+<a id="AddButton" href="AddEvent.aspx" runat="server">
+
 </a>
 <a id="EditButton" href="YourEvents.aspx" runat="server">
 

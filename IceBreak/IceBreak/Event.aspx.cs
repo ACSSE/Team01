@@ -24,6 +24,11 @@ namespace IceBreak
                           "<span class='glyphicon glyphicon-pencil glyphicon-center' style='font-size:x-large;color:white;'></span>" +
                          "</div>" +
                         "</div>";
+                    AddButton.InnerHtml = "<div class='floatingContainer'>"+
+	                    "<div class='actionButton'>" +
+		                   "<span class='glyphicon glyphicon-plus glyphicon-center' style='font-size:x-large;color:white;'></span>"+
+	                  " </div>"+
+                    "</div>";
                 }
             }
             // Page.ClientScript.RegisterStartupScript(this.GetType(),"onLoad", "<script type='text/javascript'> startTime();</script>", true);
