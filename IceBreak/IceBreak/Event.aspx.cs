@@ -30,7 +30,7 @@ namespace IceBreak
 
             DBServerTools dbs = new DBServerTools();
 
-            List<IcebreakServices.Event> events = dbs.getEvents();
+            List<IcebreakServices.Event> events = dbs.getAllEvents();
 
             foreach(IcebreakServices.Event evnt in events)
             {
@@ -52,6 +52,7 @@ namespace IceBreak
                 catch(WebException ex)
                 {
                     pageExists = false;
+                    dbs.addError(ErrorCodes.EEVENT,ex.Message, "Event.aspx[Page_Load]");
                 }
                
                 if (!pageExists)

@@ -121,6 +121,24 @@ namespace IceBreak {
         protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl time;
         
         /// <summary>
+        /// end_date_span control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl end_date_span;
+        
+        /// <summary>
+        /// event_end_date control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl event_end_date;
+        
+        /// <summary>
         /// end_time_span control.
         /// </summary>
         /// <remarks>

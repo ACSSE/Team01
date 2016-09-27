@@ -80,12 +80,6 @@ namespace IcebreakServices
             BodyStyle = WebMessageBodyStyle.Bare)]
         string imageUpload(string fileName, Stream fileStream);
 
-        /*[OperationContract]
-        [WebInvoke(Method = "POST",
-            UriTemplate = "/updateUserMailbox",
-            BodyStyle = WebMessageBodyStyle.Bare)]
-        string updateUserMailbox(Stream fileStream);*/
-
         [OperationContract]
         [WebInvoke(
             Method = "POST",
@@ -106,18 +100,22 @@ namespace IcebreakServices
             Method = "POST",
             UriTemplate = "/addEvent",
             BodyStyle = WebMessageBodyStyle.Bare)]
-        void addEvent(Stream streamdata);
-
-        /*[OperationContract]
-        [WebInvoke(
-            Method = "POST",
-            UriTemplate = "/addEventImg/{eventId}",
-            BodyStyle = WebMessageBodyStyle.Bare)]
-        void addEventImg(string eventId, Stream streamdata);*/
+        string addEvent(Stream streamdata);
 
         [OperationContract]
-        [WebGet(UriTemplate = "/readEvents/", ResponseFormat = WebMessageFormat.Json, BodyStyle =WebMessageBodyStyle.Bare)]
-        List<Event> readEvents();
+        [WebInvoke(
+            Method = "POST",
+            UriTemplate = "/updateEvent",
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        string updateEvent(Stream streamdata);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getNearbyEvents/{lat}/{lng}/{range}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        List<Event> getNearbyEvents(string lat, string lng, string range);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getAllEvents", ResponseFormat = WebMessageFormat.Json, BodyStyle =WebMessageBodyStyle.Bare)]
+        List<Event> getAllEvents();
 
         [OperationContract]
         [WebGet(UriTemplate = "/getEvent/{event_id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
@@ -127,12 +125,18 @@ namespace IcebreakServices
         [WebGet(UriTemplate = "/getUserContacts", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         List<User> getUserContacts();
 
+        [OperationContract]
+        [WebGet(
+            UriTemplate = "/getMeta/{record}",
+            ResponseFormat = WebMessageFormat.Json)]
+        Metadata getMeta(string record);
+
         //Stats
         [OperationContract]
         [WebGet(
             UriTemplate = "/getUsersIcebreakCount",
             ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.WrappedResponse)]
+            BodyStyle = WebMessageBodyStyle.WrappedResponse)] 
         void getUsersIcebreakCount();
     }
 }
