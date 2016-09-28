@@ -88,7 +88,7 @@ namespace IceBreak
                 DIV.InnerHtml = "<a href = '#'>" +
                         "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + username + ".png' alt=''/>" +
                     "</a>" + "<label class='Sidebarname'>" + firstname + " " + lastname + "</label>";
-              // DIV.InnerHtml = "<label class='Sidebarname'>" + firstname +" "+ lastname + "</label>";
+                Response.Redirect(Request.RawUrl);
             }
             else
             {

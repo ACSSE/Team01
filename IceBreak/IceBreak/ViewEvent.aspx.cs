@@ -48,17 +48,31 @@ namespace IceBreak
                 picUrl = "http://icebreak.azurewebsites.net/images/events/default.png";
             }
 
+            DateTime date = FromUnixTime(evnt.Date);
+            DateTime enddate = FromUnixTime(evnt.End_Date);
+
+
+
             EventImage.InnerHtml = "<img class='img-responsive img-center' src='" +picUrl+ "'/>";
 
             EventName.InnerHtml = evnt.Title;
 
-            EventDate.InnerHtml = "Date: "+evnt.Date;
 
-            EventEnd.InnerHtml = "End Date: " + evnt.End_Date;
+            EventDate.InnerHtml = "Date: " + date.ToShortDateString();
+            EventStart.InnerHtml = "Start Time: "+date.ToShortTimeString();
+            
+            EventEnd.InnerHtml = "End Date: " + enddate.ToShortDateString();
+
+            EndTime.InnerHtml = "End Time: " + enddate.ToShortTimeString();
 
             EventAddress.InnerHtml = "Address: " + evnt.Address;
 
             EVentDescription.InnerHtml = evnt.Description;
+        }
+        public DateTime FromUnixTime(long unixTime)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return epoch.AddMilliseconds(unixTime);
         }
     }
 }

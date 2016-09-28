@@ -28,11 +28,11 @@
                        </div>
                         <div class="form-group" style="text-align:left">
                              <label for="EventAddress">Event Address</label><span id="address_span" runat="server" style="color:red; display:none"> - Please enter your event address.</span>
-                             <input type="text" id="eventaddress" name="eventaddress" disabled placeholder="Use Google Map to enter a location" runat="server"/>
+                             <input  type="text" readonly="readonly" id="eventaddress" name="eventaddress" placeholder="Use Google Map to enter a location" runat="server"/>
                        </div>
                          <div class="form-group" style="text-align:left">
                              <label for="gps">GPS Coordinates</label><span id="gps_span" runat="server" style="color:red; display:none"> - Please enter your gps coordinates.</span>
-                             <input id="gps" type="text" name="gps" disabled placeholder="enter your gps coordinates..." runat="server" />
+                             <input  id="gps" type="text" readonly="readonly" name="gps" placeholder="enter your gps coordinates..." runat="server" />
                        </div>
                         <div class="form-group" style="text-align:left">
                             <label for="EventDescription">Event Description</label><span id="descrip_span" runat="server" style="color:red; display:none"> - Please enter your event description.</span>

@@ -18,6 +18,7 @@
                     <p class="lead section-lead" id ="EventDate" runat="server"></p>
                     <p class="lead section-lead" id ="EventStart" runat="server"></p>
                     <p class="lead section-lead" id ="EventEnd" runat="server"></p>
+                    <p class="lead section-lead" id ="EndTime" runat="server"></p>
                     <p class="lead section-lead" id ="EventAddress" runat="server"></p>
                     <p class="section-paragraph" id ="EVentDescription" runat="server"></p>
                 </div>

@@ -14,7 +14,7 @@ namespace IceBreak
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (Session["LEVEL"] == null || Session["USER"]==null)
+            if (Session["LEVEL"] == null || Session["USER"] == null)
             {
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login');window.location ='index.aspx';", true);
                 return;
@@ -88,11 +88,7 @@ namespace IceBreak
         }
         protected void btnAdd_Event(object sender, EventArgs e)
         {
-            if (Session["LEVEL"] == null || Session["USER"] == null)
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login to view this page.');window.location ='index.aspx';", true);
-                return;
-            }
+           
             int lvl = (int)Session["LEVEL"];
             if (lvl < DBServerTools.CAN_EDIT_EVENTS)
             {
@@ -236,17 +232,17 @@ namespace IceBreak
             ulong now = (ulong)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
             if (start_date <= 0 || end_date<=0)
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Start date and/or end date is invalid. Date must be in the future.');window.location ='index.aspx';", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Start date and/or end date is invalid. Date must be in the future.');window.location ='AddEvent.aspx';", true);
                 return;
             }
             if (start_date <= now || end_date <= now)
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Start date and/or end date is invalid. Date must be in the future.');window.location ='index.aspx';", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Start date and/or end date is invalid. Date must be in the future.');window.location ='AddEvent.aspx';", true);
                 return;
             }
             if (start_date > end_date)
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Start date and/or end date is invalid. End date must be after start date.');window.location ='index.aspx';", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Start date and/or end date is invalid. End date must be after start date.');window.location ='AddEvent.aspx';", true);
                 return;
             }
 
@@ -266,11 +262,11 @@ namespace IceBreak
            
             if(check.ToLower().Contains("success"))
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You have successfully created an event!');window.location ='Event.aspx';", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='Event.aspx';", true);
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Event creation unsuccessful. Try again.');", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "Event creation unsuccessful. Try again.');", true);
             }
             
         }
