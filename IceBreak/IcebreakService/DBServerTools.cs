@@ -305,7 +305,7 @@ namespace IcebreakServices
                         Message_status = Convert.ToInt16(dataReader.GetValue(2)),
                         Message_sender = Convert.ToString(dataReader.GetValue(3)),
                         Message_receiver = Convert.ToString(dataReader.GetValue(4)),
-                        Message_time = (long)(dataReader.GetValue(5))
+                        Message_time = long.Parse(Convert.ToString(dataReader.GetValue(5)))
                     });
                 }
                 
@@ -748,7 +748,7 @@ namespace IcebreakServices
                     m.Message_status = Convert.ToInt16(dataReader.GetValue(2));
                     m.Message_sender = Convert.ToString(dataReader.GetValue(3));
                     m.Message_receiver = Convert.ToString(dataReader.GetValue(4));
-                    m.Message_time = (long)(dataReader.GetValue(5));
+                    m.Message_time = long.Parse(Convert.ToString(dataReader.GetValue(5)));
                 }
 
                 dataReader.Close();
@@ -1000,6 +1000,16 @@ namespace IcebreakServices
                 cmd.Dispose();
                 conn.Close();
 
+                //Update Metadata
+                TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                ulong since_epoch = (ulong)t.TotalSeconds;
+                Metadata meta = new Metadata()
+                {
+                    Entry = "event="+Convert.ToString(ev.Id),
+                    Meta = "dmd=" + Convert.ToString(since_epoch)
+                };
+                updateMeta(meta);
+
                 return "Success";
             }
             catch(Exception e)
@@ -1043,6 +1053,26 @@ namespace IcebreakServices
 
                     cmd.Dispose();
                     conn.Close();
+
+                    //Write Metadata
+                    List<Event> events = getAllEvents();
+                    string eventId = "";
+                    foreach (Event e in events)
+                    {
+                        //if(e.Title.Equals(ev.Title) && e.Gps_location.Equals(ev.Gps_location) && e.Radius==ev.Radius)
+                        if (e.isEqualTo(ev))
+                        {        
+                            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                            ulong since_epoch = (ulong)t.TotalSeconds;
+                            Metadata meta = new Metadata()
+                            {
+                                Entry = "event="+eventId,
+                                Meta = "dmd=" + Convert.ToString(since_epoch)
+                            };
+                            addMeta(meta);
+                            eventId = Convert.ToString(e.Id);
+                        }
+                    }
 
                     return "Success";
                 }else return "Error:Invalid Event. Remember that the access code has to be >= 4 chars and no fields can be null.";
@@ -1306,22 +1336,35 @@ namespace IcebreakServices
         //Metadata stuff
         public bool addMeta(Metadata metadata)
         {
+            //Some security checks
+            if (metadata == null)
+                return false;
+            if (String.IsNullOrEmpty(metadata.Entry) || String.IsNullOrEmpty(metadata.Meta))
+                return false;
+            if ( metadata.Entry.ToLower().Equals("null") || metadata.Meta.ToLower().Equals("null"))
+                return false;
+
             try
             {
-                conn = new SqlConnection(dbConnectionString);
-                conn.Open();
+                Metadata m = getMeta(metadata.Entry);
+                if (m.Entry.ToLower().Equals("null") || m.Meta.ToLower().Equals("null"))
+                {
+                    conn = new SqlConnection(dbConnectionString);
+                    conn.Open();
 
-                string query = "INSERT INTO [dbo].[Metadata](Metadata_entry_name,Metadata_entry_data) VALUES(@entry_name,@entry_data)";
-                SqlCommand cmd = new SqlCommand(query,conn);
+                    string query = "INSERT INTO [dbo].[Metadata](Metadata_entry_name,Metadata_entry_data) VALUES(@entry_name,@entry_data)";
+                    SqlCommand cmd = new SqlCommand(query, conn);
 
-                cmd.Parameters.AddWithValue(@"entry_name", metadata.Entry);
-                cmd.Parameters.AddWithValue(@"entry_data", metadata.Meta);
+                    cmd.Parameters.AddWithValue(@"entry_name", metadata.Entry);
+                    cmd.Parameters.AddWithValue(@"entry_data", metadata.Meta);
 
-                cmd.ExecuteNonQuery();
+                    cmd.ExecuteNonQuery();
 
-                cmd.Dispose();
-                conn.Close();
-                return true;
+                    cmd.Dispose();
+                    conn.Close();
+                    return true;
+                }
+                else updateMeta(metadata);
             }
             catch(Exception e)
             {
@@ -1332,6 +1375,14 @@ namespace IcebreakServices
 
         public bool updateMeta(Metadata meta)
         {
+            //Some security checks
+            if (meta == null)
+                return false;
+            if (String.IsNullOrEmpty(meta.Entry) || String.IsNullOrEmpty(meta.Meta))
+                return false;
+            if (meta.Entry.ToLower().Equals("null") || meta.Meta.ToLower().Equals("null"))
+                return false;
+
             try
             {
                 conn = new SqlConnection(dbConnectionString);
@@ -1357,6 +1408,9 @@ namespace IcebreakServices
 
         public Metadata getMeta(string record)
         {
+            if (String.IsNullOrEmpty(record))
+                return new Metadata() { Entry="null", Meta="null"};
+
             conn = new SqlConnection(dbConnectionString);
             try
             {
@@ -1367,28 +1421,33 @@ namespace IcebreakServices
                 
                 dataReader = cmd.ExecuteReader();
                 dataReader.Read();
-
-                string entry="", meta="";
-                var entr = dataReader.GetValue(0);
-                if (Convert.IsDBNull(entr))
+                if (dataReader.HasRows)
                 {
-                    return new Metadata() { Entry = "null", Meta = "Error:" + Convert.ToString(ErrorCodes.EDMD_NOT_SET) };
-                }else entry = Convert.ToString(entr);
-                var data = dataReader.GetValue(1);
-                if (Convert.IsDBNull(data))
-                {
-                    return new Metadata() { Entry = "null", Meta = "Error:" + Convert.ToString(ErrorCodes.EDMD_NOT_SET) };
-                }else meta = Convert.ToString(data);
+                    string entry = "", meta = "";
+                    var entr = dataReader.GetValue(0);
+                    if (Convert.IsDBNull(entr))
+                    {
+                        return new Metadata() { Entry = "null", Meta = "Error:" + Convert.ToString(ErrorCodes.EDMD_NOT_SET) };
+                    }
+                    else entry = Convert.ToString(entr);
+                    var data = dataReader.GetValue(1);
+                    if (Convert.IsDBNull(data))
+                    {
+                        return new Metadata() { Entry = "null", Meta = "Error:" + Convert.ToString(ErrorCodes.EDMD_NOT_SET) };
+                    }
+                    else meta = Convert.ToString(data);
 
-                Metadata metadata = new Metadata();
-                metadata.Entry = entry;
-                metadata.Meta = meta;
+                    Metadata metadata = new Metadata();
+                    metadata.Entry = entry;
+                    metadata.Meta = meta;
 
-                dataReader.Close();
-                cmd.Dispose();
-                conn.Close();
+                    dataReader.Close();
+                    cmd.Dispose();
+                    conn.Close();
 
-                return metadata;
+                    return metadata;
+                }
+                else return new Metadata() { Entry = "null", Meta = "null" };
             }
             catch (Exception e)
             {

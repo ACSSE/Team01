@@ -114,6 +114,10 @@ namespace IcebreakServices
         List<Event> getNearbyEvents(string lat, string lng, string range);
 
         [OperationContract]
+        [WebGet(UriTemplate = "/getNearbyEventIds/{lat}/{lng}/{range}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        List<string> getNearbyEventIds(string lat, string lng, string range);
+
+        [OperationContract]
         [WebGet(UriTemplate = "/getAllEvents", ResponseFormat = WebMessageFormat.Json, BodyStyle =WebMessageBodyStyle.Bare)]
         List<Event> getAllEvents();
 

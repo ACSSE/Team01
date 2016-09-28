@@ -146,16 +146,6 @@ namespace IcebreakServices
                             if (e.isEqualTo(ev))
                             {
                                 eventId = Convert.ToString(e.Id);
-
-                                //Write Metadata
-                                TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-                                ulong since_epoch = (ulong)t.TotalSeconds;
-                                Metadata meta = new Metadata()
-                                {
-                                    Entry = eventId,
-                                    Meta = "dmd=" + Convert.ToString(since_epoch)
-                                };
-                                db.addMeta(meta);
                             }
                         }
 
@@ -300,15 +290,6 @@ namespace IcebreakServices
                     if (exec_res.ToLower().Contains("success"))
                     {
                         response = exec_res;
-                        //Write Metadata
-                        TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-                        ulong since_epoch = (ulong)t.TotalSeconds;
-                        Metadata meta = new Metadata()
-                        {
-                            Entry = Convert.ToString(ev.Id),
-                            Meta = "dmd=" + Convert.ToString(since_epoch)
-                        };
-                        db.updateMeta(meta);
                         //WebOperationContext.Current.OutgoingResponse.Headers.Add("req_event_icon", eventId);
                         WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
                     }
@@ -1089,5 +1070,16 @@ namespace IcebreakServices
             }
             return valid_events;
         }
-    }
+
+        public List<string> getNearbyEventIds(string lat, string lng, string range)
+        {
+            List<Event> events = getNearbyEvents(lat,lng,range);
+            List<string> event_ids = new List<string>();
+            foreach(Event e in events)
+            {
+                event_ids.Add(Convert.ToString(e.Id));
+            }
+            return event_ids;
+        }
+}
 }
