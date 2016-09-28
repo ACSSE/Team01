@@ -1,11 +1,11 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/master.Master" AutoEventWireup="true" CodeBehind="EditEvent.aspx.cs" Inherits="IceBreak.EditEvent" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/master.Master" ClientIDMode="Static" AutoEventWireup="true" CodeBehind="EditEvent.aspx.cs" Inherits="IceBreak.EditEvent" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <script src="scripts/jquery.backstretch.min.js"></script>
      <script async="async" defer="defer" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAAQZBI76K_oRkxy-1qAyMC2w8AnfimZM&libraries=places"></script>
-   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
      <link rel="stylesheet" href="stylesheets/addeventform.css"/>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+
      <div id="page-content-wrapper">
         
         <div class="register-container container">
@@ -24,11 +24,11 @@
                        </div>
                         <div class="form-group" style="text-align:left">
                              <label for="EventAddress">Event Address</label><span id="address_span" runat="server" style="color:red; display:none"> - Please enter your event address.</span>
-                             <input type="text" id="eventaddress" name="eventaddress" disabled  runat="server"/>
+                             <input type="text" id="eventaddress" name="eventaddress" readonly="readonly"  runat="server"/>
                        </div>
                          <div class="form-group" style="text-align:left">
                              <label for="gps">GPS Coordinates</label><span id="gps_span" runat="server" style="color:red; display:none"> - Please enter your gps coordinates.</span>
-                             <input id="gps" type="text" name="gps" disabled  runat="server" />
+                             <input id="gps" type="text" name="gps" readonly="readonly"  runat="server" />
                        </div>
                         <div class="form-group" style="text-align:left">
                             <label for="EventDescription">Event Description</label><span id="descrip_span" runat="server" style="color:red; display:none"> - Please enter your event description.</span>
@@ -37,6 +37,10 @@
                         <div class="form-group" style="text-align:left">
                             <label for="Event Date ">Event Date</label><span id="date_span" runat="server" style="color:red; display:none"> - Please enter your event date.</span>
                             <input type="date" id="date" name="date" runat="server" onkeydown = "return (event.keyCode!=13);"/>
+                        </div>
+                        <div class="form-group" style="text-align:left">
+                            <label for="Event End Date ">Event End Date</label><span id="end_date_span" runat="server" style="color:red; display:none"> - Please enter your event end date.</span>
+                            <input type="date" id="event_end_date" name="event_end_date" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                         </div>
                         <div class="form-group" style="text-align:left">
                             <label for="Event Time">Event Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event time.</span>
@@ -98,7 +102,7 @@
        }
        function initMap() {
            var map = new google.maps.Map(document.getElementById('map'), {
-               center: { lat: -33.8688, lng: 151.2195 },
+               center: { lat: -26.195246, lng: 28.034088 },
                zoom: 13
            });
            var input = /** @type {!HTMLInputElement} */(
@@ -142,13 +146,11 @@
                    anchor: new google.maps.Point(17, 34),
                    scaledSize: new google.maps.Size(35, 35)
                }));
-              
+
                marker.setPosition(place.geometry.location);
                marker.setVisible(true);
 
-               document.getElementById('gps').value = place.geometry.location;
-
-               document.getElementById('eventaddress').value = place.formatted_address;
+              
 
                var address = '';
                if (place.address_components) {
@@ -158,24 +160,16 @@
                      (place.address_components[2] && place.address_components[2].short_name || '')
                    ].join(' ');
                }
-               
+
                infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
                infowindow.open(map, marker);
+
+               document.getElementById("gps").value = place.geometry.location;
+
+               document.getElementById('eventaddress').value = place.formatted_address;
+
            });
 
-           // Sets a listener on a radio button to change the filter type on Places
-           // Autocomplete.
-           function setupClickListener(id, types) {
-               var radioButton = document.getElementById(id);
-               radioButton.addEventListener('click', function () {
-                   autocomplete.setTypes(types);
-               });
-           }
-
-           setupClickListener('changetype-all', []);
-           setupClickListener('changetype-address', ['address']);
-           setupClickListener('changetype-establishment', ['establishment']);
-           setupClickListener('changetype-geocode', ['geocode']);
 
        }
        google.maps.event.addDomListener(window, "load", initMap);

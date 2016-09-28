@@ -31,6 +31,8 @@ namespace IceBreak
             eventname.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
             eventdescrip.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
             time.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+            date.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+            event_end_date.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
             end_time.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
             meeting_place_1.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
             meeting_place_2.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
@@ -222,10 +224,10 @@ namespace IceBreak
             //EventDate = EventDate.Replace("\\|", "-");
             string[] date = EventDate.Split('-');*/
             string str_start_date = EventDate + " " + EventTime;
-            ulong start_date = (ulong)(DateTime.ParseExact(str_start_date, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) - new DateTime(1970, 1, 1)).TotalSeconds;
+            ulong start_date = (ulong)(DateTime.ParseExact(str_start_date, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) - new DateTime(1970, 1, 1,0,0,0)).TotalSeconds;
 
             string str_end_date = EventEndDate + " " + EventEndTime;
-            ulong end_date = (ulong)(DateTime.ParseExact(str_end_date, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) - new DateTime(1970, 1, 1)).TotalSeconds;
+            ulong end_date = (ulong)(DateTime.ParseExact(str_end_date, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) - new DateTime(1970, 1, 1,0,0,0)).TotalSeconds;
 
             //ulong start_date = (ulong)(DateTime.Parse(EventDate) - new DateTime(1970, 1, 1)).TotalSeconds;//convert to seconds since epoch
             //ulong end_date = (ulong)(DateTime.Parse(EventEndTime) - new DateTime(1970, 1, 1)).TotalSeconds;//convert to seconds since epoch
@@ -266,7 +268,7 @@ namespace IceBreak
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "Event creation unsuccessful. Try again.');", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Event creation unsuccessful. Try again.');", true);
             }
             
         }

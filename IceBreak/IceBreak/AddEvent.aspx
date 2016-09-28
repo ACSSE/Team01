@@ -3,9 +3,7 @@
     <script src="scripts/scripts.js"></script>
     <script src="scripts/jquery.backstretch.min.js"></script>
      <script async="async" defer="defer" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAAQZBI76K_oRkxy-1qAyMC2w8AnfimZM&libraries=places"></script>
-   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-     <link rel="stylesheet" href="stylesheets/addeventform.css"/>
-    
+      <link rel="stylesheet" href="stylesheets/addeventform.css"/>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
@@ -40,15 +38,15 @@
                         </div>
                         <div class="form-group" style="text-align:left">
                             <label for="Event Date ">Event Start Date</label><span id="date_span" runat="server" style="color:red; display:none"> - Please enter your event start date.</span>
-                            <input type="date" id="date" name="date" runat="server"/>
+                            <input type="date" id="date" name="date" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                         </div>
                          <div class="form-group" style="text-align:left">
                             <label for="Event End Date ">Event End Date</label><span id="end_date_span" runat="server" style="color:red; display:none"> - Please enter your event end date.</span>
-                            <input type="date" id="event_end_date" name="event_end_date" runat="server"/>
+                            <input type="date" id="event_end_date" name="event_end_date" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                         </div>
                         <div class="form-group" style="text-align:left">
                             <label for="Event Time">Event Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event time.</span>
-                            <input type="time" id="time" name="time" runat="server"/>
+                            <input type="time" id="time" name="time" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                         </div>
                        
                          <div class="form-group" style="text-align:left">
@@ -93,8 +91,6 @@
                </div>
             </div>
     </div>
-
-    
    <script type="text/javascript">
        function showAlert()
        {
@@ -105,7 +101,7 @@
        }
        function initMap() {
            var map = new google.maps.Map(document.getElementById('map'), {
-               center: { lat: -33.8688, lng: 151.2195 },
+               center: { lat: -26.195246, lng: 28.034088 },
                zoom: 13
            });
            var input = /** @type {!HTMLInputElement} */(
@@ -188,7 +184,4 @@
        google.maps.event.addDomListener(window, "load", initMap);
 
    </script>
-     
-   
-
 </asp:Content>
