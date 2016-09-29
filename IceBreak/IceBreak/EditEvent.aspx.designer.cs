@@ -10,7 +10,7 @@
 namespace IceBreak {
     
     
-    public partial class AddEvent {
+    public partial class EditEvent {
         
         /// <summary>
         /// lbl_name control.
@@ -94,13 +94,13 @@ namespace IceBreak {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl date_span;
         
         /// <summary>
-        /// date control.
+        /// edit_event_date control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl date;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl edit_event_date;
         
         /// <summary>
         /// end_date_span control.
@@ -112,13 +112,13 @@ namespace IceBreak {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl end_date_span;
         
         /// <summary>
-        /// event_end_date control.
+        /// edit_event_end_date control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl event_end_date;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl edit_event_end_date;
         
         /// <summary>
         /// time_span control.
@@ -130,13 +130,13 @@ namespace IceBreak {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl time_span;
         
         /// <summary>
-        /// time control.
+        /// edit_event_time control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl time;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl edit_event_time;
         
         /// <summary>
         /// end_time_span control.
@@ -148,13 +148,13 @@ namespace IceBreak {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl end_time_span;
         
         /// <summary>
-        /// end_time control.
+        /// edit_event_end_time control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl end_time;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl edit_event_end_time;
         
         /// <summary>
         /// meeting_span control.
@@ -238,12 +238,12 @@ namespace IceBreak {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl upload;
         
         /// <summary>
-        /// btnAddButton control.
+        /// btnUpdateButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddButton;
+        protected global::System.Web.UI.WebControls.Button btnUpdateButton;
     }
 }

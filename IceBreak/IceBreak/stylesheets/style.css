@@ -30,6 +30,11 @@
   padding-right: 0px;
   padding-left: 0px; }
 
+.floatingEditContainer {
+  bottom: 2em;
+  position: fixed;
+  right: 8em; }
+
 .floatingContainer {
   bottom: 2em;
   position: fixed;

@@ -127,9 +127,6 @@
             </div>
         </div>
         
-             <%-- Login modal  --%>
-      
-     
        
              <div id ="signUpModal" class="modal fade" role="dialog" runat="server">
             <div class="modal-dialog">
