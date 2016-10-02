@@ -114,10 +114,18 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="About us.aspx" />
     <Content Include="AddEvent.aspx" />
     <Content Include="Event.aspx" />
+    <Content Include="images\ab.jpg" />
+    <Content Include="images\About3.jpeg" />
+    <Content Include="images\AboutUs\Company2.jpg" />
+    <Content Include="images\AboutUs\SLOGAN.jpg" />
+    <Content Include="images\AboutUs\SLOGAN2.jpg" />
     <Content Include="images\blurred_lines.jpeg" />
+    <Content Include="images\Company.png" />
     <Content Include="images\favicon.png" />
+    <Content Include="images\founder.png" />
     <Content Include="images\image1.jpg" />
     <Content Include="images\image2.jpg" />
     <Content Include="images\iphone.png" />
@@ -125,6 +133,7 @@
     <Content Include="images\pattern.jpg" />
     <Content Include="images\pencil.png" />
     <Content Include="images\profile.jpg" />
+    <Content Include="images\SloganAboutUs.jpg" />
     <Content Include="images\Tevin.jpg" />
     <Content Include="images\view.JPG" />
     <Content Include="packages.config" />
@@ -144,6 +153,7 @@
     <Content Include="scripts\jquery.backstretch.min.js" />
     <Content Include="scripts\scripts.js" />
     <Content Include="stats.aspx" />
+    <Content Include="stylesheets\about us.css" />
     <Content Include="stylesheets\addeventform.css">
       <DependentUpon>addeventform.scss</DependentUpon>
     </Content>
@@ -185,6 +195,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="About us.aspx.cs">
+      <DependentUpon>About us.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="About us.aspx.designer.cs">
+      <DependentUpon>About us.aspx</DependentUpon>
+    </Compile>
     <Compile Include="AddEvent.aspx.cs">
       <DependentUpon>AddEvent.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
