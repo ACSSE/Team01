@@ -119,8 +119,9 @@
     <Content Include="Event.aspx" />
     <Content Include="images\ab.jpg" />
     <Content Include="images\About3.jpeg" />
+    <Content Include="images\AboutUs\company.jpg" />
     <Content Include="images\AboutUs\Company2.jpg" />
-    <Content Include="images\AboutUs\SLOGAN.jpg" />
+    <Content Include="images\AboutUs\SLOGAN.png" />
     <Content Include="images\AboutUs\SLOGAN2.jpg" />
     <Content Include="images\blurred_lines.jpeg" />
     <Content Include="images\Company.png" />

@@ -85,9 +85,9 @@
       -ms-transform: none;
           transform: none;
            
-            top: 170px; 
+            top: 125px; 
             left: 0px;
-            height: 90%; 
+            height: 100%; 
             width: 100%;
            position:fixed;
       
@@ -97,12 +97,11 @@
    <div id ="container">
     <div class="AboutGallery">
         <ul>
-            <li><img src ="images/AboutUs/SLOGAN.jpg" /><img class="bottom" src ="images/AboutUs/SLOGAN2.jpg" /></li>
-            <li><img src ="images/Company.png" /><a href ="company.aspx"><img class ="bottom" src ="images/AboutUs/Company2.jpg" /></a></li>
+            <li><img src ="images/AboutUs/SLOGAN.png" /><img class="bottom" src ="images/AboutUs/SLOGAN2.jpg" /></li>
+            <li><img src ="images/AboutUs/company.jpg" /><a href ="company.aspx"><img class ="bottom" src ="images/AboutUs/Company2.jpg" /></a></li>
             <li><img src ="images/founder.png" /><a href ="foundervid.aspx"><img class ="bottom"src ="images/About3.jpeg"/></a></li>
         </ul>
-    </div>
-    
+    </div>    
        </div>  
          
          
