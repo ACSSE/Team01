@@ -33,12 +33,12 @@
 .floatingEditContainer {
   bottom: 2em;
   position: fixed;
-  right: 8em; }
+  right: 10em; }
 
 .floatingContainer {
   bottom: 2em;
   position: fixed;
-  right: 6em; }
+  right: 4em; }
 
 .actionButton {
   background-color: #59D0F7;
