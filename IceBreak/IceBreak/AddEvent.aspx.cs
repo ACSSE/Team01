@@ -254,7 +254,7 @@ namespace IceBreak
             evnt.Gps_location = EventGps;
             evnt.Description = EventDescrip;
             evnt.Date = Convert.ToUInt32(start_date);
-            evnt.AccessCode = 12345;//Fix this!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            evnt.AccessCode = 12345;//FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             evnt.End_Date = Convert.ToUInt32(end_date);
             evnt.Meeting_Places = meetingplace;
             evnt.Manager = Convert.ToString(Session["USER"]);

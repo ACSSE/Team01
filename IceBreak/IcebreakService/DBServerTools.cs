@@ -295,9 +295,6 @@ namespace IcebreakServices
                 dataReader = cmd.ExecuteReader();
                 while (dataReader.Read())
                 {
-                    string event_date = Convert.ToString(dataReader.GetValue(5));
-                    event_date = event_date.Replace('/', '-');
-                    event_date = event_date.Replace(':', '-');
                     messages.Add(new Message()
                     {
                         Message_id = Convert.ToString(dataReader.GetValue(0)),

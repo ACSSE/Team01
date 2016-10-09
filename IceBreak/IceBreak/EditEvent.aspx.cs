@@ -303,6 +303,7 @@ namespace IceBreak
             ulong end_date = (ulong)(DateTime.ParseExact(str_end_date, "yyyy-MM-dd HH:mm:ss tt", CultureInfo.CurrentCulture) - new DateTime(1970, 1, 1)).TotalSeconds;
 
             ulong now = (ulong)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('now="+now+"');", true);
 
             if (start_date <= 0 || end_date <= 0)
             {
@@ -353,7 +354,7 @@ namespace IceBreak
         public DateTime FromUnixTime(long unixTime)
         {
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            return epoch.AddMilliseconds(unixTime);
+            return epoch.AddSeconds(unixTime);
         }
 
     }
