@@ -344,7 +344,7 @@ namespace IceBreak
             if (check.ToLower().Contains("success"))
             {
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Event editing successful.');window.location ='index.aspx';", true);
-                //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='index.aspx';", true);
+                //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='YourEvents.aspx';", true);
             }
             else
             {
