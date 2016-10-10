@@ -218,14 +218,14 @@ namespace IceBreak
             }
 
             string str_start_date = EventDate + " " + EventTime;
-            if (Convert.ToInt16(EventTime.Split(':')[0]) >= 12)
+            if (int.Parse(EventTime.Split(':')[0]) >= 12)
                 str_start_date += ":01 PM";
             else str_start_date += ":01 AM";
 
             ulong start_date = (ulong)(DateTime.ParseExact(str_start_date, "yyyy-MM-dd HH:mm:ss tt", CultureInfo.CurrentCulture) - new DateTime(1970, 1, 1)).TotalSeconds;
 
             string str_end_date = EventEndDate + " " + EventEndTime;
-            if (Convert.ToInt16(EventEndTime.Split(':')[0]) >= 12)
+            if (int.Parse(EventEndTime.Split(':')[0]) >= 12)
                 str_end_date += ":01 PM";
             else str_end_date += ":01 AM";
             ulong end_date = (ulong)(DateTime.ParseExact(str_end_date, "yyyy-MM-dd HH:mm:ss tt", CultureInfo.CurrentCulture) - new DateTime(1970, 1, 1)).TotalSeconds;
@@ -247,6 +247,9 @@ namespace IceBreak
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Start date and/or end date is invalid. End date must be after start date.');window.location ='AddEvent.aspx';", true);
                 return;
             }
+            //Get passcode
+            int pcode = DBServerTools.getRandomNumber(9999999);
+            pcode = pcode >= 1000 ? pcode : pcode + 1000;//make sure passcode is always >= 4 digits
 
             IcebreakServices.Event evnt = new IcebreakServices.Event();
             evnt.Title = EventName;
@@ -254,10 +257,10 @@ namespace IceBreak
             evnt.Gps_location = EventGps;
             evnt.Description = EventDescrip;
             evnt.Date = Convert.ToUInt32(start_date);
-            evnt.AccessCode = 12345;//FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            evnt.AccessCode = pcode;
             evnt.End_Date = Convert.ToUInt32(end_date);
             evnt.Meeting_Places = meetingplace;
-            evnt.Manager = Convert.ToString(Session["USER"]);
+            evnt.Manager = (string)Session["USER"];
 
             DBServerTools dbs = new DBServerTools();
             string check = dbs.addEvent(evnt,lvl);
@@ -268,7 +271,7 @@ namespace IceBreak
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Event creation unsuccessful. Try again.');", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert(\"Event creation unsuccessful: "+check+"\");", true);
             }
             
         }

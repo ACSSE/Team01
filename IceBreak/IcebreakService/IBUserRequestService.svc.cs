@@ -617,6 +617,8 @@ namespace IcebreakServices
                 {
                     response = exec_result;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                    User usr_sen = db.getUser(new_msg.Message_sender);
+                    new_msg.Event_id = usr_sen.Event_id;//store event where icebreaking for statistical purposes.
                     //Send notifcation to receiver    > reg_token_rec,reg_token_sen,m.getId,SRV_REC
                     string reg_token_rec = db.getUserToken(new_msg.Message_receiver);
                     string reg_token_sen = db.getUserToken(new_msg.Message_sender);
@@ -666,32 +668,24 @@ namespace IcebreakServices
                     {
                         response = exec_result;
                         WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-                        db.addError(ErrorCodes.ENOTIF, "Can't send notification because send is NULL", "addMessage");
+                        db.addError(ErrorCodes.ENOTIF, "Can't send notification because sender is NULL", "addMessage");
                     }
                 }
                 else
                 {
                     response = exec_result;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-                    db.addError(ErrorCodes.ENOTIF, "Can't send notification because addMessage wasn't successful", "addMessage");
+                    db.addError(ErrorCodes.ENOTIF, "Can't send notification because addMessage wasn't successful: " +response, "addMessage");
                 }
             }
             else
             {
                 response = "Error: Invalid token count (" + msg_details.Length + ") >> " + inbound_payload;
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                db.addError(ErrorCodes.ENOTIF, response, "addMessage");
             }
             return response;
         }
-
-        /*
-        { "notification": {
-    "title": "Portugal vs. Denmark",
-    "text": "5 to 1"
-  },
-  "to" : "bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1..."
-}
-        */
 
         public void sendNotification(string url_params)
         {
@@ -860,7 +854,7 @@ namespace IcebreakServices
             inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
             string[] usr_details = inbound_payload.Split('&');
             User new_user = new User();
-            if(handle.Length>=0)
+            if (handle.Length >= 0)
             {
                 new_user.Username = handle;
                 foreach (string usr in usr_details)
@@ -895,7 +889,7 @@ namespace IcebreakServices
                             case "event_id":
                                 new_user.Event_id = Convert.ToUInt16(val);
                                 break;
-                             case "age":
+                            case "age":
                                 new_user.Age = Convert.ToUInt16(val);
                                 break;
                             case "gender":
@@ -926,7 +920,7 @@ namespace IcebreakServices
 
                 string result = db.updateUserDetails(new_user);
                 WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
-                
+
                 if (result.ToLower().Contains("success"))
                 {
                     //WebOperationContext.Current.OutgoingResponse.StatusDescription = "Successfully updated user.";
@@ -946,30 +940,6 @@ namespace IcebreakServices
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                 return "Not enough URL params";
             }
-        }
-
-        public List<User> getUserContacts()
-        {
-            string[] fnames = { "Adrian", "Chanel", "Jacob", "George", "Chayenne", "Lois" };
-            string[] lnames = { "Jones", "Jonas", "Brown", "Black", "Victor", "Travis" };
-            List<User> users = new List<User>();
-            Random rand = new Random();
-            for (int i = 0; i < 10; i++)
-            {
-                users.Add(new User()
-                {
-                    Fname = fnames[rand.Next(0,fnames.Length)],
-                    Lname = lnames[rand.Next(0, lnames.Length)],
-                    Bio = "<insert bio here>"
-                });
-            }
-            return users;
-        }
-
-        public int getRandomNumber(int max)
-        {
-            double r = new Random().NextDouble();
-            return Convert.ToInt16(Math.Floor(r * max));
         }
 
         public List<Message> checkUserInbox(string username)
@@ -1081,5 +1051,10 @@ namespace IcebreakServices
             }
             return event_ids;
         }
-}
+
+        public List<IBException> getExceptions()
+        {
+            return db.getExceptions();
+        }
+    }
 }

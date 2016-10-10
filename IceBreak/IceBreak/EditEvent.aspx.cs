@@ -17,6 +17,7 @@ namespace IceBreak
             if (Session["LEVEL"] == null)
             {
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login');window.location ='index.aspx';", true);
+                return;
             }
             else
             {
@@ -24,6 +25,7 @@ namespace IceBreak
                 if (check != 1)
                 {
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
+                    return;
                 }
             }
             string eventid = Request.QueryString["evntid"];
@@ -173,7 +175,7 @@ namespace IceBreak
             int lvl = (int)Session["LEVEL"];
             if (lvl < DBServerTools.CAN_EDIT_EVENTS)
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have the necessary permissions to view this page.');window.location ='index.aspx';", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have the necessary permissions to view this page.');", true);
                 return;
             }
 
@@ -303,7 +305,6 @@ namespace IceBreak
             ulong end_date = (ulong)(DateTime.ParseExact(str_end_date, "yyyy-MM-dd HH:mm:ss tt", CultureInfo.CurrentCulture) - new DateTime(1970, 1, 1)).TotalSeconds;
 
             ulong now = (ulong)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
-            ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('now="+now+"');", true);
 
             if (start_date <= 0 || end_date <= 0)
             {
@@ -337,7 +338,6 @@ namespace IceBreak
             evnt.Description = EventDescrip;
             evnt.Meeting_Places = meetingplace;
             evnt.Manager = Convert.ToString(Session["USER"]);
-            evnt.AccessCode = 12345;//FIX THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             string check = dbs.updateEvent(evnt, lvl);
 

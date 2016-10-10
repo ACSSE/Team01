@@ -13,6 +13,7 @@ namespace IcebreakServices
         private string _message_sender;
         private string _message_receiver;
         private long _message_time;
+        private long _event_id;
 
         public string Message_id
         {
@@ -89,6 +90,19 @@ namespace IcebreakServices
             set
             {
                 _message_time = value;
+            }
+        }
+
+        public long Event_id
+        {
+            get
+            {
+                return _event_id;
+            }
+
+            set
+            {
+                _event_id = value;
             }
         }
     }

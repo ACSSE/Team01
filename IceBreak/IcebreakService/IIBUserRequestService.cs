@@ -126,14 +126,16 @@ namespace IcebreakServices
         Event getEvent(string event_id);
 
         [OperationContract]
-        [WebGet(UriTemplate = "/getUserContacts", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        List<User> getUserContacts();
-
-        [OperationContract]
         [WebGet(
             UriTemplate = "/getMeta/{record}",
             ResponseFormat = WebMessageFormat.Json)]
         Metadata getMeta(string record);
+
+        [OperationContract]
+        [WebGet(
+            UriTemplate = "/getExceptions",
+            ResponseFormat = WebMessageFormat.Json)]
+        List<IBException> getExceptions();
 
         //Stats
         [OperationContract]

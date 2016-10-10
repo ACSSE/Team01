@@ -15,7 +15,7 @@ namespace IcebreakServices
         private string email;
         private string password;
         private int access_level = 0;
-        private int event_id = 0;
+        private long event_id = 0;
         private int age = 0;
         private string gender;
         private string occupaton;
@@ -175,7 +175,7 @@ namespace IcebreakServices
             }
         }
         [DataMember]
-        public int Event_id
+        public long Event_id
         {
             get
             {
