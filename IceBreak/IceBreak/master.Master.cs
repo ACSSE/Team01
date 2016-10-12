@@ -76,7 +76,9 @@ namespace IceBreak
 
             if (check.ToLower().Contains("isvaliduser=true"))
             {
-               
+                String firstname = usr.Fname;
+                String lastname = usr.Lname;
+
                 Session["USER"] = username;
                 Session["NAME"] = firstname;
                 Session["LASTNAME"] = lastname;
