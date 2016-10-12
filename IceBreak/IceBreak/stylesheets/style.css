@@ -13,6 +13,11 @@
 .btn:focus, .btn:active:focus, .btn.active:focus {
   outline: 0 none; }
 
+.remove {
+  margin-left: 2%;
+  background: #f44242;
+  color: #ffffff; }
+
 .btn-primary {
   background: #59D0F7;
   color: #ffffff; }

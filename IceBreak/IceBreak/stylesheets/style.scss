@@ -23,7 +23,12 @@ a
 .btn:focus, .btn:active:focus, .btn.active:focus {
     outline: 0 none;
 }
- 
+.remove
+{
+    margin-left:2%;
+    background: #f44242;
+    color: #ffffff;
+}
 .btn-primary {
     background: #59D0F7;
     color: #ffffff;
@@ -46,12 +51,12 @@ a
 .floatingEditContainer {
     bottom: 2em;
     position: fixed;
-    right: 8em;
+    right: 10em;
 }
 .floatingContainer {
     bottom: 2em;
     position: fixed;
-    right: 6em;
+    right: 4em;
 }
 .actionButton {
     background-color: #59D0F7;

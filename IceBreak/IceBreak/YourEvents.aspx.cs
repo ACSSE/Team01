@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
+using System.Web.Script.Services;
+using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -55,11 +57,18 @@ namespace IceBreak
                         "<h3>" + evnt.Title + "</h3>" +
                         "<h4>" + evnt.Address + "</h4>" +
                         "<p>" + evnt.Description + "</p>" +
-                        "<a class='btn btn-primary' href='EditEvent.aspx?evntid=" + evnt.Id + "'>Edit Event <span class='glyphicon glyphicon-chevron-right'></span></a>" +
+                        "<a class='btn btn-primary' href='EditEvent.aspx?evntid=" + evnt.Id + "'>Edit Event <span class='glyphicon glyphicon-chevron-right'><a href='javascript:Delete()' class='btn remove'><span class='glyphicon glyphicon-remove'></span></a>" +
                    " </div>" +
                 "</div>" +
                 "<hr>";
             }
+        }
+       
+        protected void Delete(object sender, EventArgs e)
+        {
+           
+                Response.Redirect("index.aspx");
+            
         }
     }
 }
