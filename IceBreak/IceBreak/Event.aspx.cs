@@ -59,7 +59,7 @@ namespace IceBreak
                     catch (WebException ex)
                     {
                         pageExists = false;
-                        dbs.addError(ErrorCodes.EEVENT, ex.Message, "Event.aspx[Page_Load]");
+                        //dbs.addError(ErrorCodes.EEVENT, ex.Message, "Event.aspx[Page_Load]");
                     }
 
                     if (!pageExists)

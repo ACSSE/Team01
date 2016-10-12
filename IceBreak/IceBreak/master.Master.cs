@@ -67,14 +67,12 @@ namespace IceBreak
             User user = new User();
             user.Username = username;
             user.Password = password;
-            
 
             DBServerTools dbs = new DBServerTools();
-            String check =  dbs.signIn(user);
 
-            IcebreakServices.User u = dbs.getUser(username);
-            String firstname = u.Fname;
-            String lastname = u.Lname;
+            IcebreakServices.User usr = dbs.getUser(username);
+            
+            String check =  dbs.signIn(user);
 
             if (check.ToLower().Contains("isvaliduser=true"))
             {
