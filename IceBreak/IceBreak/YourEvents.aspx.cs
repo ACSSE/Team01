@@ -58,7 +58,7 @@ namespace IceBreak
                         "<h3>" + evnt.Title + "</h3>" +
                         "<h4>" + evnt.Address + "</h4>" +
                         "<p>" + evnt.Description + "</p>" +
-                        "<a class='btn btn-primary' href='EditEvent.aspx?evntid=" + evnt.Id + "'>Edit Event <span class='glyphicon glyphicon-chevron-right'><a href='javascript:Delete("+evnt.Id +")' class='btn remove'><span class='glyphicon glyphicon-remove'></span></a>" +
+                        "<a class='btn btn-primary' href='ViewEvent.aspx?evntid=" + evnt.Id + "'>View Event <span class='glyphicon glyphicon-chevron-right'></span></a><a class='btn btn-primary' href='EditEvent.aspx?evntid=" + evnt.Id + "'>Edit Event <span class='glyphicon glyphicon-chevron-right'><a href='javascript:Delete("+evnt.Id +")' class='btn remove'><span class='glyphicon glyphicon-remove'></span></a>" +
                    " </div>" +
                 "</div>" +
                 "<hr>";
