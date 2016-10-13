@@ -13,15 +13,22 @@
             </div>
         </div>
     </div>      
-         <asp:Button ID="delete" runat="server" Text=""  style="display:none" OnClick="Delete" ></asp:Button>
-
+        <div hidden="hidden">
+         <asp:Button ID="delete" runat="server"  OnCommand="Delete" ></asp:Button>
+        </div>
+         <input type="hidden" id="eventid" name = "EventId" value = '<%=this.EventID %>' />
 </div>
 
     <script type="text/javascript">
-        
-        function Delete()
+        var eventid;
+        window.onload = function () {
+            eventid = document.getElementById("eventid");
+        }
+        function Delete(id)
         {
-            document.getElementById("delete").click();
+            var deleteButton = document.getElementById("<%= delete.ClientID %>");
+            eventid.value = id;
+            deleteButton.click();
         }
     </script>
 </asp:Content>
