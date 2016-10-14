@@ -26,6 +26,7 @@ namespace IceBreak
                 string checkName = (string)Session["NAME"];
                 string checkLastName = (string)Session["LASTNAME"];
                 login.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
+                YourEvents.InnerHtml = "<a href='YourEvents.aspx'>Your Events</a>";
                 DIV.InnerHtml = "<a href = '#'>" +
                         "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + check + ".png' alt=''/>" +
                     "</a>" + "<label class='Sidebarname'>" + checkName + " " + checkLastName + "</label>";
@@ -75,27 +76,21 @@ namespace IceBreak
 
             if (check.ToLower().Contains("isvaliduser=true"))
             {
-                if (usr != null)
-                {
-                    String firstname = usr.Fname;
-                    String lastname = usr.Lname;
+                String firstname = usr.Fname;
+                String lastname = usr.Lname;
 
-                    Session["USER"] = username;
-                    Session["NAME"] = firstname;
-                    Session["LASTNAME"] = lastname;
-                    //user = dbs.getUser(username);
-                    int lvl = usr.Access_level;
-                    Session["LEVEL"] = lvl;
-                    login.InnerHtml = "<a href='javascript:Logout()'  runat='server' >Logout " + username + "</a>";
-                    DIV.InnerHtml = "<a href = '#'>" +
-                            "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + username + ".png' alt=''/>" +
-                        "</a>" + "<label class='Sidebarname'>" + firstname + " " + lastname + "</label>";
-                    //Response.Redirect(Request.RawUrl);
-                }else
-                {
-                    txtInvalid.Style.Clear();
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "loginModal", "$('#loginModal').modal();", true);
-                }
+                Session["USER"] = username;
+                Session["NAME"] = firstname;
+                Session["LASTNAME"] = lastname;
+                user = dbs.getUser(username);
+                int lvl  = user.Access_level;
+                Session["LEVEL"] = lvl;
+                login.InnerHtml = "<a href='javascript:Logout()'  runat='server' >Logout " + username + "</a>";
+                YourEvents.InnerHtml = "<a href='YourEvents.aspx'>Your Events</a>";
+                DIV.InnerHtml = "<a href = '#'>" +
+                        "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + username + ".png' alt=''/>" +
+                    "</a>" + "<label class='Sidebarname'>" + firstname + " " + lastname + "</label>";
+                Response.Redirect(Request.RawUrl);
             }
             else
             {

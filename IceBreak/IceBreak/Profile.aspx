@@ -12,8 +12,8 @@
        
         <div id="img-circle" class="img-circle" style="margin-top:5%;position:absolute">
             <div style="text-align:center;width:500px">
-             <asp:Label ID="lblName" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt;text-align:center"></asp:Label>
-            <asp:Label ID="lblSurname" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align: center "></asp:Label>
+             <asp:Label ID="lblName" runat="server" Style="font-family: Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 18pt;text-align:center"></asp:Label>
+            <asp:Label ID="lblSurname" runat="server" Style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 18pt; text-align: center "></asp:Label>
                 <br />
                 <br />
             </div>
@@ -28,15 +28,15 @@
            </div>
             
               <div style="text-align:center;width:500px">
-                   <asp:Label ID="lblOccupation" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align:center"></asp:Label>
+                   <asp:Label ID="lblOccupation" runat="server" Style="font-family: Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 18pt; text-align:center"></asp:Label>
                  <br />
            
-             <asp:Label ID="lblAge" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align:center"></asp:Label>
+             <asp:Label ID="lblAge" runat="server" Style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 18pt; text-align:center"></asp:Label>
                  <br />
                  <br />
-             <asp:Label ID="lblB" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; text-align:center">Bio:</asp:Label>
+             <asp:Label ID="lblB" runat="server" Style="font-family: Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 18pt; text-align:center">Bio:</asp:Label>
                  <br />
-                  <asp:Label ID="lblBio" runat="server" Style="font-family: 'Bookman Old Style'; font-size: 18pt; align-content:center"></asp:Label>
+                  <asp:Label ID="lblBio" runat="server" Style="font-family: Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 18pt; align-content:center"></asp:Label>
            </div>
              
         </div>
@@ -47,9 +47,9 @@
             <br />
             <br />
 
-            <div style="text-align: center; font-family: 'Bookman Old Style'; font-weight: 300; width: 350px; margin: auto;" id="inputs">
+            <div style="text-align: center; font-family: Helvetica Neue,Helvetica,Arial,sans-serif; font-weight: 300; width: 350px; margin: auto;" id="inputs">
                 <strong style="color: #59D0F7; font-size: 26pt">IceBreak User</strong>
-                <h2>Current details:</></h2>
+                <h2>Current Details:</></h2>
                 <asp:Label ID="Label1" runat="server" Text="1.Name" Style="font-size: 11pt;"></asp:Label>
                 <span id="txtName_lbl" runat="server"></span>
                 

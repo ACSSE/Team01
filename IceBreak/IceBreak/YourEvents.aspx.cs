@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
+using System.Web.Script.Services;
+using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -11,6 +13,7 @@ namespace IceBreak
 {
     public partial class YourEvents : System.Web.UI.Page
     {
+        protected string EventID = "";
         protected void Page_Load(object sender, EventArgs e)
         {
             String username = (string)Session["User"];
@@ -55,11 +58,32 @@ namespace IceBreak
                         "<h3>" + evnt.Title + "</h3>" +
                         "<h4>" + evnt.Address + "</h4>" +
                         "<p>" + evnt.Description + "</p>" +
-                        "<a class='btn btn-primary' href='EditEvent.aspx?evntid=" + evnt.Id + "'>Edit Event <span class='glyphicon glyphicon-chevron-right'></span></a>" +
+                        "<a class='btn btn-primary' href='ViewEvent.aspx?evntid=" + evnt.Id + "'>View Event <span class='glyphicon glyphicon-chevron-right'></span></a><a class='btn btn-primary' href='EditEvent.aspx?evntid=" + evnt.Id + "'>Edit Event <span class='glyphicon glyphicon-chevron-right'><a href='javascript:Delete("+evnt.Id +")' class='btn remove'><span class='glyphicon glyphicon-remove'></span></a>" +
                    " </div>" +
                 "</div>" +
                 "<hr>";
             }
+        }
+       
+        [ScriptMethod,WebMethod]
+        protected void Delete(object sender, CommandEventArgs e)
+        {
+            this.EventID = Request.Form["EventId"];
+           
+
+            DBServerTools dst = new DBServerTools();
+
+            String check = dst.deleteEvent(this.EventID);
+            if (check.ToLower().Contains("success"))
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='YourEvents.aspx';", true);
+            }
+            else
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert(\"Event deletion unsuccessful: " + check + "\");", true);
+            }
+
+
         }
     }
 }

@@ -278,6 +278,26 @@ namespace IcebreakServices
                 return "Error:"+e.Message;
             }
         }
+        public string deleteEvent(string evntid)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("DELETE FROM [dbo].[Events] WHERE event_id=@evntid", conn);
+                cmd.Parameters.AddWithValue(@"evntid", evntid);
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+                conn.Close();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EUSR, e.Message, "removeEvent");
+                return "Error:" + e.Message;
+            }
+        }
 
         public List<Message> checkUserInbox(string user)
         {

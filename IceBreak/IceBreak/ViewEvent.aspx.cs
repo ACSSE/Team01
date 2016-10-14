@@ -13,6 +13,20 @@ namespace IceBreak
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (Session["LEVEL"] != null || Session["USER"] != null)
+            {
+                int check = (int)Session["LEVEL"];
+                if (check != 1)
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
+                    return;
+                }
+                else
+                {
+                    divQR.Style.Add("display", "normal");
+                }
+            }
+           
             string eventid = Request.QueryString["evntid"];
 
             DBServerTools dbs = new DBServerTools();
@@ -69,6 +83,11 @@ namespace IceBreak
 
             EVentDescription.InnerHtml = evnt.Description;
         }
+        protected void btnGenerateQR(object sender, EventArgs e)
+        {
+
+        }
+
         public DateTime FromUnixTime(long unixTime)
         {
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);

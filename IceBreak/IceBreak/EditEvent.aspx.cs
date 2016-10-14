@@ -14,6 +14,7 @@ namespace IceBreak
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+
             if (Session["LEVEL"] == null)
             {
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You must login');window.location ='index.aspx';", true);
@@ -28,39 +29,41 @@ namespace IceBreak
                     return;
                 }
             }
-            string eventid = Request.QueryString["evntid"];
-
-            DBServerTools dbs = new DBServerTools();
-
-            IcebreakServices.Event evnt = dbs.getEvent(eventid);
-
-            eventname.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
-            eventdescrip.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
-            edit_event_date.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
-            edit_event_end_date.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
-            edit_event_time.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
-            edit_event_end_time.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
-            meeting_place_1.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
-            meeting_place_2.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
-            meeting_place_3.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
-            meeting_place_4.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
-            meeting_place_5.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
-
-            eventname.Value = evnt.Title;
-            eventaddress.Value = evnt.Address;
-            gps.Value = evnt.Gps_location;
-            eventdescrip.Value = evnt.Description;
-            DateTime startdate = FromUnixTime(evnt.Date);
-            DateTime enddate = FromUnixTime(evnt.End_Date);
-
-            meeting_place_1.Style.Add("display", "none");
-            meeting_place_2.Style.Add("display", "none");
-            meeting_place_3.Style.Add("display", "none");
-            meeting_place_4.Style.Add("display", "none");
-            meeting_place_5.Style.Add("display", "none");
-
-            if (!IsPostBack)
+            if (!Page.IsPostBack)
             {
+
+                string eventid = Request.QueryString["evntid"];
+
+                DBServerTools dbs = new DBServerTools();
+
+                IcebreakServices.Event evnt = dbs.getEvent(eventid);
+
+                eventname.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+                eventdescrip.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+                edit_event_date.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+                edit_event_end_date.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+                edit_event_time.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+                edit_event_end_time.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+                meeting_place_1.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+                meeting_place_2.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+                meeting_place_3.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+                meeting_place_4.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+                meeting_place_5.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+
+                eventname.Value = evnt.Title;
+                eventaddress.Value = evnt.Address;
+                gps.Value = evnt.Gps_location;
+                eventdescrip.Value = evnt.Description;
+                DateTime startdate = FromUnixTime(evnt.Date);
+                DateTime enddate = FromUnixTime(evnt.End_Date);
+
+                meeting_place_1.Style.Add("display", "none");
+                meeting_place_2.Style.Add("display", "none");
+                meeting_place_3.Style.Add("display", "none");
+                meeting_place_4.Style.Add("display", "none");
+                meeting_place_5.Style.Add("display", "none");
+
+
                 edit_event_date.Value = String.Format("{0:yyyy-MM-dd}", startdate);
                 edit_event_end_date.Value = String.Format("{0:yyyy-MM-dd}", enddate);
 
@@ -108,6 +111,11 @@ namespace IceBreak
                         meeting_place_3.Style.Add("display", "normal");
                         meeting_place_4.Style.Add("display", "normal");
                         meeting_place_5.Style.Add("display", "normal");
+                        meeting_place_1.Value = mparray[0];
+                        meeting_place_2.Value = mparray[1];
+                        meeting_place_3.Value = mparray[2];
+                        meeting_place_4.Value = mparray[3];
+                        meeting_place_5.Value = mparray[4];
                         break;
                     default:
                         meeting_place_1.Style.Add("display", "none");
@@ -119,11 +127,10 @@ namespace IceBreak
                         meeting_place_1.Value = mparray[0];
                         meeting_place_2.Value = mparray[1];
                         meeting_place_3.Value = mparray[2];
-                        meeting_place_1.Value = mparray[3];
-                        meeting_place_1.Value = mparray[4];
+                        meeting_place_4.Value = mparray[3];
+                        meeting_place_5.Value = mparray[4];
                         break;
                 }
-
             }
             else
             {
@@ -165,10 +172,8 @@ namespace IceBreak
                             meeting_place_5.Style.Add("display", "none");
                             break;
                     }
-
                 }
-            }
-
+             }
         }
         protected void btnUpdate_Event(object sender, EventArgs e)
         {
@@ -339,12 +344,13 @@ namespace IceBreak
             evnt.Meeting_Places = meetingplace;
             evnt.Manager = Convert.ToString(Session["USER"]);
 
+            //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('"+ evnt.Address+"');", true);
+
             string check = dbs.updateEvent(evnt, lvl);
 
             if (check.ToLower().Contains("success"))
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Event editing successful.');window.location ='index.aspx';", true);
-                //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='YourEvents.aspx';", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='YourEvents.aspx';", true);
             }
             else
             {
