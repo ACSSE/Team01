@@ -612,13 +612,14 @@ namespace IcebreakServices
                     }
                 }
                 //Insert to DB
+                User sender = db.getUser(new_msg.Message_sender);
+                new_msg.Event_id = sender.Event_id;//store event where icebreaking for statistical purposes.
+
                 string exec_result = db.addMessage(new_msg);
                 if (exec_result.ToLower().Contains("success"))
                 {
                     response = exec_result;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
-                    User usr_sen = db.getUser(new_msg.Message_sender);
-                    new_msg.Event_id = usr_sen.Event_id;//store event where icebreaking for statistical purposes.
                     //Send notifcation to receiver    > reg_token_rec,reg_token_sen,m.getId,SRV_REC
                     string reg_token_rec = db.getUserToken(new_msg.Message_receiver);
                     string reg_token_sen = db.getUserToken(new_msg.Message_sender);
@@ -631,7 +632,7 @@ namespace IcebreakServices
                                             new_msg.Message_id,DBServerTools.ICEBREAK_SERV_RECEIVED);*/
 
                     string title = new_msg.Message_status>=DBServerTools.ICEBREAK?"New IceBreak Request":"New Message";
-                    User sender = db.getUser(new_msg.Message_sender);
+                    
                     if (sender!=null)
                     {
                         string fname = DBServerTools.isEmpty(sender.Fname) ? "X" : sender.Fname;

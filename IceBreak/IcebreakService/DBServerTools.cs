@@ -681,10 +681,11 @@ namespace IcebreakServices
                 }
                 else if(msgState == DEXISTS)
                 {
-                    string query = "INSERT INTO [dbo].[Messages] VALUES(@message_id,@message,@status,@sender,@receiver,@time)";
+                    string query = "INSERT INTO [dbo].[Messages] VALUES(@message_id,@message,@status,@sender,@receiver,@time,@ev_id)";
                     cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue(@"message_id", m.Message_id);
                     cmd.Parameters.AddWithValue(@"message", m.Msg);
+                    cmd.Parameters.AddWithValue(@"ev_id", m.Event_id);
                     if (m.Message_status == ICEBREAK)
                     {
                         //Store ICEBREAK_SERV_RECEIVED instead
