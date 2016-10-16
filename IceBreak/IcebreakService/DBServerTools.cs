@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Web;
 using System.Web.Hosting;
 
@@ -278,6 +279,44 @@ namespace IcebreakServices
                 return "Error:"+e.Message;
             }
         }
+
+        public string imageUpload(string name, byte[] data)
+        {
+            if (!String.IsNullOrEmpty(name) && data!=null)
+            {
+                if (name.Contains(";"))
+                {
+                    if (name[0] == ';')
+                        name = name.Substring(1);//Remove first slash if it exists
+
+                    //Write file data
+                    string[] dirs = name.Split(';');//get directory structure
+                    string dir = "";
+                    for (int i = 0; i < dirs.Length - 1; i++)//last element would be the filename
+                        dir += dirs[i] + '/';
+                    var path = Path.Combine(HostingEnvironment.MapPath("~/images/" + dir), dirs[dirs.Length - 1]);//Path.Combine(@"C:\UploadedImages\" + name);
+                    File.WriteAllBytes(path, data);
+
+                    //Write Metadata
+                    TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                    int since_epoch = (int)t.TotalSeconds;
+                    Metadata meta = new Metadata()
+                    {
+                        Entry = (dir + dirs[dirs.Length - 1]).Replace("/", "|"),
+                        Meta = "dmd=" + Convert.ToString(since_epoch)
+                    };
+                    addMeta(meta);
+                    return "Success";
+                }
+                else return "Error: Invalid path.";
+            }
+            else
+            {
+                return "Error: Cannot write to root";
+            }
+
+        }
+
         public string deleteEvent(string evntid)
         {
             conn = new SqlConnection(dbConnectionString);
@@ -510,7 +549,7 @@ namespace IcebreakServices
             return events;
         }
 
-        public List<User> getUsersAtEvent(int id)
+        public List<User> getUsersAtEvent(long id)
         {
             #region ForRelease
             /*if(id == 0)//Prevent anyone from reading data from people that are not at any event
@@ -1360,8 +1399,8 @@ namespace IcebreakServices
             return "isValidUser=" + isValidUser;
         }
 
-        //Stats stuff
-        public string getUsersIcebreakCount()
+        #region Statistics
+        /*public int getAllIcebreakCount()
         {
             string graph_data="";
             conn = new SqlConnection(dbConnectionString);
@@ -1411,16 +1450,79 @@ namespace IcebreakServices
                 addError(ErrorCodes.ESTATS, e.Message, "getUsersIcebreakCount");
                 return "Error:"+e.Message;
             }
+        }*/
+
+        /******Master Stats************/
+        public int getAllIcebreakCount()
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_status>@stat", conn);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getAllIcebreakCount");
+                return -1;
+            }
         }
 
+        public int getAllIcebreakCountBetweenTime(long start, long end)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_time>=@start AND Message_time<=@end AND "
+                    + "Message_status>@stat", conn);
+                cmd.Parameters.AddWithValue(@"start", start);
+                cmd.Parameters.AddWithValue(@"end", end);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getAllIcebreakCountBetweenTime");
+                return -1;
+            }
+        }
+
+        /******User Stats**************/
         public int getUserIcebreakCount(string username)
         {
             conn = new SqlConnection(dbConnectionString);
             try
             {
                 conn.Open();
-                //Query user
-                cmd = new SqlCommand("SELECT * FROM dbo.Messages WHERE Message_sender=@usr AND Message_status>@stat", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_sender=@usr AND Message_status>@stat", conn);
                 cmd.Parameters.AddWithValue(@"usr", username);
                 cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
                 int count = 0;
@@ -1443,7 +1545,310 @@ namespace IcebreakServices
             }
         }
 
-        //Metadata stuff
+        public int getUserSuccessfulIcebreakCount(string username)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_sender=@usr AND Message_status>@stat AND NOT Message=@msg", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                cmd.Parameters.AddWithValue(@"msg", "ICEBREAK");
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getAllSuccessfulUserIcebreakCount");
+                return -1;
+            }
+        }
+
+        public int getUserIcebreakCountAtEvent(string username, long event_id)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_sender=@usr AND Message_status>@stat AND "
+                                        + "event_id=@id", conn);
+                cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                cmd.Parameters.AddWithValue(@"id", event_id);
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getAllSuccessfulUserIcebreakCountAtEvent");
+                return -1;
+            }
+        }
+
+        public int getUserSuccessfulIcebreakCountAtEvent(string username, long event_id)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_sender=@usr AND Message_status>@stat AND "
+                                        + "NOT Message=@msg AND event_id=@id", conn);
+                cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                cmd.Parameters.AddWithValue(@"msg", "ICEBREAK");
+                cmd.Parameters.AddWithValue(@"id", event_id);
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getAllSuccessfulUserIcebreakCountAtEvent");
+                return -1;
+            }
+        }
+
+        public int getUserSuccessfulIcebreakCountBetweenTime(string username, long start, long end)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                /*cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_sender=@usr AND Message_status>@stat AND "
+                        +"NOT Message=@msg", conn);*/
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_time>=@start AND Message_time<=@end AND "
+                    + "Message_status>@stat AND Message_sender=@usr AND NOT Message=@msg", conn);
+                cmd.Parameters.AddWithValue(@"start", start);
+                cmd.Parameters.AddWithValue(@"end", end);
+                cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                cmd.Parameters.AddWithValue(@"msg", "ICEBREAK");
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getAllSuccessfulUserIcebreakCountBetweenTime");
+                return -1;
+            }
+        }
+
+        public int getUserSuccessfulIcebreakCountBetweenTimeAtEvent(string username, long start, long end, long event_id)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                /*cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_sender=@usr AND Message_status>@stat AND "
+                        +"NOT Message=@msg", conn);*/
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_time>=@start AND Message_time<=@end AND "
+                    + "Message_status>@stat AND Message_sender=@usr AND NOT Message=@msg AND event_id=@id", conn);
+                cmd.Parameters.AddWithValue(@"start", start);
+                cmd.Parameters.AddWithValue(@"end", end);
+                cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                cmd.Parameters.AddWithValue(@"id", event_id);
+                cmd.Parameters.AddWithValue(@"msg", "ICEBREAK");
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getAllSuccessfulUserIcebreakCountBetweenTimeAtEvent");
+                return -1;
+            }
+        }
+
+        /******Event Stats************/
+        public int getEventIcebreakCount(long event_id)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE event_id=@event_id AND Message_status>@stat", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd.Parameters.AddWithValue(@"event_id", event_id);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getEventIcebreakCount");
+                return -1;
+            }
+        }
+
+        public int getEventIcebreakCountBetweenTime(long id, long start, long end)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_time>=@start AND Message_time<=@end AND "
+                    + "Message_status>@stat AND event_id=@id", conn);
+                cmd.Parameters.AddWithValue(@"id", id);
+                cmd.Parameters.AddWithValue(@"start", start);
+                cmd.Parameters.AddWithValue(@"end", end);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getEventIcebreakCountBetweenTime");
+                return -1;
+            }
+        }
+
+        public int getEventSuccessfulIcebreakCountBetweenTime(long id, long start, long end)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_time>=@start AND Message_time<=@end AND "
+                    + "Message_status>@stat AND event_id=@id AND NOT Message=@msg", conn);
+                cmd.Parameters.AddWithValue(@"id", id);
+                cmd.Parameters.AddWithValue(@"start", start);
+                cmd.Parameters.AddWithValue(@"end", end);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                cmd.Parameters.AddWithValue(@"msg", "ICEBREAK");
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getEventSuccessfulIcebreakCountBetweenTime");
+                return -1;
+            }
+        }
+
+        public int getEventUnsuccessfulIcebreakCountBetweenTime(long id, long start, long end)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_time>=@start AND Message_time<=@end AND "
+                    + "Message_status>@stat AND event_id=@id AND Message=@msg", conn);
+                cmd.Parameters.AddWithValue(@"id", id);
+                cmd.Parameters.AddWithValue(@"start", start);
+                cmd.Parameters.AddWithValue(@"end", end);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                cmd.Parameters.AddWithValue(@"msg", "ICEBREAK");
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getEventSuccessfulIcebreakCountBetweenTime");
+                return -1;
+            }
+        }
+
+        #endregion Statistics
+
+        #region Metadata
         public bool addMeta(Metadata metadata)
         {
             //Some security checks
@@ -1565,5 +1970,6 @@ namespace IcebreakServices
                 return new Metadata() { Entry="null",Meta=e.Message};
             }
         }
+        #endregion Metadata
     }
 }

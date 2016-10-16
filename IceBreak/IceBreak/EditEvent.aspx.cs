@@ -344,12 +344,13 @@ namespace IceBreak
             evnt.Meeting_Places = meetingplace;
             evnt.Manager = Convert.ToString(Session["USER"]);
 
-            //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('"+ evnt.Address+"');", true);
-
             string check = dbs.updateEvent(evnt, lvl);
 
             if (check.ToLower().Contains("success"))
             {
+                string event_icon_title = "event_icons-" + Request.QueryString["evntid"];
+                byte[] file_bytes = FileUpload.FileBytes;
+                string response = dbs.imageUpload("events;"+event_icon_title+".png",file_bytes);
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='YourEvents.aspx';", true);
             }
             else

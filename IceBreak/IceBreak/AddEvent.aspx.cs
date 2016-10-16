@@ -267,6 +267,13 @@ namespace IceBreak
            
             if(check.ToLower().Contains("success"))
             {
+                byte[] file_bytes = null;
+                using (var reader = new BinaryReader(Request.Files[0].InputStream))
+                {
+                    file_bytes = reader.ReadBytes(Request.Files[0].ContentLength);
+                }
+                //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('File size: " + Request.Files[0].ContentLength + "');", true);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('File size: " + FileUpload.FileBytes.Length + "');", true);
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='Event.aspx';", true);
             }
             else

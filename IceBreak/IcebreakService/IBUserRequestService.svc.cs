@@ -782,7 +782,10 @@ namespace IcebreakServices
 
         public List<User> getUsersAtEvent(string eventId)
         {
-            return db.getUsersAtEvent(Convert.ToUInt16(eventId));
+            long id;
+            if (long.TryParse(eventId, out id))
+                return db.getUsersAtEvent(long.Parse(eventId));
+            else return null;
         }
 
         /*public string updateUserMailbox(Stream streamdata)
@@ -963,18 +966,6 @@ namespace IcebreakServices
             return db.getEvent(event_id);
         }
 
-        [WebGet(ResponseFormat = WebMessageFormat.Json)]
-        public void getUsersIcebreakCount()
-        {
-            //if(HttpContext.Current.Request["getUsersIcebreakCountCallback"]!=null)
-                
-            //string response = "getUsersIcebreakCount([{" + db.getUsersIcebreakCount() + "}])";
-            string response = "getUsersIcebreakCount({var1:0,var2:1,var3:2});";
-            //WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
-            HttpContext.Current.Response.ContentType = "text/plain";
-            HttpContext.Current.Response.Write(response);
-        }
-
         public Metadata getMeta(string record)
         {
             return db.getMeta(record);
@@ -1056,6 +1047,96 @@ namespace IcebreakServices
         public List<IBException> getExceptions()
         {
             return db.getExceptions();
+        }
+
+        /******Master Stats*************/
+
+        public int getAllIcebreakCount()
+        {
+            return db.getAllIcebreakCount();
+        }
+
+        public int getAllIcebreakCountBetweenTime(string start, string end)
+        {
+            long s,e;
+            if (long.TryParse(start, out s) && long.TryParse(end, out e))
+                return db.getAllIcebreakCountBetweenTime(long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
+        }
+
+        /******User Stats*************/
+
+        public int getUserIcebreakCount(string username)
+        {
+            HttpContext.Current.Response.ContentType = "text/plain";
+            if (!String.IsNullOrEmpty(username))
+                return db.getUserIcebreakCount(username);
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserSuccessfulIcebreakCount(string username)
+        {
+            if(!String.IsNullOrEmpty(username))
+                return db.getUserSuccessfulIcebreakCount(username);
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserIcebreakCountAtEvent(string username, string event_id)
+        {
+            long id;
+            if (long.TryParse(event_id, out id) && !String.IsNullOrEmpty(username))
+                return db.getUserIcebreakCountAtEvent(username, long.Parse(event_id));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserSuccessfulIcebreakCountAtEvent(string username, string event_id)
+        {
+            long id;
+            if (long.TryParse(event_id, out id) && !String.IsNullOrEmpty(username))
+                return db.getUserSuccessfulIcebreakCountAtEvent(username, long.Parse(event_id));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserSuccessfulIcebreakCountBetweenTime(string username, string start, string end)
+        {
+            long s,e;
+            if (long.TryParse(start, out s) && long.TryParse(end, out e) && !String.IsNullOrEmpty(username))
+                return db.getUserSuccessfulIcebreakCountBetweenTime(username, long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserSuccessfulIcebreakCountBetweenTimeAtEvent(string username, string start, string end, string event_id)
+        {
+            long s, e, id;
+            if (long.TryParse(start, out s) && long.TryParse(end, out e) && long.TryParse(event_id, out id) && !String.IsNullOrEmpty(username))
+                return db.getUserSuccessfulIcebreakCountBetweenTimeAtEvent(username, long.Parse(start), long.Parse(end), long.Parse(event_id));
+            else return ErrorCodes.ECONV;
+        }
+
+        /******Event Stats************/
+
+        public int getEventIcebreakCount(string event_id)
+        {
+            long id;
+            if (long.TryParse(event_id, out id))
+                return db.getEventIcebreakCount(long.Parse(event_id));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getEventIcebreakCountBetweenTime(string event_id, string start, string end)
+        {
+            long id, s, e;
+            if (long.TryParse(event_id, out id) && long.TryParse(start, out s) && long.TryParse(end, out e))
+                return db.getEventIcebreakCountBetweenTime(long.Parse(event_id), long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getEventSuccessfulIcebreakCountBetweenTime(string event_id, string start, string end)
+        {
+            long id, s, e;
+            if (long.TryParse(event_id, out id) && long.TryParse(start, out s) && long.TryParse(end, out e))
+                return db.getEventSuccessfulIcebreakCountBetweenTime(long.Parse(event_id), long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
         }
     }
 }

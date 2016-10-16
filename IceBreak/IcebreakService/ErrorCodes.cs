@@ -15,6 +15,6 @@ namespace IcebreakServices
         public static int EEVENT = 306;
         public static int EMSG = 307;
         public static int EEXCEP = 307;
-
+        public static int ECONV = -2;
     }
 }
