@@ -46,7 +46,6 @@ namespace IceBreak
                                                                             dbTools);
 
                         long id = dbTools.getUserEventId(usr);
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('"+id+"');", true);
 
                         IcebreakServices.Event curr_event=null;
                         if (id > 0)
