@@ -22,15 +22,55 @@ namespace IceBreak
                     int iLvl = Convert.ToUInt16(lvl);
                     if (iLvl > 0)
                     {
-                        welcome_msg.InnerText = "Welcome back " + Session["NAME"] + ".";
 
                         DBServerTools dbTools = new DBServerTools();
                         usr_events = dbTools.getEventsforUser(usr);
-                        //dd_events.DataSource = usr_events;
-                        //dd_events.DataBind();
+
                         dd_events.Items.Clear();
                         foreach (IcebreakServices.Event ev in usr_events)
                             dd_events.Items.Add(ev.Title);
+                        welcome_msg.InnerText = "Welcome back " + Session["NAME"] + ".";
+
+                        int vpad = 0;//px
+                        string graph_type = "line";//bar|line,etc. refer to Chart.js website.
+                        int graph_w = 700;//px
+                        int graph_h = 400;//px
+
+                        //Get Icebreak count graph
+                        string count_canvas_js = getUserIcebreakCountBetweenTimeGraph(usr,
+                                                                            graph_w,
+                                                                            graph_h,
+                                                                            vpad,
+                                                                            graph_type,
+                                                                            "# of Icebreaks over the year",
+                                                                            dbTools);
+
+                        long id = dbTools.getUserEventId(usr);
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('"+id+"');", true);
+
+                        IcebreakServices.Event curr_event=null;
+                        if (id > 0)
+                            curr_event = dbTools.getEvent(Convert.ToString(id));
+                        string overview_html = "<div style='width:400px;height:auto;margin:auto;background-color:#e2e2e2;border-radius:5px;border:1px solid #494949;'>"
+                                                        + "<p># total Icebreaks: " + dbTools.getUserIcebreakCount(usr) + "</p>"
+                                                        + "<p># successful Icebreaks: " + dbTools.getUserSuccessfulIcebreakCount(usr) + "</p>";
+                        if (curr_event != null)
+                        {
+                            overview_html += "<p># Icebreaks at '" + curr_event.Title + "': " + dbTools.getUserIcebreakCountAtEvent(usr, id) + "</p>";
+                            overview_html += "<p># successful Icebreaks at '" + curr_event.Title + "': " + dbTools.getUserSuccessfulIcebreakCountAtEvent(usr, id) + "</p>";
+                        }
+                        overview_html += "</div>";
+
+                        string canvas_html =
+                             "<div style='width:" + graph_w + "px;height:auto;margin-left:auto;margin-right:auto;margin-top:" + vpad + "px;'>"
+                                + "<h2 align='center'>Overview of your account.</h2>"
+                                + overview_html
+                                + "<canvas id=\"graph_ib_count_" + usr + "\" width='" + graph_w + "' height='" + graph_h + "'></canvas>"
+                            + "</div>"
+                            + count_canvas_js
+                            + "<script>window.location='./stats.aspx#tab_personal'</script>";
+
+                        personal_canvas_container.InnerHtml = canvas_html;
                     }
                     else
                     {
@@ -288,6 +328,48 @@ namespace IceBreak
                   "<script>"
                     + getChartJS("graph_unsucc_ib_count_" + Convert.ToString(selected_event.Id),
                                     selected_event.Title,
+                                    label,
+                                    graph_type,
+                                    x_axis,
+                                    y_axis)
+                + "</script>";
+
+            return jsGraph;
+        }
+
+        public string getUserIcebreakCountBetweenTimeGraph(string username, int graph_w, int graph_h, int vpad, string graph_type, string label, DBServerTools dbTools)
+        {
+            string x_axis = "";
+            string y_axis = "";
+            long start_date = (long)(new DateTime(DateTime.Now.Year,1,1) - new DateTime(1970, 1, 1)).TotalSeconds;
+            //long end_date = (long)(new DateTime(DateTime.Now.Year, 12, 31) - new DateTime(1970, 1, 1)).TotalSeconds;
+
+            int[] days_int_months;
+            if (DateTime.IsLeapYear(DateTime.Now.Year))
+                days_int_months = new int[]{ 30, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};//jan is 30 because the 'days' var starts at 1
+            else days_int_months = new int[] { 30, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+            string[] months = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
+
+            //container.InnerHtml += "[start:" + start_date + "],[end:" + end_date + "]; interval="+interval +"<hr/>";
+            int days = 1;
+            for (long m = 0; m<12; m++)
+            {
+                long prev_seconds = 60 * 60 * 24 * days;//seconds up to end of prev month
+                days += days_int_months[m];
+                long seconds = 60 * 60 * 24 * days;//seconds up to end of current month
+
+                int count = dbTools.getUserIcebreakCountBetweenTime(username, start_date+ prev_seconds, start_date + seconds);
+                y_axis += count + ",";
+                x_axis += "'" + months[m] + "',";//FromUnixTime(start_date + prev_seconds)
+            }
+
+            x_axis = x_axis.Substring(0, x_axis.Length - 1); //Remove last comma
+            y_axis = y_axis.Substring(0, y_axis.Length - 1); //Remove last comma
+
+            string jsGraph =
+                  "<script>"
+                    + getChartJS("graph_ib_count_" + username,
+                                    (string)Session["NAME"]+" Icebreak History",
                                     label,
                                     graph_type,
                                     x_axis,

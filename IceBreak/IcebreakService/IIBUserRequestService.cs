@@ -126,6 +126,22 @@ namespace IcebreakServices
         Event getEvent(string event_id);
 
         [OperationContract]
+        [WebGet(UriTemplate = "/getAchievement/{ach_id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        Achievement getAchievement(string ach_id);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getAllAchievements", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        List<Achievement> getAllAchievements();
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getReward/{rew_id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        Reward getReward(string rew_id);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getAllRewards", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        List<Reward> getAllRewards();
+
+        [OperationContract]
         [WebGet(
             UriTemplate = "/getMeta/{record}",
             ResponseFormat = WebMessageFormat.Json)]

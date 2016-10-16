@@ -826,6 +826,159 @@ namespace IcebreakServices
             }
         }
 
+        public Achievement getAchievement(long ach_id)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Achievements] WHERE Achievement_id=@ach_id", conn);
+                cmd.Parameters.AddWithValue(@"ach_id", ach_id);
+
+                dataReader = cmd.ExecuteReader();
+                Achievement a = null;
+                if(dataReader.HasRows)
+                {
+                    dataReader.Read();
+                    a = new Achievement()
+                    {
+                        Id = long.Parse(Convert.ToString(dataReader.GetValue(0))),
+                        Name = (string)dataReader.GetValue(1),
+                        Description = (string)dataReader.GetValue(2),
+                        Owner = (string)dataReader.GetValue(3),
+                        Level = (int)dataReader.GetValue(4),
+                        Value = (int)dataReader.GetValue(5),
+                        Target = int.Parse(Convert.ToString(dataReader.GetValue(6))),
+                    };
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+                return a;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EACH, e.Message, "getAchievement");
+                return null;
+            }
+        }
+
+        public Reward getReward(long rew_id)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Rewards] WHERE Reward_id=@rew_id", conn);
+                cmd.Parameters.AddWithValue(@"rew_id", rew_id);
+
+                dataReader = cmd.ExecuteReader();
+                Reward reward = null;
+
+                if(dataReader.HasRows)
+                {
+                    dataReader.Read();
+                    reward = new Reward()
+                    {
+                        Id = long.Parse(Convert.ToString(dataReader.GetValue(0))),
+                        Name = (string)dataReader.GetValue(1),
+                        Description = (string)dataReader.GetValue(2),
+                        Owner = (string)dataReader.GetValue(3),
+                        Value = (int)dataReader.GetValue(4)
+                    };
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+                return reward;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EREW, e.Message, "getReward");
+                return null;
+            }
+        }
+
+        public List<Achievement> getAllAchievements()
+        {
+            List<Achievement> achievements = new List<Achievement>();
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Achievements]", conn);
+
+                dataReader = cmd.ExecuteReader();
+                Achievement a = null;
+                while (dataReader.Read())
+                {
+                    a = new Achievement()
+                    {
+                        Id = long.Parse(Convert.ToString(dataReader.GetValue(0))),
+                        Name = (string)dataReader.GetValue(1),
+                        Description = (string)dataReader.GetValue(2),
+                        Owner = (string)dataReader.GetValue(3),
+                        Level = (int)dataReader.GetValue(4),
+                        Value = (int)dataReader.GetValue(5),
+                        Target = int.Parse(Convert.ToString(dataReader.GetValue(6))),
+                    };
+                    achievements.Add(a);
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+                return achievements;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EACH, e.Message, "getAllAchievements");
+                return null;
+            }
+        }
+
+        public List<Reward> getAllRewards()
+        {
+            List<Reward> rewards = new List<Reward>();
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Rewards]", conn);
+
+                dataReader = cmd.ExecuteReader();
+                Reward reward = null;
+                while (dataReader.Read())
+                {
+                    reward = new Reward()
+                    {
+                        Id = long.Parse(Convert.ToString(dataReader.GetValue(0))),
+                        Name = (string)dataReader.GetValue(1),
+                        Description = (string)dataReader.GetValue(2),
+                        Owner = (string)dataReader.GetValue(3),
+                        Value = (int)dataReader.GetValue(4)
+                    };
+                    rewards.Add(reward);
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+                return rewards;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EREW, e.Message, "getAllRewards");
+                return null;
+            }
+        }
+
         public Message getMessageById(string msg_id)
         {
             Message m = null;
@@ -1452,6 +1605,36 @@ namespace IcebreakServices
             }
         }*/
 
+        public long getUserEventId(string username)
+        {
+            long id=0;
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                SqlCommand cmd = new SqlCommand("SELECT * FROM [dbo].[Users] WHERE username=@user", conn);
+                cmd.Parameters.AddWithValue(@"user",username);
+
+                SqlDataReader dataReader = cmd.ExecuteReader();
+                if (dataReader.HasRows)
+                {
+                    dataReader.Read();
+                    id = long.Parse(Convert.ToString(dataReader.GetValue(6)));
+                }
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return id;
+            }
+            catch(Exception ex)
+            {
+                addError(ErrorCodes.EUSR,ex.Message, "getUserEventId");
+                return -1;
+            }
+        }
+
         /******Master Stats************/
         public int getAllIcebreakCount()
         {
@@ -1638,6 +1821,72 @@ namespace IcebreakServices
             {
                 addError(ErrorCodes.ESTATS, e.Message, "getAllSuccessfulUserIcebreakCountAtEvent");
                 return -1;
+            }
+        }
+
+        public int getUserIcebreakCountBetweenTime(string username, long start, long end)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_time>=@start AND Message_time<=@end AND "
+                    + "Message_status>@stat AND Message_sender=@usr", conn);
+                cmd.Parameters.AddWithValue(@"start", start);
+                cmd.Parameters.AddWithValue(@"end", end);
+                cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getAllSuccessfulUserIcebreakCountBetweenTime");
+                return -1;
+            }
+        }
+
+        public string getUserIcebreaks(string username)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_status>@stat AND Message_sender=@usr", conn);
+                cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                long time = 0;
+                string times = "";
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    time = long.Parse(Convert.ToString(dataReader.GetValue(5)));
+                    times += time + ",";
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+                if (!String.IsNullOrEmpty(times))
+                    times = times.Substring(0,times.Length-1);//remove last comma
+                return times;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getAllSuccessfulUserIcebreakCountBetweenTime");
+                return "null";
             }
         }
 

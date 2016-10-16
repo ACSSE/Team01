@@ -13,13 +13,31 @@ namespace IceBreak {
     public partial class stats {
         
         /// <summary>
-        /// tab_personal control.
+        /// personal control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl tab_personal;
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor personal;
+        
+        /// <summary>
+        /// events control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlAnchor events;
+        
+        /// <summary>
+        /// personal_canvas_container control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl personal_canvas_container;
         
         /// <summary>
         /// welcome_msg control.

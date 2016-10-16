@@ -1138,5 +1138,39 @@ namespace IcebreakServices
                 return db.getEventSuccessfulIcebreakCountBetweenTime(long.Parse(event_id), long.Parse(start), long.Parse(end));
             else return ErrorCodes.ECONV;
         }
+
+        public int getUserIcebreakCountBetweenTime(string username, string start, string end)
+        {
+            long s, e;
+            if (long.TryParse(start, out s) && long.TryParse(end, out e))
+                return db.getUserIcebreakCountBetweenTime(username, long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
+        }
+
+        public Achievement getAchievement(string ach_id)
+        {
+            long id;
+            if (long.TryParse(ach_id, out id))
+                return db.getAchievement(long.Parse(ach_id));
+            else return null;
+        }
+
+        public Reward getReward(string rew_id)
+        {
+            long id;
+            if (long.TryParse(rew_id, out id))
+                return db.getReward(long.Parse(rew_id));
+            else return null;
+        }
+
+        public List<Achievement> getAllAchievements()
+        {
+            return db.getAllAchievements();
+        }
+
+        public List<Reward> getAllRewards()
+        {
+            return db.getAllRewards();
+        }
     }
 }

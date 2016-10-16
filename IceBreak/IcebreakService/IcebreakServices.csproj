@@ -71,6 +71,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Achievement.cs" />
     <Compile Include="BaseService.svc.cs">
       <DependentUpon>BaseService.svc</DependentUpon>
     </Compile>
@@ -87,6 +88,7 @@
     <Compile Include="IBUserRequestService.svc.cs">
       <DependentUpon>IBUserRequestService.svc</DependentUpon>
     </Compile>
+    <Compile Include="Reward.cs" />
     <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>

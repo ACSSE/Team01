@@ -8,7 +8,9 @@
     <script>
         $(function ()
         {
-            $( "#tabs" ).tabs();
+            $("#tabs").tabs();
+            $("#personal").click(function () { $("#tab_events").hide(); $("#tab_personal").show(); });
+            $("#events").click(function () { $("#tab_personal").hide(); $("#tab_events").show(); });
         });
     </script>
 </asp:Content>
@@ -16,12 +18,14 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server" >
     <div id="tabs">
         <ul>
-            <li><a href="#tab_personal">Personal stats</a></li>
-            <li><a href="#tab_events">Events you created</a></li>
+            <li><a id="personal" href="#tab_personal" runat="server">Personal stats</a></li>
+            <li><a id="events" href="#tab_events" runat="server">Events you created</a></li>
             <!--<li><a href="#tabs-3">Master</a></li>-->
         </ul>
-        <div id="tab_personal" runat="server">
-            
+        <div id="tab_personal">
+            <div id="personal_canvas_container" style="width:100%;height:auto;margin:auto;" runat="server">
+
+            </div>
         </div>
         <div id="tab_events">
             <div style="width:350px;height:90px;margin:auto;">
