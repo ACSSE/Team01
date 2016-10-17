@@ -41,7 +41,7 @@
                       <li><a href="index.aspx">Home</a></li>
                       <li><a href="Event.aspx">Events</a></li>
                       <li><a href="stats.aspx">Statistics</a></li>
-                      <li><a href="About us.aspx">About Us</a></li>
+                      <li><a href="AboutUsSlider.aspx">About Us</a></li>
                   </ul>
 
                    <%--Right side of nav bar/menu  --%>
