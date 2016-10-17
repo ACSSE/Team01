@@ -116,7 +116,11 @@
   <ItemGroup>
     <Content Include="AboutUsSlider.aspx" />
     <Content Include="AddEvent.aspx" />
+    <Content Include="EditEvent.aspx" />
     <Content Include="Event.aspx" />
+    <Content Include="images\ab.jpg" />
+    <Content Include="images\About3.jpeg" />
+    <Content Include="images\AboutUs\1.jpg" />
     <Content Include="images\AboutUs\Company2.jpg" />
     <Content Include="images\AboutUs\left_icon.png" />
     <Content Include="images\AboutUs\Office1.jpg" />
@@ -138,6 +142,7 @@
     <Content Include="master.Master" />
     <Content Include="Metadata\deploymentTemplates\apiappconfig.azureresource.json" />
     <Content Include="apiapp.json" />
+    <Content Include="YourEvents.aspx" />
     <None Include="compilerconfig.json" />
     <None Include="compilerconfig.json.defaults">
       <DependentUpon>compilerconfig.json</DependentUpon>
@@ -205,6 +210,13 @@
     <Compile Include="AddEvent.aspx.designer.cs">
       <DependentUpon>AddEvent.aspx</DependentUpon>
     </Compile>
+    <Compile Include="EditEvent.aspx.cs">
+      <DependentUpon>EditEvent.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditEvent.aspx.designer.cs">
+      <DependentUpon>EditEvent.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Event.aspx.cs">
       <DependentUpon>Event.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -247,6 +259,13 @@
     </Compile>
     <Compile Include="ViewEvent.aspx.designer.cs">
       <DependentUpon>ViewEvent.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="YourEvents.aspx.cs">
+      <DependentUpon>YourEvents.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="YourEvents.aspx.designer.cs">
+      <DependentUpon>YourEvents.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

@@ -7,23 +7,24 @@ namespace IcebreakServices
 {
     public class Message
     {
-        private string message_id;
-        private string message;
-        private int message_status;
-        private string message_sender;
-        private string message_receiver;
-        private string message_time;
+        private string _message_id;
+        private string _message;
+        private int _message_status;
+        private string _message_sender;
+        private string _message_receiver;
+        private long _message_time;
+        private long _event_id;
 
         public string Message_id
         {
             get
             {
-                return message_id;
+                return _message_id;
             }
 
             set
             {
-                message_id = value;
+                _message_id = value;
             }
         }
 
@@ -31,12 +32,12 @@ namespace IcebreakServices
         {
             get
             {
-                return message;
+                return _message;
             }
 
             set
             {
-                message = value;
+                _message = value;
             }
         }
 
@@ -44,12 +45,12 @@ namespace IcebreakServices
         {
             get
             {
-                return message_status;
+                return _message_status;
             }
 
             set
             {
-                message_status = value;
+                _message_status = value;
             }
         }
 
@@ -57,12 +58,12 @@ namespace IcebreakServices
         {
             get
             {
-                return message_sender;
+                return _message_sender;
             }
 
             set
             {
-                message_sender = value;
+                _message_sender = value;
             }
         }
 
@@ -70,25 +71,38 @@ namespace IcebreakServices
         {
             get
             {
-                return message_receiver;
+                return _message_receiver;
             }
 
             set
             {
-                message_receiver = value;
+                _message_receiver = value;
             }
         }
 
-        public string Message_time
+        public long Message_time
         {
             get
             {
-                return message_time;
+                return _message_time;
             }
 
             set
             {
-                message_time = value;
+                _message_time = value;
+            }
+        }
+
+        public long Event_id
+        {
+            get
+            {
+                return _event_id;
+            }
+
+            set
+            {
+                _event_id = value;
             }
         }
     }

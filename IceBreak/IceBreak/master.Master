@@ -40,6 +40,7 @@
                   <ul class ="nav navbar-nav" id="list">
                       <li><a href="index.aspx">Home</a></li>
                       <li><a href="Event.aspx">Events</a></li>
+                      <li id="YourEvents" runat="server"></li>
                       <li><a href="stats.aspx">Statistics</a></li>
                       <li><a href="AboutUsSlider.aspx">About Us</a></li>
                   </ul>
@@ -128,9 +129,6 @@
             </div>
         </div>
         
-             <%-- Login modal  --%>
-      
-     
        
              <div id ="signUpModal" class="modal fade" role="dialog" runat="server">
             <div class="modal-dialog">

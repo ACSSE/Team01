@@ -1,14 +1,12 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/master.Master" ClientIDMode="Static" AutoEventWireup="true" CodeBehind="AddEvent.aspx.cs" Inherits="IceBreak.AddEvent" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/master.Master" ClientIDMode="Static" AutoEventWireup="true" CodeBehind="EditEvent.aspx.cs" Inherits="IceBreak.EditEvent" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-    <script src="scripts/scripts.js"></script>
     <script src="scripts/jquery.backstretch.min.js"></script>
      <script async="async" defer="defer" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAAQZBI76K_oRkxy-1qAyMC2w8AnfimZM&libraries=places"></script>
-      <link rel="stylesheet" href="stylesheets/addeventform.css"/>
+     <link rel="stylesheet" href="stylesheets/addeventform.css"/>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    
-    <div id="page-content-wrapper">
+     <div id="page-content-wrapper">
         
         <div class="register-container container">
             <div class="row">
@@ -19,39 +17,38 @@
                       
                  </div>
                     <div class="form">
-                        <h2>Add Event To <strong style="color:#59D0F7">IceBreak</strong></></h2>
+                        <h2>Edit Event</h2>
                         <div class="form-group" style="text-align:left">
                             <label for="eventname"  runat="server">Event Name</label><span id="lbl_name" runat="server" style="color:red; display:none"> - Please enter your event name.</span>
-                            <input type="text" id="eventname" name="eventname" placeholder="enter your event name..." runat="server" onkeydown = "return (event.keyCode!=13);"/>
+                            <input type="text" id="eventname" name="eventname" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                        </div>
                         <div class="form-group" style="text-align:left">
                              <label for="EventAddress">Event Address</label><span id="address_span" runat="server" style="color:red; display:none"> - Please enter your event address.</span>
-                             <input  type="text" readonly="readonly" id="eventaddress" name="eventaddress" placeholder="Use Google Map to enter a location" runat="server"/>
+                             <input type="text" id="eventaddress" name="eventaddress" readonly="readonly"  runat="server"/>
                        </div>
                          <div class="form-group" style="text-align:left">
                              <label for="gps">GPS Coordinates</label><span id="gps_span" runat="server" style="color:red; display:none"> - Please enter your gps coordinates.</span>
-                             <input  id="gps" type="text" readonly="readonly" name="gps" placeholder="enter your gps coordinates..." runat="server" />
+                             <input id="gps" type="text" name="gps" readonly="readonly"  runat="server" />
                        </div>
                         <div class="form-group" style="text-align:left">
                             <label for="EventDescription">Event Description</label><span id="descrip_span" runat="server" style="color:red; display:none"> - Please enter your event description.</span>
-                            <textarea class="form-control" rows="4" id="eventdescrip" name="eventdescrip" placeholder="enter your event description..."  runat="server" onkeydown = "return (event.keyCode!=13);"></textarea>
+                            <textarea class="form-control" rows="4" id="eventdescrip" name="eventdescrip"   runat="server" onkeydown = "return (event.keyCode!=13);"></textarea>
                         </div>
                         <div class="form-group" style="text-align:left">
-                            <label for="Event Date ">Event Start Date</label><span id="date_span" runat="server" style="color:red; display:none"> - Please enter your event start date.</span>
-                            <input type="date" id="date" name="date" runat="server" onkeydown = "return (event.keyCode!=13);"/>
+                            <label for="Event Date ">Event Date</label><span id="date_span" runat="server" style="color:red; display:none"> - Please enter your event date.</span>
+                            <input type="date" id="edit_event_date" name="event_date" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                         </div>
-                         <div class="form-group" style="text-align:left">
+                        <div class="form-group" style="text-align:left">
                             <label for="Event End Date ">Event End Date</label><span id="end_date_span" runat="server" style="color:red; display:none"> - Please enter your event end date.</span>
-                            <input type="date" id="event_end_date" name="event_end_date" runat="server" onkeydown = "return (event.keyCode!=13);"/>
+                            <input type="date" id="edit_event_end_date" name="event_end_date" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                         </div>
                         <div class="form-group" style="text-align:left">
                             <label for="Event Time">Event Time</label><span id="time_span" runat="server" style="color:red; display:none"> - Please enter your event time.</span>
-                            <input type="time" id="time" name="time" runat="server" onkeydown = "return (event.keyCode!=13);"/>
+                            <input type="time" id="edit_event_time" name="event_time" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                         </div>
-                       
                          <div class="form-group" style="text-align:left">
                             <label for="Event end time">Event End Time</label><span id="end_time_span" runat="server" style="color:red; display:none"> - Please enter your event end time.</span>
-                            <input type="time" id="end_time" name="end_time" runat="server" onkeydown = "return (event.keyCode!=13);"/>
+                            <input type="time" id="edit_event_end_time" name="event_end_time" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                         </div>
                         <div class="form-group" style="text-align:left">
                             <label for="Meeting Places">Meeting Places at Event</label><span id="meeting_span" runat="server" style="color:red; display:none"> - Please enter all event meeting places.</span>
@@ -69,7 +66,7 @@
                            <div class="form-group"style="text-align:left">
                              <input type="text" id="meeting_place_1" placeholder="enter meeting place 1" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                            </div>
-                             <div class="form-group"style="text-align:left">
+                             <div class="form-group"style="text-align:left"> 
                                 <input type="text" id="meeting_place_2" placeholder="enter meeting place 2" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                              </div>
                              <div class="form-group"style="text-align:left">
@@ -86,12 +83,16 @@
                         <asp:FileUpload id="FileUpload" runat="server" CssClass="UploadButton AddButton" /> <span id="upload" runat="server" style="color:red;display:none"></span>
                      
                         </div>
-                        <asp:Button runat="server" ID="btnAddButton"  UseSubmitBehavior="true" CssClass="AddButton" OnClick="btnAdd_Event" Text="ADD EVENT"></asp:Button>
+                        <asp:Button runat="server" ID="btnUpdateButton"  UseSubmitBehavior="true" CssClass="AddButton" OnClick="btnUpdate_Event" Text="UPDATE EVENT"></asp:Button>
                    </div>
                </div>
             </div>
     </div>
-   <script type="text/javascript">
+     <script type="text/javascript">
+
+         jQuery(document).ready(function () {
+             $.backstretch("images/image2.jpg");
+         });
        function showAlert()
        {
            $('#alertModal').modal('show');
@@ -145,13 +146,11 @@
                    anchor: new google.maps.Point(17, 34),
                    scaledSize: new google.maps.Size(35, 35)
                }));
-              
+
                marker.setPosition(place.geometry.location);
                marker.setVisible(true);
 
-               document.getElementById('gps').value = place.geometry.location;
-
-               document.getElementById('eventaddress').value = place.formatted_address;
+              
 
                var address = '';
                if (place.address_components) {
@@ -161,24 +160,16 @@
                      (place.address_components[2] && place.address_components[2].short_name || '')
                    ].join(' ');
                }
-               
+
                infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
                infowindow.open(map, marker);
+
+               document.getElementById("gps").value = place.geometry.location;
+
+               document.getElementById('eventaddress').value = place.formatted_address;
+
            });
 
-           // Sets a listener on a radio button to change the filter type on Places
-           // Autocomplete.
-           function setupClickListener(id, types) {
-               var radioButton = document.getElementById(id);
-               radioButton.addEventListener('click', function () {
-                   autocomplete.setTypes(types);
-               });
-           }
-
-           setupClickListener('changetype-all', []);
-           setupClickListener('changetype-address', ['address']);
-           setupClickListener('changetype-establishment', ['establishment']);
-           setupClickListener('changetype-geocode', ['geocode']);
 
        }
        google.maps.event.addDomListener(window, "load", initMap);

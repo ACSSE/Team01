@@ -4,6 +4,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
+    <div id="page-content-wrapper">
      <header class="image-bg-fluid-height" id ="EventImage" runat="server">
         
     </header>
@@ -17,8 +18,10 @@
                     <p class="lead section-lead" id ="EventDate" runat="server"></p>
                     <p class="lead section-lead" id ="EventStart" runat="server"></p>
                     <p class="lead section-lead" id ="EventEnd" runat="server"></p>
+                    <p class="lead section-lead" id ="EndTime" runat="server"></p>
                     <p class="lead section-lead" id ="EventAddress" runat="server"></p>
                     <p class="section-paragraph" id ="EVentDescription" runat="server"></p>
+                    <div id="divQR" runat="server" style="display:none"><asp:Button runat="server" ID="btnQR"  UseSubmitBehavior="true" CssClass="AddButton" OnClick="btnGenerateQR" Text="Generate QR Code"></asp:Button></div>
                 </div>
             </div>
         </div>
@@ -27,5 +30,6 @@
     <!-- Fixed Height Image Aside -->
     <!-- Image backgrounds are set within the full-width-pics.css file. -->
     <aside class="image-bg-fixed-height"></aside>
-
+    </div>
+     
 </asp:Content>

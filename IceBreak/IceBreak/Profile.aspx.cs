@@ -98,10 +98,12 @@ namespace IceBreak
             }
             catch(FormatException ex)
             {
+                dbs.addError(ErrorCodes.EUSR, ex.Message, "Profile.aspx[Updatebutton_click]");
                 return;//TODO: return message
             }
             catch (OverflowException ex)
             {
+                dbs.addError(ErrorCodes.EUSR, ex.Message, "Profile.aspx[Updatebutton_click]");
                 return;//TODO: return message
             }
             string catchphrase = txtCatch.Text;
