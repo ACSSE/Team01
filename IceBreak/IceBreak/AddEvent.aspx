@@ -81,6 +81,14 @@
                              <div class="form-group"style="text-align:left">
                                   <input type="text" id="meeting_place_5" placeholder="enter meeting place 5" runat="server" onkeydown = "return (event.keyCode!=13);"/>
                              </div>
+                        <div class="form-group" style="text-align:left">
+                            <label for="rewardname"  runat="server">Reward Name</label><span id="reward_name_span" runat="server" style="color:red; display:none"> - Please enter your reward name.</span>
+                            <input type="text" id="rewardname" name="rewardname" placeholder="enter your reward name..." runat="server" onkeydown = "return (event.keyCode!=13);"/>
+                       </div>
+                        <div class="form-group" style="text-align:left">
+                            <label for="rewarddescrip"  runat="server">Reward Description</label><span id="rdescrip_span" runat="server" style="color:red; display:none"> - Please enter your reward description.</span>
+                            <input type="text" id="rewarddescrip" name="rewarddescrip" placeholder="enter your reward desciption..." runat="server" onkeydown = "return (event.keyCode!=13);"/>
+                       </div>
                         <div class="form-group" style="text-align:left">  
                          <label>Upload Photo</label>                         
                         <asp:FileUpload id="FileUpload" runat="server" CssClass="UploadButton AddButton" /> <span id="upload" runat="server" style="color:red;display:none"></span>
