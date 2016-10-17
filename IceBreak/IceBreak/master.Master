@@ -42,6 +42,7 @@
                       <li><a href="Event.aspx">Events</a></li>
                       <li id="YourEvents" runat="server"></li>
                       <li><a href="stats.aspx">Statistics</a></li>
+                      <li><a href="AboutUsSlider.aspx">About Us</a></li>
                   </ul>
 
                    <%--Right side of nav bar/menu  --%>
