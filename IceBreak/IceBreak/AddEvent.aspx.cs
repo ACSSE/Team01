@@ -34,6 +34,8 @@ namespace IceBreak
             date.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
             event_end_date.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
             end_time.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+            rewardname.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+            rewarddescrip.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
             meeting_place_1.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
             meeting_place_2.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
             meeting_place_3.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
@@ -106,6 +108,8 @@ namespace IceBreak
             string EventEndDate = event_end_date.Value;
             string EventDate = date.Value;
             string EventGps = gps.Value;
+            string RewardName = rewardname.Value;
+            string RewardDescrip = rewarddescrip.Value;
             string mp1 = meeting_place_1.Value;
             string mp2 = meeting_place_2.Value;
             string mp3 = meeting_place_3.Value;
@@ -194,6 +198,24 @@ namespace IceBreak
             {
                 meeting_span.Style.Add("display", "none");
             }
+            if (String.IsNullOrEmpty(RewardName))
+            {
+               reward_name_span.Style.Add("display", "normal");
+                return;
+            }
+            else
+            {
+                reward_name_span.Style.Add("display", "none");
+            }
+            if (String.IsNullOrEmpty(RewardDescrip))
+            {
+                rdescrip_span.Style.Add("display", "normal");
+                return;
+            }
+            else
+            {
+                rdescrip_span.Style.Add("display", "none");
+            }
             int num = int.Parse(NumEvents.SelectedValue);
             string meetingplace = " ";
             for(int i =0;i<num;i++)
@@ -209,14 +231,7 @@ namespace IceBreak
                     meetingplace += mpArray[i] + ";";
                 }
             }
-            string filename = Path.GetFileName(FileUpload.FileName);
-            if (String.IsNullOrEmpty(filename))
-            {
-                upload.InnerText = "Photo not chosen. Recommended size 700x300";
-                upload.Style.Add("display", "normal");
-             //   return;
-            }
-
+            
             string str_start_date = EventDate + " " + EventTime;
             if (int.Parse(EventTime.Split(':')[0]) >= 12)
                 str_start_date += ":01 PM";
@@ -252,6 +267,7 @@ namespace IceBreak
             pcode = pcode >= 1000 ? pcode : pcode + 1000;//make sure passcode is always >= 4 digits
 
             IcebreakServices.Event evnt = new IcebreakServices.Event();
+            Reward rwd = new Reward();
             evnt.Title = EventName;
             evnt.Address = EventAddress;
             evnt.Gps_location = EventGps;
@@ -262,18 +278,25 @@ namespace IceBreak
             evnt.Meeting_Places = meetingplace;
             evnt.Manager = (string)Session["USER"];
 
+            rwd.Name = RewardName;
+            rwd.Description = RewardDescrip;
+            rwd.Owner = (string)Session["USER"];
+
             DBServerTools dbs = new DBServerTools();
             string check = dbs.addEvent(evnt,lvl);
-           
-            if(check.ToLower().Contains("success"))
+            string check1 = dbs.addReward(rwd, lvl);
+            if (check.ToLower().Contains("success") && check1.ToLower().Contains("success"))
             {
-                byte[] file_bytes = null;
-                using (var reader = new BinaryReader(Request.Files[0].InputStream))
+                string filename = Path.GetFileName(FileUpload.FileName);
+                if (!String.IsNullOrEmpty(filename))
                 {
-                    file_bytes = reader.ReadBytes(Request.Files[0].ContentLength);
+                    byte[] file_bytes = null;
+                    using (var reader = new BinaryReader(Request.Files[0].InputStream))
+                    {
+                        file_bytes = reader.ReadBytes(Request.Files[0].ContentLength);
+                    }
                 }
-                //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('File size: " + Request.Files[0].ContentLength + "');", true);
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('File size: " + FileUpload.FileBytes.Length + "');", true);
+                //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('File size: " + FileUpload.FileBytes.Length + "');", true);
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='Event.aspx';", true);
             }
             else

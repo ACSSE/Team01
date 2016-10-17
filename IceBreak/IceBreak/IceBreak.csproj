@@ -135,6 +135,7 @@
     <Content Include="master.Master" />
     <Content Include="Metadata\deploymentTemplates\apiappconfig.azureresource.json" />
     <Content Include="apiapp.json" />
+    <Content Include="SearchResults.aspx" />
     <Content Include="YourEvents.aspx" />
     <None Include="compilerconfig.json" />
     <None Include="compilerconfig.json.defaults">
@@ -230,6 +231,13 @@
       <DependentUpon>Profile.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchResults.aspx.cs">
+      <DependentUpon>SearchResults.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SearchResults.aspx.designer.cs">
+      <DependentUpon>SearchResults.aspx</DependentUpon>
+    </Compile>
     <Compile Include="stats.aspx.cs">
       <DependentUpon>stats.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
