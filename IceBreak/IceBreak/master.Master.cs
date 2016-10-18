@@ -19,7 +19,7 @@ namespace IceBreak
     
         protected void Page_Load(object sender, EventArgs e)
         {
-            
+            searchtext.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
             if (Session["USER"] != null)
             {
                 string check = (string)Session["USER"];
@@ -47,7 +47,7 @@ namespace IceBreak
         [ScriptMethod, WebMethod]
         protected void SearchEvent(object sender, EventArgs e)
         {
-            Response.Redirect("SearchResults.aspx?search=" + result.Value);
+            Response.Redirect("SearchResults.aspx?search=" + searchtext.Text);
            
         }
         protected void Login(object sender, EventArgs e)

@@ -1,4 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="master.master.cs" Inherits="IceBreak.master" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="master.master.cs" Inherits="IceBreak.master"%>
 
 <!DOCTYPE html>
 
@@ -17,6 +17,7 @@
     </asp:ContentPlaceHolder>
 </head>
 <body>
+    <form id="form1" runat="server">
     <div id="wrapper">
     <div id="menu">
       <nav class="navbar navbar-default " >
@@ -52,7 +53,7 @@
                       </li>
                       <li>
                           <div class="input-group" style="width:200px;padding-top:8px">
-                              <input type="text" class="form-control" placeholder="Search" id="result" runat="server"/>
+                              <asp:TextBox ID="searchtext" runat="server" CssClass="form-control" placeholder="Search Events" onkeydown = "return (event.keyCode!=13);"></asp:TextBox>
                               <div class="input-group-btn">
                                   <a href="javascript:Search()" runat='server' class="btn search"><span class="glyphicon glyphicon-search"></span></a>
                               </div>
@@ -80,7 +81,7 @@
             </ul>
         </div>
        
-        <form id="form1" runat="server">
+        
         <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePageMethods="true">
          </asp:ScriptManager>
         <div>
@@ -169,10 +170,8 @@
                 </div>
             </div>
         </div>
-
-             </form>
     </div>
-
+     </form>
 
     <script type="text/javascript">
         $(function () {

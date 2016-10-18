@@ -52,6 +52,7 @@ namespace IceBreak
                             picUrl = "http://icebreak.azurewebsites.net/images/events/default.png";
                         }
 
+                        DateTime date = FromUnixTime(evnt.Date);
                         SearchView.InnerHtml += "<div class='row'>" +
                                    "<div class='col-md-7'>" +
                                 "<a href = '#'>" +
@@ -61,7 +62,7 @@ namespace IceBreak
                             "<div class='col-md-5'>" +
                                 "<h3>" + evnt.Title + "</h3>" +
                                 "<h4>" + evnt.Address + "</h4>" +
-                                "<p>" + evnt.Description + "</p>" +
+                            "<p>" + date.ToShortDateString() + " " + date.ToShortTimeString() + "</p>" +
                                 "<a class='btn btn-primary' href='ViewEvent.aspx?evntid=" + evnt.Id + "'>View Event <span class='glyphicon glyphicon-chevron-right'></span></a>" +
                            " </div>" +
                         "</div>" +
@@ -77,6 +78,11 @@ namespace IceBreak
             {
                 SearchView.InnerHtml += "No search results";
             }
+        }
+        public DateTime FromUnixTime(long unixTime)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return epoch.AddSeconds(unixTime);
         }
     }
 }

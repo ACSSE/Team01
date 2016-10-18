@@ -316,7 +316,26 @@ namespace IcebreakServices
             }
 
         }
-
+        public string deleteReward(string evntid)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("DELETE FROM [dbo].[Rewards] WHERE Event_id=@evntid", conn);
+                cmd.Parameters.AddWithValue(@"evntid", evntid);
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+                conn.Close();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EUSR, e.Message, "removeReward");
+                return "Error:" + e.Message;
+            }
+        }
         public string deleteEvent(string evntid)
         {
             conn = new SqlConnection(dbConnectionString);
@@ -1445,6 +1464,9 @@ namespace IcebreakServices
                 cmd.Parameters.AddWithValue(@"descrip", rw.Description);
                 cmd.Parameters.AddWithValue(@"owner", rw.Owner);
                 cmd.Parameters.AddWithValue(@"eventid", rw.EventID);
+
+
+                cmd.ExecuteNonQuery();
 
                 cmd.Dispose();
                 conn.Close();
