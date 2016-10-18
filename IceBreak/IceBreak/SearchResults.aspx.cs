@@ -53,6 +53,7 @@ namespace IceBreak
                         }
 
                         DateTime date = FromUnixTime(evnt.Date);
+
                         SearchView.InnerHtml += "<div class='row'>" +
                                    "<div class='col-md-7'>" +
                                 "<a href = '#'>" +
