@@ -42,6 +42,7 @@
                       <li><a href="Event.aspx">Events</a></li>
                       <li id="YourEvents" runat="server"></li>
                       <li><a href="stats.aspx">Statistics</a></li>
+                      <li><a href="AboutUsSlider.aspx">About Us</a></li>
                   </ul>
 
                    <%--Right side of nav bar/menu  --%>
@@ -50,13 +51,10 @@
                           <a href="#" data-toggle="modal" data-target="#loginModal" >Login</a>                          
                       </li>
                       <li>
-                          <a href="#"> <span class="glyphicon glyphicon-bell"></span></a>
-                      </li>
-                      <li>
                           <div class="input-group" style="width:200px;padding-top:8px">
-                              <input type="text" class="form-control" placeholder="Search" />
+                              <input type="text" class="form-control" placeholder="Search" id="result" runat="server"/>
                               <div class="input-group-btn">
-                                  <button type="submit" class="btn"><span class="glyphicon glyphicon-search"></span></button>
+                                  <a href="javascript:Search()" runat='server' class="btn search"><span class="glyphicon glyphicon-search"></span></a>
                               </div>
                           </div>
                       </li>
@@ -94,7 +92,9 @@
     <div class="hide">
                  <asp:Button runat="server" OnClick="Logout" ID="logout"/>
     </div>
-
+    <div class="hide">
+            <asp:Button runat="server" UseSubmitBehavior="true" OnClick="SearchEvent" ID="Search"/>
+    </div>
              <%-- Login modal  --%>
         <div id ="loginModal" class="modal fade" role="dialog" runat="server">
             <div class="modal-dialog">
@@ -193,7 +193,9 @@
         {
             document.getElementById("logout").click();
         }
-
+        function Search() {
+            document.getElementById("Search").click();
+        }
     </script>
 
 </body>

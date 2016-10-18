@@ -18,12 +18,12 @@ namespace IceBreak
                 int check = (int)Session["LEVEL"];
                 if (check >= 0)
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
-                    return;
+                    divQR.Style.Add("display", "normal");
                 }
                 else
                 {
-                    divQR.Style.Add("display", "normal");
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
+                    return;
                 }
             }
            

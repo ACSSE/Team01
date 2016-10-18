@@ -220,6 +220,42 @@ namespace IceBreak {
         protected global::System.Web.UI.HtmlControls.HtmlInputText meeting_place_5;
         
         /// <summary>
+        /// reward_name_span control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl reward_name_span;
+        
+        /// <summary>
+        /// rewardname control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText rewardname;
+        
+        /// <summary>
+        /// rdescrip_span control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl rdescrip_span;
+        
+        /// <summary>
+        /// rewarddescrip control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText rewarddescrip;
+        
+        /// <summary>
         /// FileUpload control.
         /// </summary>
         /// <remarks>

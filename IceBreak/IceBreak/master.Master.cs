@@ -44,8 +44,12 @@ namespace IceBreak
                 Response.Redirect("index.aspx");
             }
         }
-
-
+        [ScriptMethod, WebMethod]
+        protected void SearchEvent(object sender, EventArgs e)
+        {
+            Response.Redirect("SearchResults.aspx?search=" + result.Value);
+           
+        }
         protected void Login(object sender, EventArgs e)
         {
               

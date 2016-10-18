@@ -13,6 +13,9 @@
 .btn:focus, .btn:active:focus, .btn.active:focus {
   outline: 0 none; }
 
+.search {
+  Color: #808080; }
+
 .remove {
   margin-left: 2%;
   background: #f44242;

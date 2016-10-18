@@ -40,6 +40,15 @@ namespace IceBreak {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl login;
         
         /// <summary>
+        /// result control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText result;
+        
+        /// <summary>
         /// DIV control.
         /// </summary>
         /// <remarks>
@@ -83,6 +92,15 @@ namespace IceBreak {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button logout;
+        
+        /// <summary>
+        /// Search control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button Search;
         
         /// <summary>
         /// loginModal control.

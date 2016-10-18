@@ -885,7 +885,43 @@ namespace IcebreakServices
                 return null;
             }
         }
+        public Reward getRewardForEvent(string username)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Rewards] WHERE Reward_owner=@username", conn);
+                cmd.Parameters.AddWithValue(@"username", username);
 
+                dataReader = cmd.ExecuteReader();
+                Reward reward = null;
+
+                if (dataReader.HasRows)
+                {
+                    dataReader.Read();
+                    reward = new Reward()
+                    {
+                        Id = long.Parse(Convert.ToString(dataReader.GetValue(0))),
+                        Name = (string)dataReader.GetValue(1),
+                        Description = (string)dataReader.GetValue(2),
+                        Owner = (string)dataReader.GetValue(3),
+                        Value = (int)dataReader.GetValue(4)
+                    };
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+                return reward;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EREW, e.Message, "getReward");
+                return null;
+            }
+        }
         public Reward getReward(long rew_id)
         {
             conn = new SqlConnection(dbConnectionString);
@@ -1598,7 +1634,114 @@ namespace IcebreakServices
                 return "Error:"+e.Message;
             }
         }
+        public string updateReward(Reward rw, int access_lvl)
+        {
+            try
+            {
+                //Security checks
+                if (access_lvl < CAN_EDIT_EVENTS)
+                    return "Error:You do not have the necessary permissions to execute this action.";
+               
 
+                conn = new SqlConnection(dbConnectionString);
+                conn.Open();
+
+                SqlCommand cmd = null;
+
+                string q = "SELECT * FROM [dbo].[Rewards] WHERE Reward_id=@id";
+                cmd = new SqlCommand(q, conn);
+                cmd.Parameters.AddWithValue(@"id", rw.Id);
+                SqlDataReader readr = cmd.ExecuteReader();
+                readr.Read();
+                if (!readr.HasRows)
+                {
+                    //Clean up
+                    cmd.Dispose();
+                    readr.Close();
+                    conn.Close();
+                    return "Error:No Reward found matching the provided credentials ";
+                }
+                //Clean up
+                cmd.Dispose();
+                readr.Close();
+
+                if (conn == null)
+                    conn = new SqlConnection(dbConnectionString);
+                if (conn.State == System.Data.ConnectionState.Closed)
+                    conn.Open();
+
+                
+                if (!isEmpty(rw.Name))
+                {
+                    string query = "UPDATE [dbo].[Rewards] SET Reward_name=@name  WHERE Reward_id=@id";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"id", rw.Id);
+                    cmd.Parameters.AddWithValue(@"name", rw.Name);
+                    cmd.ExecuteNonQuery();
+                }
+                if (!isEmpty(rw.Description))
+                {
+                    string query = "UPDATE [dbo].[Rewards] SET Reward_description=@descrip WHERE Reward_id=@id";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"id", rw.Id);
+                    cmd.Parameters.AddWithValue(@"descrip", rw.Description);
+                    cmd.ExecuteNonQuery();
+                }
+                if (rw.Value >= 0)
+                {
+                    string query = "UPDATE [dbo].[Rewards] SET Reward_value=@value WHERE Reward_id=@id";
+                    cmd = new SqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue(@"id", rw.Id);
+                    cmd.Parameters.AddWithValue(@"value", rw.Value);
+                    cmd.ExecuteNonQuery();
+                }
+
+
+                cmd.Dispose();
+                conn.Close();
+               
+
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EEVENT, e.Message, "updateReward");
+                return "Error:" + e.Message;
+            }
+        }
+        public string addReward(Reward rw, int access_lvl)
+        {
+            if (access_lvl < CAN_EDIT_EVENTS)
+                return "Error:You do not have the necessary permissions to execute this action.";
+
+            try
+            {
+
+                conn = new SqlConnection(dbConnectionString);
+                conn.Open();
+
+                string query = "INSERT INTO [dbo].[Rewards](Reward_name,Reward_description,Reward_owner,Reward_value)" +
+                    "VALUES(@name,@descrip,@owner,0)";
+                cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue(@"name", rw.Name);
+                cmd.Parameters.AddWithValue(@"descrip", rw.Description);
+                cmd.Parameters.AddWithValue(@"owner", rw.Owner);
+                cmd.ExecuteNonQuery();
+
+                cmd.Dispose();
+                conn.Close();
+
+
+                return "Success";
+            }
+
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EEVENT, e.Message, "addReward");
+                return "Error:" + e.Message;
+            }
+        }
         public string addEvent(Event ev, int access_lvl)
         {
             if (access_lvl < CAN_EDIT_EVENTS)
@@ -1904,7 +2047,47 @@ namespace IcebreakServices
             return events;
         }
 
-       
+        public List<Event> getAllSearchedEvents(string result)
+        {
+            List<Event> events = new List<Event>();
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Events] WHERE event_title LIKE @res OR event_address LIKE @res", conn);
+                cmd.Parameters.AddWithValue("@res", "%" + result + "%");
+
+
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    events.Add(new Event()
+                    {
+                        Id = long.Parse(Convert.ToString(dataReader.GetValue(0))),
+                        Title = (string)dataReader.GetValue(1),
+                        Description = (string)dataReader.GetValue(2),
+                        Address = (string)dataReader.GetValue(3),
+                        Gps_location = (string)dataReader.GetValue(4),
+                        AccessCode = int.Parse(Convert.ToString(dataReader.GetValue(5))),
+                        Date = long.Parse(Convert.ToString(dataReader.GetValue(6))),
+                        Meeting_Places = (string)dataReader.GetValue(7),
+                        End_Date = long.Parse(Convert.ToString(dataReader.GetValue(8)))
+
+                    });
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EEVENT, e.Message, "getAllSearchedEvents");
+                //File.WriteAllLines(Path.Combine(HostingEnvironment.MapPath("~/logs/"), new DateTime()+".log"),new String[] { e.Message});
+            }
+            return events;
+        }
 
         public string signIn(User user)
         {
