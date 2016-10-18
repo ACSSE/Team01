@@ -779,6 +779,50 @@ namespace IcebreakServices
             }
             return "Error:Unknown Response.";
         }
+        public Event getLastEvent()
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                cmd = new SqlCommand("SELECT TOP 1 * FROM dbo.Events ORDER BY event_id DESC", conn);
+
+                dataReader = cmd.ExecuteReader();
+                Event e = null;
+                while (dataReader.Read())
+                {
+                    e = new Event()
+                    {
+                        Id = long.Parse(Convert.ToString(dataReader.GetValue(0))),
+                        Title = (string)dataReader.GetValue(1),
+                        Description = (string)dataReader.GetValue(2),
+                        Address = (string)dataReader.GetValue(3),
+                        //Radius = (int)dataReader.GetValue(4),
+                        Gps_location = (string)dataReader.GetValue(4),
+                        AccessCode = int.Parse(Convert.ToString(dataReader.GetValue(5))),
+                        Date = long.Parse(Convert.ToString(dataReader.GetValue(6))),
+                        Meeting_Places = (string)dataReader.GetValue(7),
+                        End_Date = long.Parse(Convert.ToString(dataReader.GetValue(8)))
+                    };
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+                return e;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EEVENT, e.Message, "getLastEvent");
+                /*return new Event
+                {
+                    Title = "<Error>",
+                    Description = e.Message
+                };*/
+                return null;
+            }
+        }
 
         public Event getEvent(string event_id)
         {
@@ -864,15 +908,15 @@ namespace IcebreakServices
                 return null;
             }
         }
-        public Reward getRewardForEvent(string username)
+        public Reward getRewardForEvent(string event_id)
         {
             conn = new SqlConnection(dbConnectionString);
             try
             {
                 conn.Open();
                 //Query user
-                cmd = new SqlCommand("SELECT * FROM [dbo].[Rewards] WHERE Reward_owner=@username", conn);
-                cmd.Parameters.AddWithValue(@"username", username);
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Rewards] WHERE Event_id=@id", conn);
+                cmd.Parameters.AddWithValue(@"id", event_id);
 
                 dataReader = cmd.ExecuteReader();
                 Reward reward = null;
@@ -1393,14 +1437,14 @@ namespace IcebreakServices
                 conn = new SqlConnection(dbConnectionString);
                 conn.Open();
 
-                string query = "INSERT INTO [dbo].[Rewards](Reward_name,Reward_description,Reward_owner,Reward_value)" +
-                    "VALUES(@name,@descrip,@owner,0)";
+                string query = "INSERT INTO [dbo].[Rewards](Reward_name,Reward_description,Reward_owner,Reward_value,Event_id)" +
+                    "VALUES(@name,@descrip,@owner,0,@eventid)";
                 cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue(@"name", rw.Name);
                 cmd.Parameters.AddWithValue(@"descrip", rw.Description);
                 cmd.Parameters.AddWithValue(@"owner", rw.Owner);
-                cmd.ExecuteNonQuery();
+                cmd.Parameters.AddWithValue(@"eventid", rw.EventID);
 
                 cmd.Dispose();
                 conn.Close();

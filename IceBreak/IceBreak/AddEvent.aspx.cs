@@ -284,17 +284,35 @@ namespace IceBreak
 
             DBServerTools dbs = new DBServerTools();
             string check = dbs.addEvent(evnt,lvl);
-            string check1 = dbs.addReward(rwd, lvl);
-            if (check.ToLower().Contains("success") && check1.ToLower().Contains("success"))
+                        
+            if (check.ToLower().Contains("success"))
             {
-                string filename = Path.GetFileName(FileUpload.FileName);
-                if (!String.IsNullOrEmpty(filename))
+                IcebreakServices.Event lastevent = dbs.getLastEvent();
+                if (lastevent != null)
                 {
-                    byte[] file_bytes = null;
-                    using (var reader = new BinaryReader(Request.Files[0].InputStream))
+                    rwd.EventID = (int)lastevent.Id;
+
+                    string check1 = dbs.addReward(rwd, lvl);
+
+                    if (check1.ToLower().Contains("success"))
                     {
-                        file_bytes = reader.ReadBytes(Request.Files[0].ContentLength);
+                        string filename = Path.GetFileName(FileUpload.FileName);
+                        if (!String.IsNullOrEmpty(filename))
+                        {
+
+                            string event_icon_title = "event_icons-" + lastevent.Id;
+                            byte[] file_bytes = FileUpload.FileBytes;
+                            string response = dbs.imageUpload("events;" + event_icon_title + ".png", file_bytes);
+                        }
                     }
+                    else
+                    {
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert(\"Event creation unsuccessful: " + check + "\");", true);
+                    }
+                }
+                else
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert(\"Event creation unsuccessful: " + check + "\");", true);
                 }
                 //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('File size: " + FileUpload.FileBytes.Length + "');", true);
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='Event.aspx';", true);
