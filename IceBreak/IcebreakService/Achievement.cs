@@ -10,10 +10,10 @@ namespace IcebreakServices
         private long _id;
         private string _name;
         private string _description;
-        private string _owner;
-        private int _level;
         private int _value;
         private int _target;
+        private long _date_achieved;
+        private string _method;
 
         public long Id
         {
@@ -54,32 +54,6 @@ namespace IcebreakServices
             }
         }
 
-        public string Owner
-        {
-            get
-            {
-                return _owner;
-            }
-
-            set
-            {
-                _owner = value;
-            }
-        }
-
-        public int Level
-        {
-            get
-            {
-                return _level;
-            }
-
-            set
-            {
-                _level = value;
-            }
-        }
-
         public int Value
         {
             get
@@ -103,6 +77,32 @@ namespace IcebreakServices
             set
             {
                 _target = value;
+            }
+        }
+
+        public long DateAchieved
+        {
+            get
+            {
+                return _date_achieved;
+            }
+
+            set
+            {
+                _date_achieved = value;
+            }
+        }
+
+        public string Method
+        {
+            get
+            {
+                return _method;
+            }
+
+            set
+            {
+                _method = value;
             }
         }
     }

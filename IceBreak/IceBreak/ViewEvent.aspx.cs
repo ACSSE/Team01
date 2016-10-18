@@ -16,7 +16,7 @@ namespace IceBreak
             if (Session["LEVEL"] != null || Session["USER"] != null)
             {
                 int check = (int)Session["LEVEL"];
-                if (check != 1)
+                if (check >= 0)
                 {
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
                     return;

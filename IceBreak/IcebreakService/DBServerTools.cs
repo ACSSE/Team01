@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace IcebreakServices
 
                     if(user.Access_level>=0)
                     {
-                        cmd = new SqlCommand("UPDATE dbo.Users SET access_level=@lvl WHERE username=@usr", conn);
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET access_level=@lvl WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"lvl", user.Access_level);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
@@ -59,14 +60,14 @@ namespace IcebreakServices
                     {
                         if (user.Email.Length <= 0)
                             user.Email = NO_EMAIL;
-                        cmd = new SqlCommand("UPDATE dbo.Users SET email=@email WHERE username=@usr", conn);
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET email=@email WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"email", user.Email);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
                     }
                     if (user.Age > 0)
                     {
-                        cmd = new SqlCommand("UPDATE dbo.Users SET Age=@age WHERE username=@usr", conn);
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET Age=@age WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"age", user.Age);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
@@ -75,7 +76,7 @@ namespace IcebreakServices
                     {
                         if (user.Occupation.Length <= 0)
                             user.Occupation = NO_OCC;
-                        cmd = new SqlCommand("UPDATE dbo.Users SET Occupation=@occupation WHERE username=@usr", conn);
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET Occupation=@occupation WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"occupation", user.Occupation);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
@@ -84,7 +85,7 @@ namespace IcebreakServices
                     {
                         if (user.Bio.Length <= 0)
                             user.Bio = NO_BIO;
-                        cmd = new SqlCommand("UPDATE dbo.Users SET Bio=@bio WHERE username=@usr", conn);
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET Bio=@bio WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"bio", user.Bio);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
@@ -93,65 +94,83 @@ namespace IcebreakServices
                     {
                         if (user.Catchphrase.Length <= 0)
                             user.Catchphrase = NO_PHRASE;
-                        cmd = new SqlCommand("UPDATE dbo.Users SET Catchphrase=@cp WHERE username=@usr", conn);
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET Catchphrase=@cp WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"cp", user.Catchphrase);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
                     }
                     if (user.Gender != null)
                     {
-                        cmd = new SqlCommand("UPDATE dbo.Users SET Gender=@gender WHERE username=@usr", conn);
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET Gender=@gender WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"gender", user.Gender);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
                     }
                     if (user.Event_id > 0)
                     {
-                        cmd = new SqlCommand("UPDATE dbo.Users SET event_id=@id WHERE username=@usr", conn);
+                        //Update Users table
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET event_id=@id WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"id", user.Event_id);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
+
+                        //Add to bridging table
+                        addUserEvent(user.Username, user.Event_id);
                     }
                     if (user.Fname != null)
                     {
-                        cmd = new SqlCommand("UPDATE dbo.Users SET fname=@fname WHERE username=@usr", conn);
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET fname=@fname WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"fname", user.Fname);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
                     }
                     if (user.Lname != null)
                     {
-                        cmd = new SqlCommand("UPDATE dbo.Users SET lname=@lname WHERE username=@usr", conn);
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET lname=@lname WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"lname", user.Lname);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
                     }
                     if (user.Password != null)
                     {
-                        cmd = new SqlCommand("UPDATE dbo.Users SET pwd=@pwd WHERE username=@usr", conn);
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET pwd=@pwd WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"pwd", Hash.HashString(user.Password));
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
                     }
                     if (user.Fb_token != null)
                     {
-                        cmd = new SqlCommand("UPDATE dbo.Users SET fb_token=@token WHERE username=@usr", conn);
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET fb_token=@token WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"token", user.Fb_token);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
                     }
                     if (user.Fb_id != null)
                     {
-                        cmd = new SqlCommand("UPDATE dbo.Users SET fb_id=@id WHERE username=@usr", conn);
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET fb_id=@id WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"id", user.Fb_id);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Points > 0)
+                    {
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET Achievement_points=@pts WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"pts", user.Points);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Last_Seen > 0)
+                    {
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET last_seen=@seen WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.Parameters.AddWithValue(@"seen", user.Last_Seen);
                         cmd.ExecuteNonQuery();
                     }
                     if (user.Username != null)
                     {
                         if (userExists(user).ToLower().Contains("exists=false"))//Make sure username has not been taken
                         {
-                            cmd = new SqlCommand("UPDATE dbo.Users SET username=@username WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                            cmd = new SqlCommand("UPDATE [dbo].[Users] SET username=@username WHERE username=@usr", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
                             cmd.Parameters.AddWithValue(@"username", user.Username);
                             cmd.Parameters.AddWithValue(@"usr", user.Username);
                             cmd.ExecuteNonQuery();
@@ -567,24 +586,25 @@ namespace IcebreakServices
                 List<User> users = new List<User>();
                 while (dataReader.Read())
                 {
-                    //Nasty code for now
                     //Get rid of NULLs
-                    string fname = Convert.IsDBNull(dataReader.GetValue(0)) ? "X" : Convert.ToString(dataReader.GetValue(0));
-                    string lname = Convert.IsDBNull(dataReader.GetValue(1)) ? "X" : Convert.ToString(dataReader.GetValue(1));
-                    string username = Convert.IsDBNull(dataReader.GetValue(4)) ? "X" : Convert.ToString(dataReader.GetValue(4));
-                    int age = Convert.IsDBNull(dataReader.GetValue(7)) ? 0 : int.Parse(Convert.ToString(dataReader.GetValue(7)));
-                    string bio = Convert.IsDBNull(dataReader.GetValue(8)) ? "X" : Convert.ToString(dataReader.GetValue(8));
-                    string catchphrase = Convert.IsDBNull(dataReader.GetValue(9)) ? "X" : Convert.ToString(dataReader.GetValue(9));
-                    string occupation = Convert.IsDBNull(dataReader.GetValue(10)) ? "X" : Convert.ToString(dataReader.GetValue(10));
-                    string gender = Convert.IsDBNull(dataReader.GetValue(11)) ? "X" : Convert.ToString(dataReader.GetValue(11));
-                    //Get rid of empties
-                    fname = isEmpty(fname) ? "X" : fname;
-                    lname = isEmpty(lname) ? "X" : lname;
-                    bio = isEmpty(bio)? "X" : bio;
-                    catchphrase = isEmpty(catchphrase) ? "X" : catchphrase;
-                    occupation = isEmpty(occupation)? "X" : occupation;
-                    gender = isEmpty(gender) ? "X" : gender;
-                    //End of nasty code
+                    string fname = Convert.IsDBNull(dataReader.GetValue(0)) ? "X" : Convert.ToString((string)dataReader.GetValue(0));
+                    string lname = Convert.IsDBNull(dataReader.GetValue(1)) ? "X" : Convert.ToString((string)dataReader.GetValue(1));
+                    //string email = Convert.IsDBNull(dataReader.GetValue(2)) ? NO_EMAIL : Convert.ToString((string)dataReader.GetValue(2));
+                    string username = Convert.ToString((string)dataReader.GetValue(4));
+
+                    //int lvl = Convert.IsDBNull(dataReader.GetValue(5)) ? 0 : dataReader.GetInt32(5);
+                    //long ev = Convert.IsDBNull(dataReader.GetValue(6)) ? 0 : dataReader.GetInt32(6);
+                    int age = Convert.IsDBNull(dataReader.GetValue(7)) ? 0 : dataReader.GetInt32(7);
+
+                    string bio = Convert.IsDBNull(dataReader.GetValue(8)) ? NO_BIO : Convert.ToString((string)dataReader.GetValue(8));
+                    string catchphrase = Convert.IsDBNull(dataReader.GetValue(9)) ? NO_PHRASE : Convert.ToString((string)dataReader.GetValue(9));
+                    string occupation = Convert.IsDBNull(dataReader.GetValue(10)) ? NO_OCC : Convert.ToString((string)dataReader.GetValue(10));
+                    string gender = Convert.IsDBNull(dataReader.GetValue(11)) ? NO_GENDER : Convert.ToString((string)dataReader.GetValue(11));
+
+                    long pts = Convert.IsDBNull(dataReader.GetValue(15)) ? 0 : dataReader.GetInt32(15);
+                    String seen = Convert.IsDBNull(dataReader.GetValue(16)) ? "0" : dataReader.GetString(16);
+                    double ls = Double.Parse(seen);//last seen date
+
                     users.Add(new User
                     {
                         Fname = fname,
@@ -594,8 +614,10 @@ namespace IcebreakServices
                         Age = age,
                         Bio = bio,
                         Gender = gender,
-                        Catchphrase = catchphrase
-                    });
+                        Catchphrase = catchphrase,
+                        Points = pts,
+                        Last_Seen = (long)Math.Ceiling(ls)
+                });
                 }
                 
                 dataReader.Close();
@@ -846,10 +868,9 @@ namespace IcebreakServices
                         Id = long.Parse(Convert.ToString(dataReader.GetValue(0))),
                         Name = (string)dataReader.GetValue(1),
                         Description = (string)dataReader.GetValue(2),
-                        Owner = (string)dataReader.GetValue(3),
-                        Level = (int)dataReader.GetValue(4),
-                        Value = (int)dataReader.GetValue(5),
-                        Target = int.Parse(Convert.ToString(dataReader.GetValue(6))),
+                        Value = int.Parse(Convert.ToString(dataReader.GetValue(3))),
+                        Target = int.Parse(Convert.ToString(dataReader.GetValue(4))),
+                        Method = (string)dataReader.GetValue(5)
                     };
                 }
 
@@ -914,20 +935,19 @@ namespace IcebreakServices
                 cmd = new SqlCommand("SELECT * FROM [dbo].[Achievements]", conn);
 
                 dataReader = cmd.ExecuteReader();
-                Achievement a = null;
+                Achievement ach = null;
                 while (dataReader.Read())
                 {
-                    a = new Achievement()
+                    ach = new Achievement()
                     {
                         Id = long.Parse(Convert.ToString(dataReader.GetValue(0))),
                         Name = (string)dataReader.GetValue(1),
                         Description = (string)dataReader.GetValue(2),
-                        Owner = (string)dataReader.GetValue(3),
-                        Level = (int)dataReader.GetValue(4),
-                        Value = (int)dataReader.GetValue(5),
-                        Target = int.Parse(Convert.ToString(dataReader.GetValue(6))),
+                        Value = int.Parse(Convert.ToString(dataReader.GetValue(3))),
+                        Target = int.Parse(Convert.ToString(dataReader.GetValue(4))),
+                        Method = (string)dataReader.GetValue(5)
                     };
-                    achievements.Add(a);
+                    achievements.Add(ach);
                 }
 
                 dataReader.Close();
@@ -938,6 +958,38 @@ namespace IcebreakServices
             catch (Exception e)
             {
                 addError(ErrorCodes.EACH, e.Message, "getAllAchievements");
+                return null;
+            }
+        }
+
+        public List<Achievement> getUserAchievements(string username)
+        {
+            List<Achievement> achievements = new List<Achievement>();
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[User_Achievements] WHERE username=@usr", conn);
+                cmd.Parameters.AddWithValue(@"usr",username);
+
+                dataReader = cmd.ExecuteReader();
+                Achievement ach = null;
+                while (dataReader.Read())
+                {
+                    ach = getAchievement(long.Parse(Convert.ToString(dataReader.GetValue(1))));
+                    ach.DateAchieved = long.Parse(Convert.ToString(dataReader.GetValue(3)));
+                    achievements.Add(ach);
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+                return achievements;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EACH, e.Message, "getUserAchievements");
                 return null;
             }
         }
@@ -1017,6 +1069,45 @@ namespace IcebreakServices
             }
         }
 
+        public List<Event> getUserEventHistory(string username)
+        {
+            List<Event> events = null;
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                events = new List<Event>();
+                conn.Open();
+                //Get user's unread messages and Icebreaks
+                cmd = new SqlCommand("SELECT DISTINCT * FROM [dbo].[User_Event] WHERE username=@usr", conn);
+                cmd.Parameters.AddWithValue(@"usr", username);
+
+                dataReader = cmd.ExecuteReader();
+                List<string> ids = new List<string>();
+                if (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        string id = Convert.ToString(dataReader.GetValue(2));
+                        ids.Add(id);
+                    }
+
+                    foreach(string id in ids)
+                        events.Add(getEvent(id));
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return events;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EMSG, e.Message, "getUserEventHistory");
+                return null;
+            }
+        }
+
         public static bool isEmpty(string s)
         {
             if(s == null)
@@ -1031,6 +1122,242 @@ namespace IcebreakServices
                 return true;
             //Passes checks
             return false;
+        }
+
+        public string ping(string username)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                string last_seen = Convert.ToString((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds);
+
+                conn.Open();
+                //Get user's unread messages and Icebreaks
+                cmd = new SqlCommand("UPDATE [dbo].[Users] SET last_seen=@seen WHERE username=@usr", conn);
+                cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"seen", last_seen);
+                cmd.ExecuteNonQuery();
+
+                cmd.Dispose();
+                conn.Close();
+
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EMSG, e.Message, "ping");
+                return "Error: " + e.Message;
+            }
+        }
+
+        public List<Achievement> updateUserAchievements(string username)
+        {
+            List<Achievement> achievements = getAllAchievements();
+            List<Achievement> usr_achievements = getUserAchievements(username);
+            foreach (Achievement ach in achievements)
+            {
+                bool ach_found = false;
+                foreach (Achievement usr_ach in usr_achievements)
+                {
+                    if (ach.Id == usr_ach.Id)
+                    {
+                        ach_found = true;
+                        break;
+                    }
+                }
+                if (!ach_found)
+                {
+                    //current achievement not in user's list of achievements - check if eligible
+                    int count = 0;
+                    switch(ach.Method.ToUpper())
+                    {
+                        case "A":
+                            count = getUserIcebreakCount(username);
+                            break;
+                        case "B":
+                            count = getUserSuccessfulIcebreakCount(username);
+                            break;
+                        case "C":
+                            count = getMaxUserIcebreakCountAtOneEvent(username).Value;
+                            break;
+                        case "D":
+                            count = getMaxUserSuccessfulIcebreakCountAtOneEvent(username).Value;
+                            break;
+                        case "E":
+                            count = getUserIcebreaksXHoursApart(username, 2).Count;
+                            break;
+                        case "F":
+                            count = getUserSuccessfulIcebreaksXHoursApart(username, 2).Count;
+                            break;
+                        case "AB"://get unsuccessful Icebreak count
+                            count = getUserIcebreakCount(username)-getUserSuccessfulIcebreakCount(username);
+                            break;
+                        default:
+                            addError(ErrorCodes.EACH, "Unkown method '" + ach.Method.ToUpper() + "'", "updateUserAchievements");
+                            break;
+                        /*case "F": //getUserSuccessfulIcebreakCountBetweenTime(string username, long start, long end)
+                            count = ;
+                            break;
+                        case "G": //getUserSuccessfulIcebreakCountBetweenTimeAtOneEvent(string username, long start, long end, long event_id)
+                            count = ;
+                            break;*/
+                    }
+                    //If user qualifies for achievement
+                    if (count >= ach.Target)
+                    {
+                        //Add to list of achievements
+                        usr_achievements.Add(ach);
+                    }
+                }
+            }
+            return usr_achievements;
+        }
+
+        public List<Message> getUserSuccessfulIcebreaksXHoursApart(string username, long hours)
+        {
+            List<Message> max_icebreaks_x_hours_apart = new List<Message>();
+            List<Message> icebreaks_x_hours_apart = new List<Message>();
+            List<Message> icebreaks = getUserSuccessfulIcebreaks(username);
+            //insertionSortMessagesByTime(icebreaks);
+
+            long interval = 60 * 60 * hours; //hours in seconds
+            if (icebreaks != null)
+            {
+                if (icebreaks.Count > 0)
+                {
+                    for (int i = 0; i < icebreaks.Count; i++)
+                    {
+                        Message outer_ib = icebreaks.ElementAt(i);
+                        icebreaks_x_hours_apart = new List<Message>();
+                        //For each Icebreak
+                        for (int j = 0; j < icebreaks.Count; j++)
+                        {
+                            //Look for other Icebreaks in the x hour range - yourself included
+                            Message inner_ib = icebreaks.ElementAt(j);
+                            //For each one, look for all Icebreaks within the 2 hour range
+                            long min = outer_ib.Message_time;
+                            long max = outer_ib.Message_time + interval;
+                            if (inner_ib.Message_time >= min && inner_ib.Message_time <= max)
+                            {
+                                icebreaks_x_hours_apart.Add(inner_ib);
+                            }
+                        }
+                        //If the max is less than inner max, replace max list items
+                        if (max_icebreaks_x_hours_apart.Count < icebreaks_x_hours_apart.Count)
+                        {
+                            max_icebreaks_x_hours_apart = new List<Message>();
+                            foreach (Message m in icebreaks_x_hours_apart)
+                                max_icebreaks_x_hours_apart.Add(m);
+                        }
+                    }
+                }
+            }
+            return max_icebreaks_x_hours_apart;
+        }
+
+        public List<Message> getUserIcebreaksXHoursApart(string username, long hours)
+        {
+            List<Message> max_icebreaks_x_hours_apart = new List<Message>();
+            List<Message> icebreaks_x_hours_apart = new List<Message>();
+            List<Message> icebreaks = getUserIcebreaks(username);
+            //insertionSortMessagesByTime(icebreaks);
+
+            //for (int i = 0; i < icebreaks.Count; i++)
+            //    addError(123,"Sorted list[" + i + "], " + icebreaks.ElementAt(i).Message_time, "getMaxUserIcebreakCountInHours");
+
+            long interval = 60 * 60 * hours; //hours in seconds
+            if (icebreaks != null)
+            {
+                if (icebreaks.Count > 0)
+                {
+                    for (int i = 0; i < icebreaks.Count; i++)
+                    {
+                        Message outer_ib = icebreaks.ElementAt(i);
+                        icebreaks_x_hours_apart = new List<Message>();
+                        //For each Icebreak
+                        for (int j = 0; j < icebreaks.Count; j++)
+                        {
+                            //Look for other Icebreaks in the x hour range - yourself included
+                            Message inner_ib = icebreaks.ElementAt(j);
+                            //For each one, look for all Icebreaks within the 2 hour range
+                            long min = outer_ib.Message_time;
+                            long max = outer_ib.Message_time + interval;
+                            if (inner_ib.Message_time >= min && inner_ib.Message_time <= max)
+                            {
+                                icebreaks_x_hours_apart.Add(inner_ib);
+                            }
+                        }
+                        //If the max is less than inner max, replace max list items
+                        if(max_icebreaks_x_hours_apart.Count < icebreaks_x_hours_apart.Count)
+                        {
+                            max_icebreaks_x_hours_apart = new List<Message>();
+                            foreach (Message m in icebreaks_x_hours_apart)
+                                max_icebreaks_x_hours_apart.Add(m);
+                        }
+                    }
+                }
+            }
+            return max_icebreaks_x_hours_apart;
+        }
+
+        public void insertionSortMessagesByTime(List<Message> messages)
+        {
+            for(int i = 1; i < messages.Count; i++)
+            {
+                int j = i;
+                while (j > 0 && messages.ElementAt(i).Message_time < messages.ElementAt(j - 1).Message_time)
+                {
+                    swap(messages.ElementAt(i), messages.ElementAt(i - 1));
+                    --j;
+                }
+            }
+        }
+
+        public void swap(Message a, Message b)
+        {
+            Message msg = a + b;//msg really is just b;
+        }
+
+        public KeyValuePair<Event,int> getMaxUserIcebreakCountAtOneEvent(string username)
+        {
+            //Get highest Icebreak count from all events the user has been to
+            int max_ib_count = 0;
+            Event max_ib_ev = null;
+            List<Event> usr_evt_hist = getUserEventHistory(username);
+            foreach (Event e in usr_evt_hist)
+            {
+                int temp_count = getUserIcebreakCountAtEvent(username, e.Id);
+                if (temp_count > max_ib_count)
+                {
+                    max_ib_count = temp_count;
+                    max_ib_ev = e;
+                }
+            }
+
+            //Check if they qualify for it.
+            /*if (max_ib_count >= ach.Target)
+            {
+                //They qualify
+            }*/
+            return new KeyValuePair<Event, int>(max_ib_ev,max_ib_count);
+        }
+
+        public KeyValuePair<Event, int> getMaxUserSuccessfulIcebreakCountAtOneEvent(string username)
+        {
+            //Get highest Icebreak count from all events the user has been to
+            int max_ib_count = 0;
+            Event max_ib_ev = null;
+            List<Event> usr_evt_hist = getUserEventHistory(username);
+            foreach (Event e in usr_evt_hist)
+            {
+                int temp_count = getUserSuccessfulIcebreakCountAtEvent(username, e.Id);
+                if (temp_count > max_ib_count)
+                {
+                    max_ib_count = temp_count;
+                    max_ib_ev = e;
+                }
+            }
+            return new KeyValuePair<Event, int>(max_ib_ev, max_ib_count);
         }
 
         public string registerUser(User user)
@@ -1337,6 +1664,38 @@ namespace IcebreakServices
             }
         }
 
+        public string addUserEvent(string username, long event_id)
+        {
+            try
+            {
+                double now = (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+
+                if(conn==null)
+                    conn = new SqlConnection(dbConnectionString);
+                if(conn.State==ConnectionState.Closed)
+                    conn.Open();
+
+                string query = "INSERT INTO [dbo].[User_Event](username,event_id,date) " +
+                    "VALUES(@usr,@id,@date)";
+                cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"id", event_id);
+                cmd.Parameters.AddWithValue(@"date", now);
+                
+                cmd.ExecuteNonQuery();
+
+                cmd.Dispose();
+                //conn.Close();
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EEVENT, e.Message, "addUserEvent");
+                return "Error:" + e.Message;
+            }
+        }
+
         public User getUser(string username)
         {
             User user = null;
@@ -1352,34 +1711,50 @@ namespace IcebreakServices
                 if (dataReader.HasRows)
                 {
                     user= new User();
+
                     while (dataReader.Read())
                     {
-                        user.Fname = (string)dataReader.GetValue(0);
-                        user.Lname = (string)dataReader.GetValue(1);
-                        user.Email = (string)dataReader.GetValue(2);
-                        user.Username = (string)dataReader.GetValue(4);
-                        user.Access_level = (int)dataReader.GetValue(5);
-                        user.Event_id = long.Parse(Convert.ToString(dataReader.GetValue(6)));
-                        user.Age = (int)dataReader.GetValue(7);
-                        user.Bio = (string)dataReader.GetValue(8);
-                        user.Catchphrase = (string)dataReader.GetValue(9);
-                        user.Occupation = (string)dataReader.GetValue(10);
-                        user.Gender = (string)dataReader.GetValue(11);
+                        string fname = Convert.IsDBNull(dataReader.GetValue(0)) ? "X" : Convert.ToString((string)dataReader.GetValue(0));
+                        string lname = Convert.IsDBNull(dataReader.GetValue(1)) ? "X" : Convert.ToString((string)dataReader.GetValue(1));
+                        string email = Convert.IsDBNull(dataReader.GetValue(2)) ? NO_EMAIL : Convert.ToString((string)dataReader.GetValue(2));
+
+                        int lvl = Convert.IsDBNull(dataReader.GetValue(5)) ? 0 : dataReader.GetInt32(5);
+                        long ev = Convert.IsDBNull(dataReader.GetValue(6)) ? 0 : dataReader.GetInt32(6);
+                        int age = Convert.IsDBNull(dataReader.GetValue(7)) ? 0 : dataReader.GetInt32(7);
+
+                        string bio = Convert.IsDBNull(dataReader.GetValue(8)) ? NO_BIO : Convert.ToString((string)dataReader.GetValue(8));
+                        string catchphrase = Convert.IsDBNull(dataReader.GetValue(9)) ? NO_PHRASE : Convert.ToString((string)dataReader.GetValue(9));
+                        string occupation = Convert.IsDBNull(dataReader.GetValue(10)) ? NO_OCC : Convert.ToString((string)dataReader.GetValue(10));
+                        string gender = Convert.IsDBNull(dataReader.GetValue(11)) ? NO_GENDER : Convert.ToString((string)dataReader.GetValue(11));
+
+                        long pts = Convert.IsDBNull(dataReader.GetValue(15)) ? 0 : dataReader.GetInt32(15);
+                        String seen = Convert.IsDBNull(dataReader.GetValue(16)) ? "0" : dataReader.GetString(16);
+                        double ls = Double.Parse(seen);//last seen date
+
+                        user.Fname = fname;
+                        user.Lname = lname;
+                        user.Email = email;
+                        user.Username = username;
+                        user.Access_level = lvl;
+                        user.Event_id = ev;
+                        user.Age = age;
+                        user.Bio = bio;
+                        user.Catchphrase = catchphrase;
+                        user.Occupation = occupation;
+                        user.Gender = gender;
+                        user.Points = pts;
+                        user.Last_Seen = (long)Math.Ceiling(ls);
                     }
                 }
 
+                conn.Close();
                 dataReader.Close();
                 cmd.Dispose();
             }
             catch (Exception e)
             {
                 addError(ErrorCodes.EUSR, e.Message, "getUser");
-                /*user.Fname = "NULL";
-                user.Lname = "NULL";
-                user.Bio = "ERR: " + e.Message;*/
             }
-            if(conn!=null)
-                conn.Close();
             return user;
         }
 
@@ -1443,17 +1818,37 @@ namespace IcebreakServices
                 User user = new User();
                 while (dataReader.Read())
                 {
-                    user.Fname = (string)dataReader.GetValue(0);
-                    user.Lname = (string)dataReader.GetValue(1);
-                    user.Email = (string)dataReader.GetValue(2);
-                    user.Username = (string)dataReader.GetValue(4);
-                    user.Access_level = (int)dataReader.GetValue(5);
-                    user.Event_id = long.Parse(Convert.ToString(dataReader.GetValue(6)));
-                    user.Age = (int)dataReader.GetValue(7);
-                    user.Bio = (string)dataReader.GetValue(8);
-                    user.Catchphrase = (string)dataReader.GetValue(9);
-                    user.Occupation = (string)dataReader.GetValue(10);
-                    user.Gender = (string)dataReader.GetValue(11);
+                    //Get rid of NULLs
+                    string fname = Convert.IsDBNull(dataReader.GetValue(0)) ? "X" : Convert.ToString((string)dataReader.GetValue(0));
+                    string lname = Convert.IsDBNull(dataReader.GetValue(1)) ? "X" : Convert.ToString((string)dataReader.GetValue(1));
+                    string email = Convert.IsDBNull(dataReader.GetValue(2)) ? NO_EMAIL : Convert.ToString((string)dataReader.GetValue(2));
+                    string username = Convert.ToString((string)dataReader.GetValue(4));
+
+                    int lvl = Convert.IsDBNull(dataReader.GetValue(5)) ? 0 : dataReader.GetInt32(5);
+                    long ev = Convert.IsDBNull(dataReader.GetValue(6)) ? 0 : dataReader.GetInt32(6);
+                    int age = Convert.IsDBNull(dataReader.GetValue(7)) ? 0 : dataReader.GetInt32(7);
+
+                    string bio = Convert.IsDBNull(dataReader.GetValue(8)) ? NO_BIO : Convert.ToString((string)dataReader.GetValue(8));
+                    string catchphrase = Convert.IsDBNull(dataReader.GetValue(9)) ? NO_PHRASE : Convert.ToString((string)dataReader.GetValue(9));
+                    string occupation = Convert.IsDBNull(dataReader.GetValue(10)) ? NO_OCC : Convert.ToString((string)dataReader.GetValue(10));
+                    string gender = Convert.IsDBNull(dataReader.GetValue(11)) ? NO_GENDER : Convert.ToString((string)dataReader.GetValue(11));
+
+                    long pts = Convert.IsDBNull(dataReader.GetValue(15)) ? 0 : dataReader.GetInt32(15);
+                    String seen = Convert.IsDBNull(dataReader.GetValue(16)) ? "0" : dataReader.GetString(16);
+                    double ls = Double.Parse(seen);//last seen date
+                    user.Fname = fname;
+                    user.Lname = lname;
+                    user.Email = email;
+                    user.Username = username;
+                    user.Access_level = lvl;
+                    user.Event_id = ev;
+                    user.Age = age;
+                    user.Bio = bio;
+                    user.Catchphrase = catchphrase;
+                    user.Occupation = occupation;
+                    user.Gender = gender;
+                    user.Points = pts;
+                    user.Last_Seen = (long)Math.Ceiling(ls);
                 }
 
                 dataReader.Close();
@@ -1464,11 +1859,6 @@ namespace IcebreakServices
             catch (Exception e)
             {
                 addError(ErrorCodes.EUSR, e.Message, "getUserByFbId");
-                /*return new User
-                {
-                    Fname = "<Error>",
-                    Lname = e.Message
-                };*/
                 return null;
             }
             
@@ -1552,6 +1942,36 @@ namespace IcebreakServices
             return "isValidUser=" + isValidUser;
         }
 
+        public long getUserEventId(string username)
+        {
+            long id = 0;
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query user
+                SqlCommand cmd = new SqlCommand("SELECT * FROM [dbo].[Users] WHERE username=@user", conn);
+                cmd.Parameters.AddWithValue(@"user", username);
+
+                SqlDataReader dataReader = cmd.ExecuteReader();
+                if (dataReader.HasRows)
+                {
+                    dataReader.Read();
+                    id = long.Parse(Convert.ToString(dataReader.GetValue(6)));
+                }
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return id;
+            }
+            catch (Exception ex)
+            {
+                addError(ErrorCodes.EUSR, ex.Message, "getUserEventId");
+                return -1;
+            }
+        }
+
         #region Statistics
         /*public int getAllIcebreakCount()
         {
@@ -1605,38 +2025,8 @@ namespace IcebreakServices
             }
         }*/
 
-        public long getUserEventId(string username)
-        {
-            long id=0;
-            conn = new SqlConnection(dbConnectionString);
-            try
-            {
-                conn.Open();
-                //Query user
-                SqlCommand cmd = new SqlCommand("SELECT * FROM [dbo].[Users] WHERE username=@user", conn);
-                cmd.Parameters.AddWithValue(@"user",username);
-
-                SqlDataReader dataReader = cmd.ExecuteReader();
-                if (dataReader.HasRows)
-                {
-                    dataReader.Read();
-                    id = long.Parse(Convert.ToString(dataReader.GetValue(6)));
-                }
-                dataReader.Close();
-                cmd.Dispose();
-                conn.Close();
-
-                return id;
-            }
-            catch(Exception ex)
-            {
-                addError(ErrorCodes.EUSR,ex.Message, "getUserEventId");
-                return -1;
-            }
-        }
-
         /******Master Stats************/
-        public int getAllIcebreakCount()
+        public int getTotalIcebreakCount()
         {
             conn = new SqlConnection(dbConnectionString);
             try
@@ -1660,12 +2050,43 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                addError(ErrorCodes.ESTATS, e.Message, "getAllIcebreakCount");
+                addError(ErrorCodes.ESTATS, e.Message, "getTotalIcebreakCount");
                 return -1;
             }
         }
 
-        public int getAllIcebreakCountBetweenTime(long start, long end)
+        public int getTotalSuccessfulIcebreakCount()
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_status>@stat AND NOT Message=@msg", conn);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                cmd.Parameters.AddWithValue(@"msg", "ICEBREAK");
+
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getTotalSuccessfulIcebreakCount");
+                return -1;
+            }
+        }
+
+        public int getTotalIcebreakCountBetweenTime(long start, long end)
         {
             conn = new SqlConnection(dbConnectionString);
             try
@@ -1692,7 +2113,41 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                addError(ErrorCodes.ESTATS, e.Message, "getAllIcebreakCountBetweenTime");
+                addError(ErrorCodes.ESTATS, e.Message, "getTotalIcebreakCountBetweenTime");
+                return -1;
+            }
+        }
+
+        public int getTotalSuccessfulIcebreakCountBetweenTime(long start, long end)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_time>=@start AND Message_time<=@end AND "
+                    + "Message_status>@stat AND NOT Message=@msg", conn);
+                cmd.Parameters.AddWithValue(@"start", start);
+                cmd.Parameters.AddWithValue(@"end", end);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                cmd.Parameters.AddWithValue(@"msg", "ICEBREAK");
+                
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getTotalIcebreakCountBetweenTime");
                 return -1;
             }
         }
@@ -1728,6 +2183,46 @@ namespace IcebreakServices
             }
         }
 
+        public List<Message> getUserIcebreaks(string username)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            List<Message> icebreaks = new List<Message>();
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_sender=@usr AND Message_status>@stat", conn);
+                cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    Message m = new Message();
+
+                    m.Message_id = Convert.ToString(dataReader.GetValue(0));
+                    m.Msg = Convert.ToString(dataReader.GetValue(1));
+                    m.Message_status = Convert.ToInt16(dataReader.GetValue(2));
+                    m.Message_sender = Convert.ToString(dataReader.GetValue(3));
+                    m.Message_receiver = Convert.ToString(dataReader.GetValue(4));
+                    m.Message_time = long.Parse(Convert.ToString(dataReader.GetValue(5)));
+
+                    icebreaks.Add(m);
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return icebreaks;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getUserIcebreaks");
+                return null;
+            }
+        }
+
         public int getUserSuccessfulIcebreakCount(string username)
         {
             conn = new SqlConnection(dbConnectionString);
@@ -1756,6 +2251,47 @@ namespace IcebreakServices
             {
                 addError(ErrorCodes.ESTATS, e.Message, "getAllSuccessfulUserIcebreakCount");
                 return -1;
+            }
+        }
+
+        public List<Message> getUserSuccessfulIcebreaks(string username)
+        {
+            List<Message> icebreaks = new List<Message>();
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_sender=@usr AND Message_status>@stat AND NOT Message=@msg", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                cmd.Parameters.AddWithValue(@"msg", "ICEBREAK");
+                
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    Message m = new Message();
+
+                    m.Message_id = Convert.ToString(dataReader.GetValue(0));
+                    m.Msg = Convert.ToString(dataReader.GetValue(1));
+                    m.Message_status = Convert.ToInt16(dataReader.GetValue(2));
+                    m.Message_sender = Convert.ToString(dataReader.GetValue(3));
+                    m.Message_receiver = Convert.ToString(dataReader.GetValue(4));
+                    m.Message_time = long.Parse(Convert.ToString(dataReader.GetValue(5)));
+
+                    icebreaks.Add(m);
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return icebreaks;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getAllSuccessfulUserIcebreakCount");
+                return null;
             }
         }
 
@@ -1857,39 +2393,6 @@ namespace IcebreakServices
             }
         }
 
-        public string getUserIcebreaks(string username)
-        {
-            conn = new SqlConnection(dbConnectionString);
-            try
-            {
-                conn.Open();
-
-                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_status>@stat AND Message_sender=@usr", conn);
-                cmd.Parameters.AddWithValue(@"usr", username);
-                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
-                long time = 0;
-                string times = "";
-                dataReader = cmd.ExecuteReader();
-                while (dataReader.Read())
-                {
-                    time = long.Parse(Convert.ToString(dataReader.GetValue(5)));
-                    times += time + ",";
-                }
-
-                dataReader.Close();
-                cmd.Dispose();
-                conn.Close();
-                if (!String.IsNullOrEmpty(times))
-                    times = times.Substring(0,times.Length-1);//remove last comma
-                return times;
-            }
-            catch (Exception e)
-            {
-                addError(ErrorCodes.ESTATS, e.Message, "getAllSuccessfulUserIcebreakCountBetweenTime");
-                return "null";
-            }
-        }
-
         public int getUserSuccessfulIcebreakCountBetweenTime(string username, long start, long end)
         {
             conn = new SqlConnection(dbConnectionString);
@@ -1926,6 +2429,40 @@ namespace IcebreakServices
             }
         }
 
+        public int getUserIcebreakCountBetweenTimeAtEvent(string username, long start, long end, long event_id)
+        {
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Messages] WHERE Message_time>=@start AND Message_time<=@end AND "
+                    + "Message_status>@stat AND Message_sender=@usr AND event_id=@id", conn);
+                cmd.Parameters.AddWithValue(@"start", start);
+                cmd.Parameters.AddWithValue(@"end", end);
+                cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"stat", ICEBREAK);
+                cmd.Parameters.AddWithValue(@"id", event_id);
+                int count = 0;
+                dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    count++;
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return count;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.ESTATS, e.Message, "getUserIcebreakCountBetweenTimeAtEvent");
+                return -1;
+            }
+        }
+
         public int getUserSuccessfulIcebreakCountBetweenTimeAtEvent(string username, long start, long end, long event_id)
         {
             conn = new SqlConnection(dbConnectionString);
@@ -1958,7 +2495,7 @@ namespace IcebreakServices
             }
             catch (Exception e)
             {
-                addError(ErrorCodes.ESTATS, e.Message, "getAllSuccessfulUserIcebreakCountBetweenTimeAtEvent");
+                addError(ErrorCodes.ESTATS, e.Message, "getUserSuccessfulIcebreakCountBetweenTimeAtEvent");
                 return -1;
             }
         }

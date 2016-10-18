@@ -15,6 +15,38 @@ namespace IcebreakServices
         private long _message_time;
         private long _event_id;
 
+        public static Message operator +(Message a, Message b)
+        {
+            Message temp = new Message();
+
+            temp.Message_id = a.Message_id;
+            temp.Msg = a.Msg;
+            temp.Message_status = a.Message_status;
+            temp.Message_sender = a.Message_sender;
+            temp.Message_receiver = a.Message_receiver;
+            temp.Message_time = a.Message_time;
+            temp.Event_id = a.Event_id;
+
+            a.Message_id = b.Message_id;
+            a.Msg = b.Msg;
+            a.Message_status = b.Message_status;
+            a.Message_sender = b.Message_sender;
+            a.Message_receiver = b.Message_receiver;
+            a.Message_time = b.Message_time;
+            a.Event_id = b.Event_id;
+
+            b.Message_id = temp.Message_id;
+            b.Msg = temp.Msg;
+            b.Message_status = temp.Message_status;
+            b.Message_sender = temp.Message_sender;
+            b.Message_receiver = temp.Message_receiver;
+            b.Message_time = temp.Message_time;
+            a.Event_id = temp.Event_id;
+
+            temp = null;
+            return b;
+        }
+
         public string Message_id
         {
             get

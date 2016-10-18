@@ -23,6 +23,8 @@ namespace IcebreakServices
         private string catchphrase;
         private string fb_token;
         private string fb_id;
+        private long _points = 0;
+        private long _last_seen = 0;
 
         /*public User(string fname, string lname, string username, string email)
         {
@@ -211,6 +213,32 @@ namespace IcebreakServices
             set
             {
                 fb_id = value;
+            }
+        }
+
+        public long Last_Seen
+        {
+            get
+            {
+                return _last_seen;
+            }
+
+            set
+            {
+                _last_seen = value;
+            }
+        }
+
+        public long Points
+        {
+            get
+            {
+                return _points;
+            }
+
+            set
+            {
+                _points = value;
             }
         }
 
