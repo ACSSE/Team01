@@ -120,6 +120,7 @@
     <Content Include="Event.aspx" />
     <Content Include="images\AboutUs\Company2.jpg" />
     <Content Include="images\AboutUs\left_icon.png" />
+    <Content Include="images\AboutUs\Office1.jpg" />
     <Content Include="images\AboutUs\right_icon.png" />
     <Content Include="images\AboutUs\SLOGAN2.jpg" />
     <Content Include="images\blurred_lines.jpeg" />
@@ -130,8 +131,6 @@
     <Content Include="images\pattern.jpg" />
     <Content Include="images\pencil.png" />
     <Content Include="images\profile.jpg" />
-    <Content Include="images\SloganAboutUs.jpg" />
-    <Content Include="images\Tevin.jpg" />
     <Content Include="images\view.JPG" />
     <Content Include="packages.config" />
     <Content Include="ApplicationInsights.config">

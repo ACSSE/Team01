@@ -140,23 +140,23 @@
                     <div class="modal-body" id="NameBox" runat="server">
                         <div class="form-inline">
                             <label for="Name">First Name:</label>
-                            <input type="text" class="form-control" id="txtName" runat="server"/>
+                            <input type="text" class="form-control" id="txtName" runat="server" style="margin-left:10px"/>
                         </div>
                         <div class="form-inline" id="lastNameBox" runat="server">                            
                             <label for="lastName">Last Name:</label>
-                            <input type="text" class="form-control" id="txtLastName" runat="server"/>
+                            <input type="text" class="form-control" id="txtLastName" runat="server" style="margin-left:13px"/>
                         </div>
                          <div class="form-inline" id="EmailBox" runat="server">                            
-                            <label for="Email">Email:</label>
-                            <input type="email" class="form-control" id="txtemail" runat="server"/>
+                            <label for="Email">Email Add:</label>
+                            <input type="email" class="form-control" id="txtemail" runat="server" style="margin-left:14px"/>
                         </div>
                         <div class="form-inline" id="UsernameSignupBox" runat="server">                            
                             <label for="Username">Username:</label>
-                            <input type="text" class="form-control" id="txtUsrname" runat="server"/>
+                            <input type="text" class="form-control" id="txtUsrname" runat="server" style="margin-left:16px"/>
                         </div>
                          <div class="form-inline" id="PasswordSignupBox" runat="server">                            
                             <label for="Password">Password:</label>
-                            <input type="password" class="form-control" id="txtPass" runat="server"/>
+                            <input type="password" class="form-control" id="txtPass" runat="server" style="margin-left:16px"/>
                         </div>
                         <div class="alert alert-danger" style="display:none" id="Div4" runat="server">
                              <strong>Password or username is invalid</strong> 
