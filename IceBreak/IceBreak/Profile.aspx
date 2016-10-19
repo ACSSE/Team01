@@ -6,9 +6,9 @@
  <link rel="stylesheet" href="~/stylesheets/sidebar.css" runat="server"/>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-    <div id="page-content-wrapper">
+    <div id="page-content-wrapper" >
         <div class="background" >
-            <img src="images/profile.jpg" style="position:absolute;background-size:5000px"/>
+            <img src="images/profile.jpg" style="position:absolute;width:100%;height:1350px"/>
        
         <div id="img-circle" class="img-circle" style="margin-top:5%;position:absolute">
             <div style="text-align:center;width:500px">
