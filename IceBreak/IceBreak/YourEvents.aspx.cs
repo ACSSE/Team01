@@ -16,55 +16,69 @@ namespace IceBreak
         protected string EventID = "";
         protected void Page_Load(object sender, EventArgs e)
         {
+
+
             String username = (string)Session["User"];
             DBServerTools dbs = new DBServerTools();
 
 
             List<IcebreakServices.Event> events = dbs.getEventsforUser(username);
-            foreach (IcebreakServices.Event evnt in events)
+
+            if (events.Any())
             {
-                String picUrl = "http://icebreak.azurewebsites.net/images/events/event_icons-" + evnt.Id + ".png";
-                String server = "http://icebreak.azurewebsites.net";
-                String relativePath = "/images/events/event_icons-" + evnt.Id + ".png";
-                Uri serverUri = new Uri(server);
-                Uri relativeUri = new Uri(relativePath, UriKind.Relative);
-                Uri fullUri = new Uri(serverUri, relativeUri);
-
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(picUrl);
-                request.Method = WebRequestMethods.Http.Head;
-                bool pageExists = true;
-                try
+                foreach (IcebreakServices.Event evnt in events)
                 {
-                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                    pageExists = response.StatusCode == HttpStatusCode.OK;
-                }
-                catch (WebException ex)
-                {
-                    pageExists = false;
-                }
+                    String picUrl = "http://icebreak.azurewebsites.net/images/events/event_icons-" + evnt.Id + ".png";
+                    String server = "http://icebreak.azurewebsites.net";
+                    String relativePath = "/images/events/event_icons-" + evnt.Id + ".png";
+                    Uri serverUri = new Uri(server);
+                    Uri relativeUri = new Uri(relativePath, UriKind.Relative);
+                    Uri fullUri = new Uri(serverUri, relativeUri);
 
-                if (!pageExists)
-                {
-                    picUrl = "http://icebreak.azurewebsites.net/images/events/default.png";
-                }
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(picUrl);
+                    request.Method = WebRequestMethods.Http.Head;
+                    bool pageExists = true;
+                    try
+                    {
+                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                        pageExists = response.StatusCode == HttpStatusCode.OK;
+                    }
+                    catch (WebException ex)
+                    {
+                        pageExists = false;
+                    }
 
-                EventView.InnerHtml += "<div class='row'>" +
-                           "<div class='col-md-7'>" +
-                        "<a href = '#'>" +
-                            "<img class='img-responsive' src='" + picUrl + "' alt=''/>" +
-                        "</a>" +
+                    if (!pageExists)
+                    {
+                        picUrl = "http://icebreak.azurewebsites.net/images/events/default.png";
+                    }
+                    DateTime date = FromUnixTime(evnt.Date);
+                    EventView.InnerHtml += "<div class='row'>" +
+                               "<div class='col-md-7'>" +
+                            "<a href = '#'>" +
+                                "<img class='img-responsive' src='" + picUrl + "' alt=''/>" +
+                            "</a>" +
+                        "</div>" +
+                        "<div class='col-md-5'>" +
+                            "<h3>" + evnt.Title + "</h3>" +
+                            "<h4>" + evnt.Address + "</h4>" +
+                            "<p>" + date.ToShortDateString() + " " + date.ToShortTimeString() + "</p>" +
+                            "<a class='btn btn-primary' href='ViewEvent.aspx?evntid=" + evnt.Id + "'>View Event <span class='glyphicon glyphicon-chevron-right'></span></a><a class='btn btn-primary' href='EditEvent.aspx?evntid=" + evnt.Id + "'>Edit Event <span class='glyphicon glyphicon-chevron-right'><a href='javascript:Delete(" + evnt.Id + ")' class='btn remove'><span class='glyphicon glyphicon-remove'></span></a>" +
+                       " </div>" +
                     "</div>" +
-                    "<div class='col-md-5'>" +
-                        "<h3>" + evnt.Title + "</h3>" +
-                        "<h4>" + evnt.Address + "</h4>" +
-                        "<p>" + evnt.Description + "</p>" +
-                        "<a class='btn btn-primary' href='ViewEvent.aspx?evntid=" + evnt.Id + "'>View Event <span class='glyphicon glyphicon-chevron-right'></span></a><a class='btn btn-primary' href='EditEvent.aspx?evntid=" + evnt.Id + "'>Edit Event <span class='glyphicon glyphicon-chevron-right'><a href='javascript:Delete("+evnt.Id +")' class='btn remove'><span class='glyphicon glyphicon-remove'></span></a>" +
-                   " </div>" +
-                "</div>" +
-                "<hr>";
+                    "<hr>";
+                }
+            }
+            else
+            {
+                EventView.InnerHtml += "You have no events";
             }
         }
-       
+        public DateTime FromUnixTime(long unixTime)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return epoch.AddSeconds(unixTime);
+        }
         [ScriptMethod,WebMethod]
         protected void Delete(object sender, CommandEventArgs e)
         {
@@ -73,8 +87,10 @@ namespace IceBreak
 
             DBServerTools dst = new DBServerTools();
 
+            String check1 = dst.deleteReward(this.EventID);
+
             String check = dst.deleteEvent(this.EventID);
-            if (check.ToLower().Contains("success"))
+            if (check.ToLower().Contains("success") && check1.ToLower().Contains("success"))
             {
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='YourEvents.aspx';", true);
             }

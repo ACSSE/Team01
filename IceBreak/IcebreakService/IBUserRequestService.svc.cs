@@ -336,7 +336,7 @@ namespace IcebreakServices
 
                 //Write Metadata
                 TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-                int since_epoch = (int)t.TotalSeconds;
+                long since_epoch = (long)t.TotalSeconds;
                 Metadata meta = new Metadata()
                 {
                     Entry=(dir+dirs[dirs.Length-1]).Replace("/","|"),
@@ -855,6 +855,7 @@ namespace IcebreakServices
             WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
             WebOperationContext.Current.OutgoingResponse.Headers.Add("Response", "<Response goes here>");
             return "Some response";*/
+            long now = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
             inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
             string[] usr_details = inbound_payload.Split('&');
             User new_user = new User();
@@ -868,7 +869,7 @@ namespace IcebreakServices
                         string var = usr.Split('=')[0];
                         string val = usr.Split('=')[1];
 
-                        switch (var)
+                        switch (var.ToLower())
                         {
                             case "fname":
                                 new_user.Fname = val;
@@ -897,7 +898,7 @@ namespace IcebreakServices
                                 new_user.Age = Convert.ToUInt16(val);
                                 break;
                             case "gender":
-                                new_user.Gender = val;
+                                new_user.Gender = val.ToLower();
                                 break;
                             case "occupation":
                                 new_user.Occupation = val;
@@ -913,6 +914,12 @@ namespace IcebreakServices
                                 break;
                             case "fb_id":
                                 new_user.Fb_id = val;
+                                break;
+                            case "last_seen":
+                                new_user.Last_Seen = now;
+                                break;
+                            default:
+                                db.addError(ErrorCodes.EUSR,"Unknown attribute '" + var + "'", "");
                                 break;
                         }
                     }
@@ -1049,18 +1056,33 @@ namespace IcebreakServices
             return db.getExceptions();
         }
 
+        #region Statistics
+
         /******Master Stats*************/
 
-        public int getAllIcebreakCount()
+        public int getTotalIcebreakCount()
         {
-            return db.getAllIcebreakCount();
+            return db.getTotalIcebreakCount();
         }
 
-        public int getAllIcebreakCountBetweenTime(string start, string end)
+        public int getTotalSuccessfulIcebreakCount()
+        {
+            return db.getTotalSuccessfulIcebreakCount();
+        }
+
+        public int getTotalIcebreakCountBetweenTime(string start, string end)
         {
             long s,e;
             if (long.TryParse(start, out s) && long.TryParse(end, out e))
-                return db.getAllIcebreakCountBetweenTime(long.Parse(start), long.Parse(end));
+                return db.getTotalIcebreakCountBetweenTime(long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getTotalSuccessfullIcebreakCountBetweenTime(string start, string end)
+        {
+            long s, e;
+            if (long.TryParse(start, out s) && long.TryParse(end, out e))
+                return db.getTotalSuccessfulIcebreakCountBetweenTime(long.Parse(start), long.Parse(end));
             else return ErrorCodes.ECONV;
         }
 
@@ -1097,11 +1119,27 @@ namespace IcebreakServices
             else return ErrorCodes.ECONV;
         }
 
+        public int getUserIcebreakCountBetweenTime(string username, string start, string end)
+        {
+            long s, e;
+            if (long.TryParse(start, out s) && long.TryParse(end, out e))
+                return db.getUserIcebreakCountBetweenTime(username, long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
+        }
+
         public int getUserSuccessfulIcebreakCountBetweenTime(string username, string start, string end)
         {
             long s,e;
             if (long.TryParse(start, out s) && long.TryParse(end, out e) && !String.IsNullOrEmpty(username))
                 return db.getUserSuccessfulIcebreakCountBetweenTime(username, long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserIcebreakCountBetweenTimeAtEvent(string username, string start, string end, string event_id)
+        {
+            long s, e, id;
+            if (long.TryParse(start, out s) && long.TryParse(end, out e) && long.TryParse(event_id, out id) && !String.IsNullOrEmpty(username))
+                return db.getUserIcebreakCountBetweenTimeAtEvent(username, long.Parse(start), long.Parse(end), long.Parse(event_id));
             else return ErrorCodes.ECONV;
         }
 
@@ -1111,6 +1149,42 @@ namespace IcebreakServices
             if (long.TryParse(start, out s) && long.TryParse(end, out e) && long.TryParse(event_id, out id) && !String.IsNullOrEmpty(username))
                 return db.getUserSuccessfulIcebreakCountBetweenTimeAtEvent(username, long.Parse(start), long.Parse(end), long.Parse(event_id));
             else return ErrorCodes.ECONV;
+        }
+
+        public int getMaxUserIcebreakCountAtOneEvent(string username)
+        {
+            return db.getMaxUserIcebreakCountAtOneEvent(username).Value;
+        }
+
+        public int getMaxUserSuccessfulIcebreakCountAtOneEvent(string username)
+        {
+            return db.getMaxUserSuccessfulIcebreakCountAtOneEvent(username).Value;
+        }
+
+        public int getUserIcebreakCountXHoursApart(string username, string hours)
+        {
+            long hrs;
+            if (long.TryParse(hours, out hrs))
+                return db.getUserIcebreaksXHoursApart(username, long.Parse(hours)).Count;
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserSuccessfulIcebreakCountXHoursApart(string username, string hours)
+        {
+            long hrs;
+            if (long.TryParse(hours, out hrs))
+                return db.getUserSuccessfulIcebreaksXHoursApart(username, long.Parse(hours)).Count;
+            else return ErrorCodes.ECONV;
+        }
+
+        public List<Event> getUserEventHistory(string username)
+        {
+            return db.getUserEventHistory(username);
+        }
+
+        public List<Achievement> getUserAchievements(string username)
+        {
+            return db.getUserAchievements(username);
         }
 
         /******Event Stats************/
@@ -1139,13 +1213,7 @@ namespace IcebreakServices
             else return ErrorCodes.ECONV;
         }
 
-        public int getUserIcebreakCountBetweenTime(string username, string start, string end)
-        {
-            long s, e;
-            if (long.TryParse(start, out s) && long.TryParse(end, out e))
-                return db.getUserIcebreakCountBetweenTime(username, long.Parse(start), long.Parse(end));
-            else return ErrorCodes.ECONV;
-        }
+        #endregion Statistics
 
         public Achievement getAchievement(string ach_id)
         {
@@ -1171,6 +1239,37 @@ namespace IcebreakServices
         public List<Reward> getAllRewards()
         {
             return db.getAllRewards();
+        }
+
+        public string ping(string username)
+        {
+            string res = db.ping(username);
+            if (res.ToLower().Equals("success"))
+            {
+                List<Achievement> usr_achs = db.getUserAchievements(username);
+                List<Achievement> new_usr_achs = db.updateUserAchievements(username);
+                if(usr_achs.Count < new_usr_achs.Count)
+                {
+                    User usr = db.getUser(username);
+                    //Has gotten new achievements - send notification
+                    for (int i=usr_achs.Count;i<new_usr_achs.Count;i++)
+                    {
+                        string notif = "{" +
+                                "\"data\": {" +
+                                "\"Achievement_id\": \"" + new_usr_achs.ElementAt(i).Id + "\"}," +
+                                "\"to\": \"" + db.getUserToken(username) + "\"}";
+                        sendNotification(notif);
+                        
+                        //TODO: Add to User_Achievements bridging table
+                        
+                        //Increase User points
+                        usr.Points += new_usr_achs.ElementAt(i).Value;
+                    }
+                    db.updateUserDetails(usr);//update user points
+                    db.addError(123, "["+ (new_usr_achs.Count - usr_achs.Count) + "] new achievements for user ["+username+"].", "ping");
+                }
+            }
+            return res;
         }
     }
 }

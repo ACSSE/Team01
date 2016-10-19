@@ -38,12 +38,16 @@ namespace IceBreak
 
                 IcebreakServices.Event evnt = dbs.getEvent(eventid);
 
+                Reward rwd = dbs.getRewardForEvent(eventid);
+
                 eventname.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
                 eventdescrip.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
                 edit_event_date.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
                 edit_event_end_date.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
                 edit_event_time.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
                 edit_event_end_time.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+                rewardname.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
+                rewarddescrip.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
                 meeting_place_1.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
                 meeting_place_2.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
                 meeting_place_3.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
@@ -56,6 +60,8 @@ namespace IceBreak
                 eventdescrip.Value = evnt.Description;
                 DateTime startdate = FromUnixTime(evnt.Date);
                 DateTime enddate = FromUnixTime(evnt.End_Date);
+                rewardname.Value = rwd.Name;
+                rewarddescrip.Value = rwd.Description;
 
                 meeting_place_1.Style.Add("display", "none");
                 meeting_place_2.Style.Add("display", "none");
@@ -192,6 +198,8 @@ namespace IceBreak
             string EventEndDate = edit_event_end_date.Value;
             string EventDate = edit_event_date.Value;
             string EventGps = gps.Value;
+            string RewardName = rewardname.Value;
+            string RewardDescrip = rewarddescrip.Value;
             string mp1 = meeting_place_1.Value;
             string mp2 = meeting_place_2.Value;
             string mp3 = meeting_place_3.Value;
@@ -262,6 +270,24 @@ namespace IceBreak
             {
                 end_time_span.Style.Add("display", "none");
             }
+            if (String.IsNullOrEmpty(RewardName))
+            {
+                reward_name_span.Style.Add("display", "normal");
+                return;
+            }
+            else
+            {
+                reward_name_span.Style.Add("display", "none");
+            }
+            if (String.IsNullOrEmpty(RewardDescrip))
+            {
+                rdescrip_span.Style.Add("display", "normal");
+                return;
+            }
+            else
+            {
+                rdescrip_span.Style.Add("display", "none");
+            }
             if (int.Parse(NumEvents.SelectedValue) < 0)
             {
                 meeting_span.Style.Add("display", "normal");
@@ -331,6 +357,9 @@ namespace IceBreak
 
             DBServerTools dbs = new DBServerTools();
 
+            Reward rwd = dbs.getRewardForEvent(eventid);
+
+
             IcebreakServices.Event evnt = dbs.getEvent(eventid);
             long id=0;
             if (long.TryParse(eventid, out id))
@@ -344,13 +373,21 @@ namespace IceBreak
             evnt.Meeting_Places = meetingplace;
             evnt.Manager = Convert.ToString(Session["USER"]);
 
-            string check = dbs.updateEvent(evnt, lvl);
+            rwd.Name = RewardName;
+            rwd.Description = RewardDescrip;
 
-            if (check.ToLower().Contains("success"))
+            string check = dbs.updateEvent(evnt, lvl);
+            string check1 = dbs.updateReward(rwd, lvl);
+
+            if (check.ToLower().Contains("success") && check1.ToLower().Contains("success"))
             {
-                string event_icon_title = "event_icons-" + Request.QueryString["evntid"];
-                byte[] file_bytes = FileUpload.FileBytes;
-                string response = dbs.imageUpload("events;"+event_icon_title+".png",file_bytes);
+                string filename = Path.GetFileName(FileUpload.FileName);
+                if (!String.IsNullOrEmpty(filename))
+                {
+                    string event_icon_title = "event_icons-" + Request.QueryString["evntid"];
+                    byte[] file_bytes = FileUpload.FileBytes;
+                    string response = dbs.imageUpload("events;" + event_icon_title + ".png", file_bytes);
+                }
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='YourEvents.aspx';", true);
             }
             else

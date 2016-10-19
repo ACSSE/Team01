@@ -20,7 +20,7 @@ namespace IceBreak
                 if (usr != null && lvl != null)
                 {
                     int iLvl = Convert.ToUInt16(lvl);
-                    if (iLvl > 0)
+                    if (iLvl >= 0)
                     {
 
                         DBServerTools dbTools = new DBServerTools();

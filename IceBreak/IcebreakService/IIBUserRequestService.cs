@@ -134,12 +134,22 @@ namespace IcebreakServices
         List<Achievement> getAllAchievements();
 
         [OperationContract]
+        [WebGet(UriTemplate = "/getUserAchievements/{username}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        List<Achievement> getUserAchievements(string username);
+
+        [OperationContract]
         [WebGet(UriTemplate = "/getReward/{rew_id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         Reward getReward(string rew_id);
 
         [OperationContract]
         [WebGet(UriTemplate = "/getAllRewards", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         List<Reward> getAllRewards();
+
+        [OperationContract]
+        [WebGet(
+            UriTemplate = "/ping/{username}",
+            ResponseFormat = WebMessageFormat.Json)]
+        string ping(string username);
 
         [OperationContract]
         [WebGet(
@@ -157,15 +167,27 @@ namespace IcebreakServices
         /******Master Stats*************/
         [OperationContract]
         [WebGet(
-            UriTemplate = "/getAllIcebreakCount",
+            UriTemplate = "/getTotalIcebreakCount",
             ResponseFormat = WebMessageFormat.Json)]
-        int getAllIcebreakCount();
+        int getTotalIcebreakCount();
 
         [OperationContract]
         [WebGet(
-            UriTemplate = "/getAllIcebreakCountBetweenTime/{start}/{end}",
+            UriTemplate = "/getTotalSuccessfulIcebreakCount",
             ResponseFormat = WebMessageFormat.Json)]
-        int getAllIcebreakCountBetweenTime(string start, string end);
+        int getTotalSuccessfulIcebreakCount();
+
+        [OperationContract]
+        [WebGet(
+            UriTemplate = "/getTotalIcebreakCountBetweenTime/{start}/{end}",
+            ResponseFormat = WebMessageFormat.Json)]
+        int getTotalIcebreakCountBetweenTime(string start, string end);
+
+        [OperationContract]
+        [WebGet(
+            UriTemplate = "/getTotalSuccessfullIcebreakCountBetweenTime/{start}/{end}",
+            ResponseFormat = WebMessageFormat.Json)]
+        int getTotalSuccessfullIcebreakCountBetweenTime(string start, string end);
 
         /******User Stats**************/
         [OperationContract]
@@ -194,15 +216,48 @@ namespace IcebreakServices
 
         [OperationContract]
         [WebGet(
+            UriTemplate = "/getUserIcebreakCountBetweenTime/{username}/{start}/{end}",
+            ResponseFormat = WebMessageFormat.Json)]
+        int getUserIcebreakCountBetweenTime(string username, string start, string end);
+
+
+        [OperationContract]
+        [WebGet(
             UriTemplate = "/getUserSuccessfulIcebreakCountBetweenTime/{username}/{start}/{end}",
             ResponseFormat = WebMessageFormat.Json)]
         int getUserSuccessfulIcebreakCountBetweenTime(string username, string start, string end);
 
         [OperationContract]
         [WebGet(
+            UriTemplate = "/getUserIcebreakCountBetweenTimeAtEvent/{username}/{start}/{end}/{event_id}",
+            ResponseFormat = WebMessageFormat.Json)]
+        int getUserIcebreakCountBetweenTimeAtEvent(string username, string start, string end, string event_id);
+
+        [OperationContract]
+        [WebGet(
             UriTemplate = "/getUserSuccessfulIcebreakCountBetweenTimeAtEvent/{username}/{start}/{end}/{event_id}",
             ResponseFormat = WebMessageFormat.Json)]
         int getUserSuccessfulIcebreakCountBetweenTimeAtEvent(string username, string start, string end, string event_id);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getMaxUserIcebreakCountAtOneEvent/{username}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        int getMaxUserIcebreakCountAtOneEvent(string username);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getMaxUserSuccessfulIcebreakCountAtOneEvent/{username}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        int getMaxUserSuccessfulIcebreakCountAtOneEvent(string username);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getUserIcebreakCountXHoursApart/{username}/{hours}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        int getUserIcebreakCountXHoursApart(string username, string hours);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getUserSuccessfulIcebreakCountXHoursApart/{username}/{hours}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        int getUserSuccessfulIcebreakCountXHoursApart(string username, string hours);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getUserEventHistory/{username}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        List<Event> getUserEventHistory(string username);
 
         /******Event Stats************/
         [OperationContract]
