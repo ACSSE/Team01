@@ -981,7 +981,8 @@ namespace IcebreakServices
                         Description = (string)dataReader.GetValue(2),
                         Value = int.Parse(Convert.ToString(dataReader.GetValue(3))),
                         Target = int.Parse(Convert.ToString(dataReader.GetValue(4))),
-                        Method = (string)dataReader.GetValue(5)
+                        Method = (string)dataReader.GetValue(5),
+                        DateAchieved = 0
                     };
                     achievements.Add(ach);
                 }
@@ -1015,6 +1016,8 @@ namespace IcebreakServices
                 {
                     ach = getAchievement(long.Parse(Convert.ToString(dataReader.GetValue(1))));
                     ach.DateAchieved = long.Parse(Convert.ToString(dataReader.GetValue(3)));
+                    int count = getUserAchievementPoints(ach, username);
+                    ach.Pts = count;
                     achievements.Add(ach);
                 }
 
@@ -1186,10 +1189,44 @@ namespace IcebreakServices
             }
         }
 
+        public int getUserAchievementPoints(Achievement ach, string username)
+        {
+            int count = 0;
+            switch (ach.Method.ToUpper())
+            {
+                case "A":
+                    count = getUserIcebreakCount(username);
+                    break;
+                case "B":
+                    count = getUserSuccessfulIcebreakCount(username);
+                    break;
+                case "C":
+                    count = getMaxUserIcebreakCountAtOneEvent(username).Value;
+                    break;
+                case "D":
+                    count = getMaxUserSuccessfulIcebreakCountAtOneEvent(username).Value;
+                    break;
+                case "E":
+                    count = getUserIcebreaksXHoursApart(username, 2).Count;
+                    break;
+                case "F":
+                    count = getUserSuccessfulIcebreaksXHoursApart(username, 2).Count;
+                    break;
+                case "AB"://get unsuccessful Icebreak count
+                    count = getUserIcebreakCount(username) - getUserSuccessfulIcebreakCount(username);
+                    break;
+                default:
+                    addError(ErrorCodes.EACH, "Unkown method '" + ach.Method.ToUpper() + "'", "updateUserAchievements");
+                    break;
+            }
+            return count;
+        }
+
         public List<Achievement> updateUserAchievements(string username)
         {
             List<Achievement> achievements = getAllAchievements();
             List<Achievement> usr_achievements = getUserAchievements(username);
+
             foreach (Achievement ach in achievements)
             {
                 bool ach_found = false;
@@ -1204,44 +1241,12 @@ namespace IcebreakServices
                 if (!ach_found)
                 {
                     //current achievement not in user's list of achievements - check if eligible
-                    int count = 0;
-                    switch(ach.Method.ToUpper())
-                    {
-                        case "A":
-                            count = getUserIcebreakCount(username);
-                            break;
-                        case "B":
-                            count = getUserSuccessfulIcebreakCount(username);
-                            break;
-                        case "C":
-                            count = getMaxUserIcebreakCountAtOneEvent(username).Value;
-                            break;
-                        case "D":
-                            count = getMaxUserSuccessfulIcebreakCountAtOneEvent(username).Value;
-                            break;
-                        case "E":
-                            count = getUserIcebreaksXHoursApart(username, 2).Count;
-                            break;
-                        case "F":
-                            count = getUserSuccessfulIcebreaksXHoursApart(username, 2).Count;
-                            break;
-                        case "AB"://get unsuccessful Icebreak count
-                            count = getUserIcebreakCount(username)-getUserSuccessfulIcebreakCount(username);
-                            break;
-                        default:
-                            addError(ErrorCodes.EACH, "Unkown method '" + ach.Method.ToUpper() + "'", "updateUserAchievements");
-                            break;
-                        /*case "F": //getUserSuccessfulIcebreakCountBetweenTime(string username, long start, long end)
-                            count = ;
-                            break;
-                        case "G": //getUserSuccessfulIcebreakCountBetweenTimeAtOneEvent(string username, long start, long end, long event_id)
-                            count = ;
-                            break;*/
-                    }
+                    int count = getUserAchievementPoints(ach, username);
                     //If user qualifies for achievement
                     if (count >= ach.Target)
                     {
                         //Add to list of achievements
+                        ach.Pts = count;
                         usr_achievements.Add(ach);
                     }
                 }

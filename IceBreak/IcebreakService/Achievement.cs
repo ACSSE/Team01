@@ -14,6 +14,7 @@ namespace IcebreakServices
         private int _target;
         private long _date_achieved;
         private string _method;
+        private int _pts;//out of target
 
         public long Id
         {
@@ -103,6 +104,19 @@ namespace IcebreakServices
             set
             {
                 _method = value;
+            }
+        }
+
+        public int Pts
+        {
+            get
+            {
+                return _pts;
+            }
+
+            set
+            {
+                _pts = value;
             }
         }
     }
