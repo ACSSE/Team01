@@ -1266,7 +1266,7 @@ namespace IcebreakServices
                         usr.Points += new_usr_achs.ElementAt(i).Value;
                     }
                     db.updateUserDetails(usr);//update user points
-                    db.addError(123, "["+ (new_usr_achs.Count - usr_achs.Count) + "] new achievements for user ["+username+"].", "ping");
+                    //db.addError(123, "["+ (new_usr_achs.Count - usr_achs.Count) + "] new achievements for user ["+username+"].", "ping");
                 }
             }
             return res;

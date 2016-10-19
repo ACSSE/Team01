@@ -12,6 +12,7 @@ namespace IcebreakServices
         private string _description;
         private string _owner;
         private int _value;
+        private int _eventid;
 
         public long Id
         {
@@ -75,6 +76,18 @@ namespace IcebreakServices
             set
             {
                 _value = value;
+            }
+        }
+        public int EventID
+        {
+            get
+            {
+                return _eventid;
+            }
+
+            set
+            {
+                _eventid = value;
             }
         }
     }

@@ -88,7 +88,7 @@
                        </div>
                         <div class="form-group" style="text-align:left">  
                          <label>Upload Photo</label>                         
-                        <asp:FileUpload id="FileUpload" runat="server" CssClass="UploadButton AddButton" /> <span id="upload" runat="server" style="color:red;display:none"></span>
+                        <asp:FileUpload id="FileUpload" runat="server" /> <span id="upload" runat="server" style="color:red;display:none"></span>
                      
                         </div>
                         <asp:Button runat="server" ID="btnUpdateButton"  UseSubmitBehavior="true" CssClass="AddButton" OnClick="btnUpdate_Event" Text="UPDATE EVENT"></asp:Button>

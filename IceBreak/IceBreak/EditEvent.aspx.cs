@@ -38,7 +38,7 @@ namespace IceBreak
 
                 IcebreakServices.Event evnt = dbs.getEvent(eventid);
 
-                Reward rwd = dbs.getRewardForEvent((string)Session["USER"]);
+                Reward rwd = dbs.getRewardForEvent(eventid);
 
                 eventname.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
                 eventdescrip.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
@@ -357,7 +357,7 @@ namespace IceBreak
 
             DBServerTools dbs = new DBServerTools();
 
-            Reward rwd = dbs.getRewardForEvent((string)Session["USER"]);
+            Reward rwd = dbs.getRewardForEvent(eventid);
 
 
             IcebreakServices.Event evnt = dbs.getEvent(eventid);
