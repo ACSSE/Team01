@@ -207,6 +207,18 @@ namespace IceBreak
             {
                 reward_name_span.Style.Add("display", "none");
             }
+            if (String.IsNullOrEmpty(cost.Value))
+            {
+                cost_span.Style.Add("display", "normal");
+                return;
+            }
+            else
+            {
+                int cst;
+                if(int.TryParse(cost.Value,out cst))
+                    cost_span.Style.Add("display", "none");
+                else cost_span.Style.Add("display", "normal");
+            }
             if (String.IsNullOrEmpty(RewardDescrip))
             {
                 rdescrip_span.Style.Add("display", "normal");
@@ -267,10 +279,36 @@ namespace IceBreak
             pcode = pcode >= 1000 ? pcode : pcode + 1000;//make sure passcode is always >= 4 digits
 
             IcebreakServices.Event evnt = new IcebreakServices.Event();
-            Reward rwd = new Reward();
             evnt.Title = EventName;
             evnt.Address = EventAddress;
-            evnt.Gps_location = EventGps;
+
+            EventGps = EventGps.Replace(" ", "");
+            string loc=EventGps;
+
+            if (loc.Length > 0)
+            {
+                if (loc.ElementAt(0).Equals('('))
+                    loc = loc.Substring(1);
+                if (loc.ElementAt(loc.Length - 1).Equals(')'))
+                    loc = loc.Substring(0, loc.Length - 1);
+
+                if (!loc.Contains(";"))//If there's not already and array of coordinates
+                {
+                    double radius = 0.003555;
+                    double lat = double.Parse(loc.Split(',')[0]);
+                    double lng = double.Parse(loc.Split(',')[1]);
+
+                    double[] top_left = { lat - radius, lng - radius };
+                    double[] top_right = { lat - radius, lng + radius };
+                    double[] bottom_left = { lat + radius, lng - radius };
+                    double[] bottom_right = { lat + radius, lng + radius };
+
+                    loc = top_left[0] + "," + top_left[1] + ";" + top_right[0] + "," + top_right[1] + ";" + bottom_left[0] + "," + bottom_left[1] + ";" + bottom_right[0] + "," + bottom_right[1];
+                }
+            }
+            else return;//Invalid GPS coordinates
+
+            evnt.Gps_location = loc;
             evnt.Description = EventDescrip;
             evnt.Date = Convert.ToUInt32(start_date);
             evnt.AccessCode = pcode;
@@ -278,48 +316,54 @@ namespace IceBreak
             evnt.Meeting_Places = meetingplace;
             evnt.Manager = (string)Session["USER"];
 
-            rwd.Name = RewardName;
-            rwd.Description = RewardDescrip;
-            rwd.Owner = (string)Session["USER"];
-
             DBServerTools dbs = new DBServerTools();
             string check = dbs.addEvent(evnt,lvl);
                         
             if (check.ToLower().Contains("success"))
             {
                 IcebreakServices.Event lastevent = dbs.getLastEvent();
+
                 if (lastevent != null)
                 {
-                    rwd.EventID = (int)lastevent.Id;
+                    string filename = Path.GetFileName(FileUpload.FileName);
+                    if (!String.IsNullOrEmpty(filename))
+                    {
+                        string event_icon_title = "event_icons-" + lastevent.Id;
+                        byte[] file_bytes = FileUpload.FileBytes;
+                        string response = dbs.imageUpload("events;" + event_icon_title + ".png", file_bytes);
+                    }
+
+                    Reward rwd = new Reward();
+                    rwd.Name = RewardName;
+                    rwd.Description = RewardDescrip;
+                    rwd.Owner = (string)Session["USER"];
+                    rwd.Event_ID = (int)lastevent.Id;
+                    rwd.Value = int.Parse((string)cost.Value);
 
                     string check1 = dbs.addReward(rwd, lvl);
 
                     if (check1.ToLower().Contains("success"))
                     {
-                        string filename = Path.GetFileName(FileUpload.FileName);
-                        if (!String.IsNullOrEmpty(filename))
-                        {
-
-                            string event_icon_title = "event_icons-" + lastevent.Id;
-                            byte[] file_bytes = FileUpload.FileBytes;
-                            string response = dbs.imageUpload("events;" + event_icon_title + ".png", file_bytes);
-                        }
+                        
                     }
                     else
                     {
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert(\"Event creation unsuccessful: " + check + "\");", true);
+                        Console.WriteLine(check);
+                        //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert(\"Event creation unsuccessful: " + check + "\");", true);
+                        //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert(\"Event creation unsuccessful: " + check + "\");", true);
                     }
                 }
                 else
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert(\"Event creation unsuccessful: " + check + "\");", true);
+                    //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert(\"Event creation unsuccessful: " + check + "\");", true);
+                    Console.WriteLine(check);
                 }
                 //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('File size: " + FileUpload.FileBytes.Length + "');", true);
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='Event.aspx';", true);
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert(\"Event creation unsuccessful: "+check+"\");", true);
+                //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert(\"Event creation unsuccessful: "+check+"\");", true);
             }
             
         }

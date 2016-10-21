@@ -13,12 +13,14 @@ namespace IceBreak
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            loading_qr_ico.Visible = false;
             if (Session["LEVEL"] != null || Session["USER"] != null)
             {
                 int check = (int)Session["LEVEL"];
                 if (check >= 0)
                 {
                     divQR.Style.Add("display", "normal");
+                    loading_qr_ico.Visible = true;
                 }
                 else
                 {
@@ -35,7 +37,18 @@ namespace IceBreak
 
             if(evnt==null)
                 return;
-            
+            if (Session["LEVEL"] != null)
+            {
+                if ((int)Session["LEVEL"] > 0)
+                {
+                    if (qr_code != null)
+                    {
+                        qr_code.Src = "https://chart.googleapis.com/chart?cht=qr&chl=" + evnt.AccessCode + "&chs=400x400";
+                        loading_qr_ico.Visible = false;
+                    }
+                } 
+            }
+
             String picUrl = "http://icebreak.azurewebsites.net/images/events/event_icons-" + evnt.Id + ".png";
             //String server = "http://icebreak.azurewebsites.net";
             //String relativePath = "/images/events/event_icons-" + evnt.Id + ".png";

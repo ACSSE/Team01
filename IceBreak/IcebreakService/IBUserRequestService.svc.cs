@@ -1271,5 +1271,53 @@ namespace IcebreakServices
             }
             return res;
         }
+
+        public List<Reward> getUserPreparedRewardsForEvent(string username, string event_id)
+        {
+            long id;
+            if (long.TryParse(event_id, out id))
+                return db.getUserPreparedRewardsAtEvent(username, long.Parse(event_id));
+            else return null;
+        }
+
+        public string claimReward(string username, string reward_id, string event_id, string code)
+        {
+            return db.claimReward(username, reward_id, event_id, code);
+        }
+
+        public Reward getRewardForEvent(string event_id)
+        {
+            return db.getRewardForEvent(event_id);
+        }
+
+        public List<Reward> getUserRewardsAtEvent(string username, string event_id)
+        {
+            return db.getUserRewardsAtEvent(username, event_id);
+        }
+
+        public List<Reward> getRewardsCreatedByUser(string username)
+        {
+            return db.getRewardsCreatedByUser(username);
+        }
+
+        public string addUserReward(string rw_id, string code, string date, string event_id)
+        {
+            Reward rwd = new Reward();
+            rwd.Code = code;
+            rwd.Id = int.Parse(rw_id);
+            rwd.Date = long.Parse(date);
+            rwd.Event_ID = long.Parse(event_id);
+            return db.addUserReward(rwd);
+        }
+
+        public string redeemReward(string username, string reward_id, string event_id, string code, string new_code)
+        {
+            return db.redeemReward(username, reward_id, event_id, code, new_code);
+        }
+
+        public List<Reward> getRewardsForEvent(string event_id)
+        {
+            return db.getRewardsForEvent(event_id);
+        }
     }
 }

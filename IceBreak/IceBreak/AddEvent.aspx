@@ -89,6 +89,10 @@
                             <label for="rewarddescrip"  runat="server">Reward Description</label><span id="rdescrip_span" runat="server" style="color:red; display:none"> - Please enter your reward description.</span>
                             <input type="text" id="rewarddescrip" name="rewarddescrip" placeholder="enter your reward desciption..." runat="server" onkeydown = "return (event.keyCode!=13);"/>
                        </div>
+                        <div class="form-group" style="text-align:left">
+                            <label for="rewardcost"  runat="server">Reward Cost</label><span id="cost_span" runat="server" style="color:red; display:none"> - Please enter your reward cost description.</span>
+                            <input type="text" id="cost" name="rewardcost" placeholder="enter your reward cost..." runat="server" onkeydown = "return (event.keyCode!=13);"/>
+                       </div>
                         <div class="form-group" style="text-align:left">  
                          <label>Upload Photo</label>                         
                         <asp:FileUpload id="FileUpload" runat="server" /> <span id="upload" runat="server" style="color:red;display:none"></span>

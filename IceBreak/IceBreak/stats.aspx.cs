@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -13,6 +14,7 @@ namespace IceBreak
         public List<IcebreakServices.Event> usr_events;
         protected void Page_Load(object sender, EventArgs e)
         {
+            loading_user_ico.Visible = false;
             if (!IsPostBack)
             {
                 string usr = (string)Session["USER"];
@@ -22,7 +24,6 @@ namespace IceBreak
                     int iLvl = Convert.ToUInt16(lvl);
                     if (iLvl >= 0)
                     {
-
                         DBServerTools dbTools = new DBServerTools();
                         usr_events = dbTools.getEventsforUser(usr);
 
@@ -145,9 +146,9 @@ namespace IceBreak
                                 string name = String.IsNullOrEmpty(u.Fname) ? "Anonymous" : u.Fname + " " + u.Lname;
                                 users_at_event_html += "<div style='width:500px;height:100px;margin:auto;background-color:#e2e2e2;border:1px solid #343434;'>"
                                                             + "<div style='border-radius:100px;width:" + usr_img_size + "px;height:"+ usr_img_size + "px;float:left;'>"
-                                                                + "<img style='border-radius:100px;border:1px solid #343434;' src='" + img_url+"' height='"+ usr_img_size + "px' width='"+ usr_img_size + "px' alt='"+name+" profile image'/>"
+                                                                + "<img style='border-radius:100px;border:1px solid #343434;' src='" + img_url+"' height='"+ usr_img_size + "' width='"+ usr_img_size + "' alt='"+name+" profile image'/>"
                                                             +"</div>"
-                                                            +"<h3 align='center' style='margin-top:30px;'>"+name+"</h3>"
+                                                            + "<h3 style='margin-top:30px;text-align:center;'>" + name+"</h3>"
                                                         +"</div>";
                             }
                             users_at_event_html += "</div>";
@@ -435,40 +436,135 @@ namespace IceBreak
             return chart;
         }
 
-        protected void btnIndividual_Click(object sender, EventArgs e)
-        {
-            string usr = (string)Session["USER"];
-            string lvl = (string)Session["LEVEL"];
-            if (usr != null && lvl != null)
-            {
-                int iLvl = Convert.ToUInt16(lvl);
-                if (iLvl >= 0)
-                {
-                    switch (iLvl)
-                    {
-                        case 0://normal user
-                            break;
-                        case 1://event admin
-                            break;
-                    }
-                }
-                else
-                {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You are not authorized to view this page.');", true);
-                    return;
-                }
-            }
-            else
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You are not signed in.');", true);
-                return;
-            }
-        }
-
         public DateTime FromUnixTime(long unixTime)
         {
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return epoch.AddSeconds(unixTime);
+        }
+
+        protected void btnSearchUser_Click(object sender, EventArgs e)
+        {
+            loading_user_ico.Visible = true;
+            var usr = search_box.Text;
+            if (!String.IsNullOrEmpty(usr))
+            {
+                string users_html = "<div>";
+                DBServerTools dbTools = new DBServerTools();
+                List<User> users = dbTools.searchUser(usr);
+                if (users == null)
+                {
+                    redeem_container.InnerHtml = "<h2 style='text-align:center;'>No users found</h2>";
+                    loading_user_ico.Visible = false;
+                    //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You are not authorized to view this page.');", true);
+                    return;
+                }
+                if (users.Count <= 0)
+                {
+                    redeem_container.InnerHtml = "<h2 style='text-align:center;'>No users found</h2>";
+                    loading_user_ico.Visible = false;
+                    //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You are not authorized to view this page.');", true);
+                    return;
+                }
+
+                foreach (User u in users)
+                {
+                    string img_url = "http://icebreak.azurewebsites.net/images/profile/" + u.Username + ".png";
+
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(img_url);
+                    request.Method = WebRequestMethods.Http.Head;
+                    bool imgExists = true;
+                    
+                    try
+                    {
+                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                        imgExists = response.StatusCode == HttpStatusCode.OK;
+                    }
+                    catch (WebException ex)
+                    {
+                        //404 error - dbs.addError(ErrorCodes.EEVENT, ex.Message, "ViewEvent.aspx[Page_Load]");
+                        imgExists = false;
+                    }
+
+                    if (!imgExists)
+                    {
+                        img_url = "http://icebreak.azurewebsites.net/images/profile/default.png";
+                    }
+                    
+                    string name;
+                    if (String.IsNullOrEmpty(u.Fname))
+                        name = "Anonymous";
+                    else name = u.Fname + " " + u.Lname;
+
+                    if (u.Fname.ToLower().Equals("x"))
+                        name = "Anonymous";
+                    else name = u.Fname + " " + u.Lname;
+                    int usr_img_size = 100;//px;
+
+                    long id = dbTools.getUserEventId(u.Username);
+                    u.Event_id = id;
+                    List<Reward> user_rewards = dbTools.getUserRewardsAtEvent(u.Username, Convert.ToString(u.Event_id));
+
+                    users_html += "<div style='width:500px;height:110px;margin:auto;background-color:#e2e2e2;border:1px solid #343434;'>"
+                                    + "<div style='border-radius:" + usr_img_size + "px;width:" + usr_img_size + "px;height:" + usr_img_size + "px;float:left;'>"
+                                        + "<img style='border-radius:" + usr_img_size + "px;border:1px solid #343434;' src='" + img_url + "' height='" + usr_img_size + "' width='" + usr_img_size + "' alt='" + name + " profile image'/>"
+                                    + "</div>"
+                                    + "<h3 style='margin-top:20px;text-align:center;'>" + name + "</h3>"
+                                    + "<select id='dd_usr_"+u.Username+ "' style='margin-left:5px;margin-right:5px;'>";
+                    foreach (Reward r in user_rewards)
+                        users_html += "<option value='"+r.Id+"'>"+r.Name+"</option>";
+                    users_html += "</select>"
+                                    + "<input type='text' id='usr_"+u.Username+ "_redeem_code' value='' style='margin-top:5px;margin-left:auto;margin-right:auto;'/>"
+                                    + "<button style='margin-top:5px;margin-left:20px;' id='redeem_usr_" + u.Username + "'>Redeem</button>"
+                                + "</div>";
+                    users_html += getUserRedeemHandler(u.Username, Convert.ToString(u.Event_id));
+                }
+                users_html += "</div>";
+                users_html += "<script>window.location='./stats.aspx#tab_redeem'</script>";
+
+                loading_user_ico.Visible = false;
+                redeem_container.InnerHtml = users_html;
+
+            }
+            else
+            {
+                redeem_container.InnerHtml = "<h2 style='text-align:center;'>No users found</h2>";
+                //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You are not authorized to view this page.');", true);
+                return;
+            }
+        }
+
+        public string getUserRedeemHandler(string username, string ev_id)
+        {
+            string script = "<script>"
+                    + "$('#redeem_usr_"+username+"').click(function()"
+                    +"{"
+                        + "var code=document.getElementById('usr_" + username + "_redeem_code').value;"
+                        + "var rews=document.getElementById('dd_usr_" + username + "');"
+                        + "var rew_id = rews.options[rews.selectedIndex].value;"
+                        + "$.ajax({"
+                        +"type: 'GET',"
+                            + "url: 'http://icebreak.azurewebsites.net/IBUserRequestService.svc/redeemReward/" + username+"/'+rew_id+'/"+ev_id+"/'+code+'/"+DBServerTools.RW_CLAIMED+"',"
+                            //+"data: '',"
+                            +"contentType: 'text/plain; charset=utf-8',"
+                            +"dataType: 'text',"
+                            +"async: true"
+                    /*+"function(jqXHR, textStatus, errorThrown)"
+                    +"{"
+                        //+ "var notif = document.getElementById('notif');"
+                        //+ "notif.innerText='Error, could not complete your request. Please try again.';"
+                        + "alert('Error, could not complete your request. Please try again.')"
+                    + "},"
+                + "success:"
+                    + "function(msg)"
+                    + "{"
+                        //+ "var notif = document.getElementById('notif');"
+                        //+ "notif.innerText=msg;"
+                        + "alert(msg);"
+                    + "}"*/
+                    + "}).done(function(msg){alert(msg);});"
+                + "});"
+            + "</script>";
+        return script;
         }
     }
 }

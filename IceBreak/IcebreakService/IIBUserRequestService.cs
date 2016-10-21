@@ -137,13 +137,55 @@ namespace IcebreakServices
         [WebGet(UriTemplate = "/getUserAchievements/{username}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         List<Achievement> getUserAchievements(string username);
 
+        #region Rewards
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getRewardForEvent/{event_id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        Reward getRewardForEvent(string event_id);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getRewardsForEvent/{event_id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        List<Reward> getRewardsForEvent(string event_id);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getUserRewardsAtEvent/{username}/{event_id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        List<Reward> getUserRewardsAtEvent(string username, string event_id);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getRewardsCreatedByUser/{username}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        List<Reward> getRewardsCreatedByUser(string username);
+
         [OperationContract]
         [WebGet(UriTemplate = "/getReward/{rew_id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         Reward getReward(string rew_id);
 
         [OperationContract]
+        [WebGet(UriTemplate = "/getUserPreparedRewardsForEvent/{username}/{event_id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        List<Reward> getUserPreparedRewardsForEvent(string username, string event_id);
+
+        [OperationContract]
         [WebGet(UriTemplate = "/getAllRewards", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         List<Reward> getAllRewards();
+
+        /* For future Event Manager mobile app
+
+        string updateReward(Reward rw, int access_lvl);
+
+        string addReward(Reward rw, int access_lvl);*/
+        [OperationContract]
+        [WebGet(UriTemplate = "/addUserReward/{rw_id}/{code}/{date}/{event_id}/", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        string addUserReward(string rw_id, string code, string date, string event_id);
+
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/claimReward/{username}/{reward_id}/{event_id}/{code}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        string claimReward(string username, string reward_id, string event_id, string code);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/redeemReward/{username}/{reward_id}/{event_id}/{code}/{new_code}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        string redeemReward(string username, string reward_id, string event_id, string code, string new_code);
+
+        #endregion Rewards
 
         [OperationContract]
         [WebGet(

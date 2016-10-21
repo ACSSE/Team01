@@ -38,8 +38,6 @@ namespace IceBreak
 
                 IcebreakServices.Event evnt = dbs.getEvent(eventid);
 
-                Reward rwd = dbs.getRewardForEvent(eventid);
-
                 eventname.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
                 eventdescrip.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
                 edit_event_date.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
@@ -60,8 +58,13 @@ namespace IceBreak
                 eventdescrip.Value = evnt.Description;
                 DateTime startdate = FromUnixTime(evnt.Date);
                 DateTime enddate = FromUnixTime(evnt.End_Date);
-                rewardname.Value = rwd.Name;
-                rewarddescrip.Value = rwd.Description;
+
+                Reward rwd = dbs.getRewardForEvent(eventid);
+                if(rwd!=null)
+                {
+                    rewardname.Value = rwd.Name;
+                    rewarddescrip.Value = rwd.Description;
+                }
 
                 meeting_place_1.Style.Add("display", "none");
                 meeting_place_2.Style.Add("display", "none");
@@ -357,29 +360,62 @@ namespace IceBreak
 
             DBServerTools dbs = new DBServerTools();
 
-            Reward rwd = dbs.getRewardForEvent(eventid);
-
-
             IcebreakServices.Event evnt = dbs.getEvent(eventid);
             long id=0;
             if (long.TryParse(eventid, out id))
                 evnt.Id = long.Parse(eventid);
             evnt.Title = EventName;
             evnt.Address = EventAddress;
-            evnt.Gps_location = EventGps;
+            EventGps = EventGps.Replace(" ", "");
+            string loc = EventGps;
+
+            if (loc.Length > 0)
+            {
+                if (loc.ElementAt(0).Equals('('))
+                    loc = loc.Substring(1);
+                if (loc.ElementAt(loc.Length - 1).Equals(')'))
+                    loc = loc.Substring(0, loc.Length - 1);
+
+                if (!loc.Contains(";"))//If there's not already and array of coordinates
+                {
+                    double radius = 0.003555;
+                    double lat = double.Parse(loc.Split(',')[0]);
+                    double lng = double.Parse(loc.Split(',')[1]);
+
+                    double[] top_left = { lat - radius, lng - radius };
+                    double[] top_right = { lat - radius, lng + radius };
+                    double[] bottom_left = { lat + radius, lng - radius };
+                    double[] bottom_right = { lat + radius, lng + radius };
+
+                    loc = top_left[0] + "," + top_left[1] + ";" + top_right[0] + "," + top_right[1] + ";" + bottom_left[0] + "," + bottom_left[1] + ";" + bottom_right[0] + "," + bottom_right[1];
+                }
+            }
+            else return;//Invalid GPS coordinates
+
+            evnt.Gps_location = loc;
             evnt.Date = Convert.ToUInt32(start_date);
             evnt.End_Date = Convert.ToUInt32(end_date);
             evnt.Description = EventDescrip;
             evnt.Meeting_Places = meetingplace;
             evnt.Manager = Convert.ToString(Session["USER"]);
 
-            rwd.Name = RewardName;
-            rwd.Description = RewardDescrip;
+            Reward rwd = dbs.getRewardForEvent(eventid);
+            if (rwd != null)
+            {
+                rwd.Name = RewardName;
+                rwd.Description = RewardDescrip;
+
+                string check1 = dbs.updateReward(rwd, lvl);
+                if(!check1.ToLower().Contains("success"))
+                {
+                    //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Could not update your rewards.');", true);
+                    //return;
+                }
+            }
 
             string check = dbs.updateEvent(evnt, lvl);
-            string check1 = dbs.updateReward(rwd, lvl);
 
-            if (check.ToLower().Contains("success") && check1.ToLower().Contains("success"))
+            if (check.ToLower().Contains("success"))//&& check1.ToLower().Contains("success"))
             {
                 string filename = Path.GetFileName(FileUpload.FileName);
                 if (!String.IsNullOrEmpty(filename))
@@ -392,7 +428,8 @@ namespace IceBreak
             }
             else
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Event editing unsuccessful. Try again:"+check+".');", true);
+                //ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Event editing unsuccessful. Try again:"+check+".');", true);
+                //TODO: Notify user
             }
         }
         public DateTime FromUnixTime(long unixTime)
