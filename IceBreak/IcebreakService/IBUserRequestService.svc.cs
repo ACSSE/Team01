@@ -1247,7 +1247,7 @@ namespace IcebreakServices
             if (res.ToLower().Equals("success"))
             {
                 List<Achievement> usr_achs = db.getUserAchievements(username);
-                List<Achievement> new_usr_achs = db.updateUserAchievements(username);
+                List<Achievement> new_usr_achs = db.getNewUserAchievements(username);
                 if(usr_achs.Count < new_usr_achs.Count)
                 {
                     User usr = db.getUser(username);
@@ -1259,9 +1259,9 @@ namespace IcebreakServices
                                 "\"Achievement_id\": \"" + new_usr_achs.ElementAt(i).Id + "\"}," +
                                 "\"to\": \"" + db.getUserToken(username) + "\"}";
                         sendNotification(notif);
-                        
+
                         //TODO: Add to User_Achievements bridging table
-                        
+                        db.addUserAchievement(new_usr_achs.ElementAt(i), username);
                         //Increase User points
                         usr.Points += new_usr_achs.ElementAt(i).Value;
                     }
@@ -1318,6 +1318,13 @@ namespace IcebreakServices
         public List<Reward> getRewardsForEvent(string event_id)
         {
             return db.getRewardsForEvent(event_id);
+        }
+
+        public int getUserAchievementPoints(string username, string method)
+        {
+            Achievement ach = new Achievement();
+            ach.Method = method;
+            return db.getUserAchievementPoints(ach, username);
         }
     }
 }

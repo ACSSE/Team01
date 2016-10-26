@@ -4,6 +4,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Web;
 using System.Web.Hosting;
 
@@ -951,6 +953,35 @@ namespace IcebreakServices
             }
         }
 
+        public string addUserAchievement(Achievement ach, string username)
+        {
+            try
+            {
+                conn = new SqlConnection(dbConnectionString);
+                conn.Open();
+
+                string query = "INSERT INTO [dbo].[User_Achievements](Achievement_id,username,date)" +
+                    "VALUES(@id,@usr,@date)";
+                cmd = new SqlCommand(query, conn);
+
+                cmd.Parameters.AddWithValue(@"id", ach.Id);
+                cmd.Parameters.AddWithValue(@"usr", username);
+                cmd.Parameters.AddWithValue(@"date", (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds);
+
+                cmd.ExecuteNonQuery();
+
+                cmd.Dispose();
+                conn.Close();
+
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EEVENT, e.Message, "addUserAchievement");
+                return "Error:" + e.Message;
+            }
+        }
+
         #region Rewards
         public Reward getRewardForEvent(string event_id)
         {
@@ -1050,12 +1081,14 @@ namespace IcebreakServices
 
                 dataReader = cmd.ExecuteReader();
 
-                Reward reward = new Reward();
+                Reward reward = null;
 
                 if (dataReader.HasRows)
                 {
                     while (dataReader.Read())
                     {
+                        reward = new Reward();
+
                         long rw_id = long.Parse(Convert.ToString(dataReader.GetValue(1)));
 
                         reward.Id = rw_id;
@@ -1447,30 +1480,31 @@ namespace IcebreakServices
             }
         }
 
+
         public string claimReward(string username, string rw_id, string event_id, string code)
         {
+            Reward rw = new Reward();
+            rw.Id = long.Parse(rw_id);
+            rw.Code = code;
+            rw.Event_ID = long.Parse(event_id);
+            rw.Owner = username;
+            rw.Date = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
+
             List<Reward> rwds = getUserRewardsAtEvent(username, event_id);
             if (rwds == null)
-            {
-                Reward rw = new Reward();
-                rw.Id = long.Parse(rw_id);
-                rw.Code = code;
-                rw.Event_ID = long.Parse(event_id);
-                rw.Owner = username;
-                rw.Date = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
                 return addUserReward(rw);
-            }
             if(rwds.Count<=0)
-            {
-                Reward rw = new Reward();
-                rw.Id = long.Parse(rw_id);
-                rw.Code = code;
-                rw.Event_ID = long.Parse(event_id);
-                rw.Owner = username;
-                rw.Date = (long)(DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
                 return addUserReward(rw);
-            }
-            //Else update
+            //Else update if Reward in user Rewards list
+            foreach (Reward r in rwds)
+                if (r.Id == long.Parse(rw_id))
+                    return updateUserReward(username, r.Id, event_id, code);
+            //Else is new Reward [not in user Rewards list]
+            return addUserReward(rw);
+        }
+
+        public string updateUserReward(string username, long rw_id, string event_id, string code)
+        {
             try
             {
                 conn = new SqlConnection(dbConnectionString);
@@ -1488,7 +1522,7 @@ namespace IcebreakServices
                 cmd.ExecuteNonQuery();*/
                 //
                 string query = "UPDATE [dbo].[User_Rewards] SET Reward_code=@code, event_id=@ev_id WHERE Reward_id=@id AND username=@usr AND event_id=@ev_id";
-                
+
                 cmd = new SqlCommand(query, conn);
 
                 cmd.Parameters.AddWithValue(@"id", rw_id);
@@ -1498,19 +1532,19 @@ namespace IcebreakServices
 
                 cmd.ExecuteNonQuery();
 
-                if (code==RW_CLAIMED)
+                cmd.Dispose();
+                conn.Close();
+
+                if (code.Equals(RW_CLAIMED))
                 {
                     //Get reward
-                    Reward rwd = getReward(long.Parse(rw_id));
+                    Reward rwd = getReward(rw_id);
                     //Decrease user pts.
                     User u = getUser(username);
                     u.Points -= rwd.Value;
                     //Update user points
                     updateUserDetails(u);
                 }
-
-                cmd.Dispose();
-                conn.Close();
 
                 return "Success";
             }
@@ -1553,7 +1587,10 @@ namespace IcebreakServices
 
                         cmd.ExecuteNonQuery();
 
-                        if (code == RW_CLAIMED)
+                        cmd.Dispose();
+                        conn.Close();
+
+                        if (new_code.Equals(RW_CLAIMED))
                         {
                             //Get reward
                             Reward rwd = getReward(long.Parse(rw_id));
@@ -1563,10 +1600,6 @@ namespace IcebreakServices
                             //Update user points
                             updateUserDetails(u);
                         }
-
-                        cmd.Dispose();
-                        conn.Close();
-
                         return "Success";
                     }
                     catch (Exception e)
@@ -1706,18 +1739,58 @@ namespace IcebreakServices
 
                 dataReader = cmd.ExecuteReader();
                 Achievement ach = null;
-                while (dataReader.Read())
+
+                if (dataReader.HasRows)
                 {
-                    ach = getAchievement(long.Parse(Convert.ToString(dataReader.GetValue(1))));
-                    ach.DateAchieved = long.Parse(Convert.ToString(dataReader.GetValue(3)));
-                    int count = getUserAchievementPoints(ach, username);
-                    ach.Pts = count;
-                    achievements.Add(ach);
+                    while (dataReader.Read())
+                    {
+                        ach = new Achievement();
+
+                        ach.Id = long.Parse(Convert.ToString(dataReader.GetValue(1)));
+                        ach.DateAchieved = long.Parse(Convert.ToString(dataReader.GetValue(3)));
+                        achievements.Add(ach);
+                    }
                 }
 
                 dataReader.Close();
                 cmd.Dispose();
                 conn.Close();
+
+                //Get Achievement
+                foreach (Achievement a in achievements)
+                {
+                    ach = getAchievement(a.Id);
+                    a.Name = ach.Name;
+                    a.Description = ach.Description;
+                    a.Target = ach.Target;
+                    a.Value = ach.Value;
+                    a.Method = ach.Method;
+                    //Get User Achievement points
+                    int count = getUserAchievementPoints(a, username);
+                    a.Pts = count;
+                }
+
+                //See if there are new Achievements
+                /*List<Achievement> new_usr_achs = getNewUserAchievements(username);
+                if (achievements.Count < new_usr_achs.Count)
+                {
+                    User usr = getUser(username);
+                    //Has gotten new achievements - send notification
+                    for (int i = achievements.Count; i < new_usr_achs.Count; i++)
+                    {
+                        string notif = "{" +
+                                "\"data\": {" +
+                                "\"Achievement_id\": \"" + new_usr_achs.ElementAt(i).Id + "\"}," +
+                                "\"to\": \"" + getUserToken(username) + "\"}";
+                        sendNotification(notif);
+
+                        //TODO: Add to User_Achievements bridging table
+
+                        //Increase User points
+                        usr.Points += new_usr_achs.ElementAt(i).Value;
+                    }
+                    updateUserDetails(usr);//update user points
+                }*/
                 return achievements;
             }
             catch (Exception e)
@@ -1725,6 +1798,35 @@ namespace IcebreakServices
                 addError(ErrorCodes.EACH, e.Message, "getUserAchievements");
                 return null;
             }
+        }
+
+        public void sendNotification(string url_params)
+        {
+            WebRequest req = WebRequest.Create("https://fcm.googleapis.com/fcm/send?" + url_params);
+            req.Method = "POST";
+            req.ContentType = "application/json";
+            req.Headers.Add("Authorization", "key=AIzaSyAbyhAF4s4HzZqYcHztCnk9Xcgpjd4Wt1U");
+            req.ContentLength = url_params.Length;
+            Stream dataStream = req.GetRequestStream();
+
+            dataStream.Write(Encoding.UTF8.GetBytes(url_params), 0, url_params.Length);
+            dataStream.Close();
+
+            WebResponse response = req.GetResponse();
+
+            dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.
+            StreamReader reader = new StreamReader(dataStream);
+            // Read the content.
+            string responseFromServer = reader.ReadToEnd();
+            // Save error to DB -- TODO: fix this
+            if (!((HttpWebResponse)response).StatusCode.ToString().Contains("OK"))
+                addError(ErrorCodes.ENOTIF, ((HttpWebResponse)response).StatusCode + ":>" + responseFromServer, "sendNotification");
+
+            // Clean up the streams.
+            reader.Close();
+            dataStream.Close();
+            response.Close();
         }
 
         public Message getMessageById(string msg_id)
@@ -1879,7 +1981,7 @@ namespace IcebreakServices
             return count;
         }
 
-        public List<Achievement> updateUserAchievements(string username)
+        public List<Achievement> getNewUserAchievements(string username)
         {
             List<Achievement> achievements = getAllAchievements();
             List<Achievement> usr_achievements = getUserAchievements(username);

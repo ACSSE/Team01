@@ -137,6 +137,10 @@ namespace IcebreakServices
         [WebGet(UriTemplate = "/getUserAchievements/{username}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         List<Achievement> getUserAchievements(string username);
 
+        [OperationContract]
+        [WebGet(UriTemplate = "/getUserAchievementPoints/{username}/{method}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        int getUserAchievementPoints(string username, string method);
+
         #region Rewards
 
         [OperationContract]

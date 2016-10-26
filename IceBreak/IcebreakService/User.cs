@@ -216,6 +216,7 @@ namespace IcebreakServices
             }
         }
 
+        [DataMember]
         public long Last_Seen
         {
             get
@@ -229,6 +230,7 @@ namespace IcebreakServices
             }
         }
 
+        [DataMember]
         public long Points
         {
             get
