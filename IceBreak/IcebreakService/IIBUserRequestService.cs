@@ -81,6 +81,19 @@ namespace IcebreakServices
         string imageUpload(string fileName, Stream fileStream);
 
         [OperationContract]
+        [WebInvoke(Method = "PUT",
+            UriTemplate = "/imageUploadWithMeta/{meta}",
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        string imageUploadWithMeta(string meta, Stream fileStream);
+
+        [OperationContract]
+        [WebGet(
+            UriTemplate = "/getImageIDsAtEvent/{event_id}",
+            ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        string getImageIDsAtEvent(string event_id);
+
+        [OperationContract]
         [WebInvoke(
             Method = "POST",
             UriTemplate = "/signup",
@@ -116,6 +129,10 @@ namespace IcebreakServices
         [OperationContract]
         [WebGet(UriTemplate = "/getNearbyEventIds/{lat}/{lng}/{range}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         List<string> getNearbyEventIds(string lat, string lng, string range);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getNearbyEventIdsByNoise/{lat}/{lng}/{range}/{loudness}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        List<string> getNearbyEventIdsByNoise(string lat, string lng, string range, string loudness);
 
         [OperationContract]
         [WebGet(UriTemplate = "/getAllEvents", ResponseFormat = WebMessageFormat.Json, BodyStyle =WebMessageBodyStyle.Bare)]

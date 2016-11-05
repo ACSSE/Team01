@@ -41,8 +41,10 @@
             </div>
         </div>
         <div id="tab_redeem">
+            <div id="js_redeem_notifications" style="width:600px;height:auto;margin:auto;border:1px solid #0094ff;border-radius:10px;">
+            </div>
             <div style="width:400px;height:50px;margin:auto;">
-                <h3 id="notif" style="text-align:center;">Search user</h3>
+                <h3 style="text-align:center;">Search user</h3>
             </div>
             <div style="width:340px;height:50px;margin:auto;">
                 <asp:TextBox BorderWidth="1" BorderColor="Black" BackColor="White" Width="250px" ID="search_box" runat="server"></asp:TextBox>
@@ -51,9 +53,7 @@
             <div style="border-radius:100px;width:100px;height:100px;margin:auto;display:block;visibility:visible;" id="loading_user_ico" runat="server">
                 <img style="border-radius:100px;border:1px solid #343434;" src="http://icebreak.azurewebsites.net/images/public_res/ring-alt.gif" height="100" width="100" alt="Profile image"/>
             </div>
-            <!--<asp:HiddenField ID="emanersu" runat="server" Value="" />
-                <h3 style="margin-top:30px;text-align:center;font-size:18pt;" id="user_name" runat="server" >No results.</h3>-->
-            <div style="width:500px;height:400px;margin:auto;" id="redeem_container" runat="server">
+            <div style="width:auto;height:auto;margin:auto;" id="redeem_container" runat="server">
                 
             </div>
         </div>

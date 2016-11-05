@@ -25,6 +25,7 @@ namespace IcebreakServices
         private string fb_id;
         private long _points = 0;
         private long _last_seen = 0;
+        private double _pitch = 0.0;
 
         /*public User(string fname, string lname, string username, string email)
         {
@@ -241,6 +242,19 @@ namespace IcebreakServices
             set
             {
                 _points = value;
+            }
+        }
+
+        public double Pitch
+        {
+            get
+            {
+                return _pitch;
+            }
+
+            set
+            {
+                _pitch = value;
             }
         }
 

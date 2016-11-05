@@ -35,6 +35,7 @@ namespace IcebreakServices
         public static string NO_PHRASE = "<No catchphrase specified>";
         public static string NO_GENDER = "Unspecified";
         public static string RW_CLAIMED = "CLAIMED";
+        public static string SNAP_AT_EVENT_ID_NAME = "snap_at_event";
 
         private string dbConnectionString = "Server=tcp:icebreak-server.database.windows.net,1433;Initial Catalog=IcebreakDB;Persist Security Info=False;User ID=superuser;Password=Breakingtheice42;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;";
         private SqlConnection conn;
@@ -138,6 +139,13 @@ namespace IcebreakServices
                     {
                         cmd = new SqlCommand("UPDATE [dbo].[Users] SET pwd=@pwd WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"pwd", Hash.HashString(user.Password));
+                        cmd.Parameters.AddWithValue(@"usr", user.Username);
+                        cmd.ExecuteNonQuery();
+                    }
+                    if (user.Pitch > 0)
+                    {
+                        cmd = new SqlCommand("UPDATE [dbo].[Users] SET [pitch]=@pitch WHERE username=@usr", conn);
+                        cmd.Parameters.AddWithValue(@"pitch", user.Pitch);
                         cmd.Parameters.AddWithValue(@"usr", user.Username);
                         cmd.ExecuteNonQuery();
                     }
@@ -627,6 +635,9 @@ namespace IcebreakServices
                     String seen = Convert.IsDBNull(dataReader.GetValue(16)) ? "0" : dataReader.GetString(16);
                     double ls = Double.Parse(seen);//last seen date
 
+                    string p = Convert.IsDBNull(dataReader.GetValue(17)) ? "0.0" : dataReader.GetString(17);
+                    double pitch = double.Parse(p);
+
                     users.Add(new User
                     {
                         Fname = fname,
@@ -638,7 +649,8 @@ namespace IcebreakServices
                         Gender = gender,
                         Catchphrase = catchphrase,
                         Points = pts,
-                        Last_Seen = (long)Math.Ceiling(ls)
+                        Last_Seen = (long)Math.Ceiling(ls),
+                        Pitch = pitch
                 });
                 }
                 
@@ -1480,6 +1492,70 @@ namespace IcebreakServices
             }
         }
 
+        public string getImageIDsAtEvent(string event_id)
+        {
+            if (String.IsNullOrEmpty(event_id))
+                return "Error: Empty event ID.";
+            int id;
+            if (!int.TryParse(event_id, out id))
+                return "Error: Invalid event ID.";
+
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                conn.Open();
+                //Query record
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Metadata] WHERE [Metadata_entry_data] LIKE @entry", conn);//WHERE 'username'=@usr AND 'pwd'=@pwd", conn);
+                cmd.Parameters.AddWithValue(@"entry", "%" + SNAP_AT_EVENT_ID_NAME + "="+ event_id + "%");
+
+                dataReader = cmd.ExecuteReader();
+
+                if (dataReader.HasRows)
+                {
+                    //Get image paths separated by a semi-colon
+                    string meta = "";
+                    while (dataReader.Read())
+                    {
+                        var file_path = dataReader.GetValue(1);
+                        string[] attributes = file_path.ToString().Split(';');//get attributes
+                        //look for filename
+                        foreach (string attr in attributes)
+                        {
+                            if (attr.Contains("="))
+                            {
+                                string var = attr.Split('=')[0];
+                                string val = attr.Split('=')[1];
+                                if (var.ToLower().Equals("filename"))
+                                {
+                                    meta += val + ";";
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                return "Error: Attribute has no assignment ('=').";
+                            }
+                        }
+                    }
+                    //Some security checks
+                    if (meta.Length <= 1)
+                        return "Error: No records found."; 
+                    //Remove last ';'
+                    if (meta[meta.Length - 1] == ';') meta = meta.Substring(0, meta.Length - 1);
+
+                    dataReader.Close();
+                    cmd.Dispose();
+                    conn.Close();
+
+                    return meta;
+                }else return "Error: No records found.";
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EMETA, e.Message, "getMeta");
+                return "Error: " + e.Message;
+            }
+        }
 
         public string claimReward(string username, string rw_id, string event_id, string code)
         {
@@ -2531,6 +2607,9 @@ namespace IcebreakServices
                         String seen = Convert.IsDBNull(dataReader.GetValue(16)) ? "0" : dataReader.GetString(16);
                         double ls = Double.Parse(seen);//last seen date
 
+                        string p = Convert.IsDBNull(dataReader.GetValue(17)) ? "0.0" : dataReader.GetString(17);
+                        double pitch = double.Parse(p);
+
                         user.Fname = fname;
                         user.Lname = lname;
                         user.Email = email;
@@ -2544,6 +2623,7 @@ namespace IcebreakServices
                         user.Gender = gender;
                         user.Points = pts;
                         user.Last_Seen = (long)Math.Ceiling(ls);
+                        user.Pitch = pitch;
                     }
                 }
 

@@ -332,6 +332,7 @@ namespace IcebreakServices
                 for (int i = 0; i < dirs.Length - 1; i++)//last element would be the filename
                     dir += dirs[i] + '/';
                 var path = Path.Combine(HostingEnvironment.MapPath("~/images/" + dir), dirs[dirs.Length - 1]);//Path.Combine(@"C:\UploadedImages\" + name);
+                //File.Create(path);//Create dir/s
                 File.WriteAllBytes(path, bytes);
 
                 //Write Metadata
@@ -355,6 +356,93 @@ namespace IcebreakServices
                 WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
                 return "Error: Cannot write to root";
             }
+        }
+
+        public string imageUploadWithMeta(string metadata, Stream fileStream)
+        {
+            metadata = metadata.ToLower();
+            StreamReader reader = new StreamReader(fileStream);
+            string inbound_payload = reader.ReadToEnd();
+            reader.Close();
+            reader.Dispose();
+            char delim = ';';
+            byte[] bytes = Convert.FromBase64String(inbound_payload);
+            if (metadata.Contains(delim))
+            {
+                if (metadata[0] == delim)
+                    metadata = metadata.Substring(1);//Remove first slash if it exists
+
+                string filename = null;
+                //Write file data
+                string[] attributes = metadata.Split(delim);//get attributes
+                //look for filename
+                foreach(string attr in attributes)
+                {
+                    if (attr.Contains("="))
+                    {
+                        string var = attr.Split('=')[0];
+                        string val = attr.Split('=')[1];
+                        if (var.ToLower().Equals("filename"))
+                        {
+                            filename = val;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                        WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+                        return "Error: Attribute has no assignment ('=').";
+                    }
+                }
+                if (String.IsNullOrEmpty(filename))
+                {
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                    WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+                    return "Error: No filename specified.";
+                }
+                if (!filename.Contains('|'))
+                {
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                    WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+                    return "Error: File name error - cannot write to root directory.";
+                }
+
+                string[] dirs = filename.Split('|');
+                string dir = "";
+                for (int i = 0; i < dirs.Length - 1; i++)//last element would be the filename
+                    dir += dirs[i] + '/';
+                var path = Path.Combine(HostingEnvironment.MapPath("~/images/" + dir), dirs[dirs.Length - 1]);
+                //File.Create(path);//Create dir/s
+                File.WriteAllBytes(path, bytes);
+
+                //Write Metadata
+                TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+                long since_epoch = (long)t.TotalSeconds;
+                Metadata meta = new Metadata()
+                {
+                    Entry = (dir + dirs[dirs.Length - 1]).Replace("/", "|"),
+                    Meta = "dmd=" + Convert.ToString(since_epoch) + ";" + metadata
+                };
+                db.addMeta(meta);
+
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+
+                return "Success";
+            }
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+                return "Error: Invalid/Empty meta attributes.";
+            }
+        }
+
+        public string getImageIDsAtEvent(string event_id)
+        {
+            //WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
+            return db.getImageIDsAtEvent(event_id);
         }
 
         /*[OperationContract]
@@ -918,6 +1006,14 @@ namespace IcebreakServices
                             case "last_seen":
                                 new_user.Last_Seen = now;
                                 break;
+                            case "pts":
+                                int pts;
+                                new_user.Points = int.TryParse(val, out pts)? pts : 0;
+                                break;
+                            case "pitch":
+                                double pitch;
+                                new_user.Pitch = double.TryParse(val, out pitch) ? pitch : 0.0;
+                                break;
                             default:
                                 db.addError(ErrorCodes.EUSR,"Unknown attribute '" + var + "'", "");
                                 break;
@@ -1034,6 +1130,82 @@ namespace IcebreakServices
                         double distance_km = HaversineInKM(meLat, meLng, ep.Lat, ep.Lng);
                         if (distance_km <= range)
                             valid_events.Add(e);
+                    }
+                }
+            }
+            return valid_events;
+        }
+
+        public List<Event> getNearbyEventsByNoise(string lat, string lng, string strRange, string strLoudness)
+        {
+            double meLat = 0.0, meLng = 0.0, range = 0.0, loudness = 0.0;
+            if (double.TryParse(lat, out meLat))
+            {
+                meLat = double.Parse(lat);
+            }
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return null;
+            }
+
+            if (double.TryParse(lng, out meLng))
+            {
+                meLng = double.Parse(lng);
+            }
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return null;
+            }
+
+            if (double.TryParse(strRange, out range))
+            {
+                range = double.Parse(strRange);
+            }
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return null;
+            }
+
+            if (double.TryParse(strLoudness, out loudness))
+            {
+                loudness = double.Parse(strLoudness);
+            }
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return null;
+            }
+
+            List<Event> valid_events = new List<Event>();
+            if (meLat != 0.0 && meLng != 0.0 && range != 0.0)
+            {
+                List<Event> events = db.getAllEvents();
+                foreach (Event e in events)
+                {
+                    List<User> users_at_event = getUsersAtEvent(Convert.ToString(e.Id));
+                    double total_pitch = 0.0;
+                    int samples = 0;
+                    foreach (User u in users_at_event)
+                    {
+                        if (u.Pitch > 0)
+                        {
+                            total_pitch += u.Pitch;
+                            samples++;
+                        }
+                    }
+                    double avg_pitch = samples>0?total_pitch / samples:0;
+                    if (avg_pitch <= loudness)
+                    {
+                        Point ep = e.getOrigin();
+                        if (!ep.isZero())
+                        {
+                            double distance_km = HaversineInKM(meLat, meLng, ep.Lat, ep.Lng);
+                            if (distance_km <= range)
+                                valid_events.Add(e);
+                        }
                     }
                 }
             }
@@ -1325,6 +1497,17 @@ namespace IcebreakServices
             Achievement ach = new Achievement();
             ach.Method = method;
             return db.getUserAchievementPoints(ach, username);
+        }
+
+        public List<string> getNearbyEventIdsByNoise(string lat, string lng, string range, string loudness)
+        {
+            List<Event> events = getNearbyEventsByNoise(lat, lng, range, loudness);
+            List<string> event_ids = new List<string>();
+            foreach (Event e in events)
+            {
+                event_ids.Add(Convert.ToString(e.Id));
+            }
+            return event_ids;
         }
     }
 }

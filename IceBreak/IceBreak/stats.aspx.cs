@@ -498,18 +498,18 @@ namespace IceBreak
                     if (u.Fname.ToLower().Equals("x"))
                         name = "Anonymous";
                     else name = u.Fname + " " + u.Lname;
-                    int usr_img_size = 100;//px;
+                    int usr_img_size = 135;//px;
 
                     long id = dbTools.getUserEventId(u.Username);
                     u.Event_id = id;
                     List<Reward> user_rewards = dbTools.getUserRewardsAtEvent(u.Username, Convert.ToString(u.Event_id));
 
-                    users_html += "<div style='width:500px;height:110px;margin:auto;background-color:#e2e2e2;border:1px solid #343434;'>"
+                    users_html += "<div style='width:600px;height:140px;margin:auto;background-color:#e2e2e2;border:1px solid #343434;border-radius:10px;'>"
                                     + "<div style='border-radius:" + usr_img_size + "px;width:" + usr_img_size + "px;height:" + usr_img_size + "px;float:left;'>"
                                         + "<img style='border-radius:" + usr_img_size + "px;border:1px solid #343434;' src='" + img_url + "' height='" + usr_img_size + "' width='" + usr_img_size + "' alt='" + name + " profile image'/>"
                                     + "</div>"
                                     + "<h3 style='margin-top:20px;text-align:center;'>" + name + "</h3>"
-                                    + "<select id='dd_usr_"+u.Username+ "' style='margin-left:5px;margin-right:5px;'>";
+                                    + "<select id='dd_usr_"+u.Username+ "' style='margin-left:15px;margin-right:5px;'>";
                     foreach (Reward r in user_rewards)
                         users_html += "<option value='"+r.Id+"'>"+r.Name+"</option>";
                     users_html += "</select>"
@@ -561,7 +561,12 @@ namespace IceBreak
                         //+ "notif.innerText=msg;"
                         + "alert(msg);"
                     + "}"*/
-                    + "}).done(function(msg){alert(msg);});"
+                    + "}).done(function(msg)"
+                    + "{"
+                    +   "var notifs=document.getElementById('js_redeem_notifications');"
+                    +   "notifs.innerHTML = '<h3 style=\"text-align:center;\">'+msg+'</h3>';"
+                    +   "notifs.style.visibility='visible';"
+                    + "});"
                 + "});"
             + "</script>";
         return script;
