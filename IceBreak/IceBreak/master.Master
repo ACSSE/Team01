@@ -107,11 +107,11 @@
                     <div class="modal-body" id="usernameBox" runat="server">
                         <div class="form-inline">
                             <label for="username">Username:</label>
-                            <input type="text" class="form-control" id="txtUsername" runat="server" style="padding-left:5%"/>
+                            <input type="text" class="form-control" id="txtUsername" runat="server" style="margin-left:5%"/>
                         </div>
                         <div class="form-inline" id="passwordBox" runat="server">                            
                             <label for="password">Password:</label>
-                            <input type="password" class="form-control" id="txtPassword" runat="server" style="padding-left:5%"/>
+                            <input type="password" class="form-control" id="txtPassword" runat="server" style="margin-left:5%"/>
                         </div>
                         <div class="alert alert-danger" style="display:none" id="txtInvalid" runat="server">
                              <strong>Password or username is invalid</strong> 

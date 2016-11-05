@@ -3,7 +3,7 @@
     <script src="scripts/scripts.js"></script>
     <script src="scripts/jquery.backstretch.min.js"></script>
      <script async="async" defer="defer" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAAQZBI76K_oRkxy-1qAyMC2w8AnfimZM&libraries=places"></script>
-      <link rel="stylesheet" href="stylesheets/addeventform.css"/>
+     <link rel="stylesheet" href="stylesheets/addeventform.css"/>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
