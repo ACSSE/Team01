@@ -75,7 +75,7 @@
             <ul class="sidebar-nav" style="position:inherit">              
                  <%--<li id="DIV" class="img-circle" runat="server"><img class="img-circle"  /></li>   --%>     
                 <li><a href="Profile.aspx"><span class="glyphicon glyphicon-user"></span> View Full Profile</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-book"></span> History</a></li>
+                <li><a href="Subscription.aspx"><span class="glyphicon glyphicon-book"></span> Subscription</a></li>
                  <li><a href="#"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
                 <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
             </ul>
