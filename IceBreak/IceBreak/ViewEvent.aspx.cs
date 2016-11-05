@@ -13,18 +13,48 @@ namespace IceBreak
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            loading_qr_ico.Visible = false;
+            if (Session["LEVEL"] != null || Session["USER"] != null)
+            {
+                int check = (int)Session["LEVEL"];
+                if (check >= 0)
+                {
+                    divQR.Style.Add("display", "normal");
+                    loading_qr_ico.Visible = true;
+                }
+                else
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
+                    return;
+                }
+            }
+           
             string eventid = Request.QueryString["evntid"];
 
             DBServerTools dbs = new DBServerTools();
 
             IcebreakServices.Event evnt = dbs.getEvent(eventid);
 
+            if(evnt==null)
+                return;
+            if (Session["LEVEL"] != null)
+            {
+                if ((int)Session["LEVEL"] > 0)
+                {
+                    if (qr_code != null)
+                    {
+                        qr_code.Src = "https://chart.googleapis.com/chart?cht=qr&chl=" + evnt.AccessCode + "&chs=400x400";
+                        loading_qr_ico.Visible = false;
+                    }
+                } 
+            }
+
             String picUrl = "http://icebreak.azurewebsites.net/images/events/event_icons-" + evnt.Id + ".png";
-            String server = "http://icebreak.azurewebsites.net";
-            String relativePath = "/images/events/event_icons-" + evnt.Id + ".png";
-            Uri serverUri = new Uri(server);
-            Uri relativeUri = new Uri(relativePath, UriKind.Relative);
-            Uri fullUri = new Uri(serverUri, relativeUri);
+            //String server = "http://icebreak.azurewebsites.net";
+            //String relativePath = "/images/events/event_icons-" + evnt.Id + ".png";
+            //Uri serverUri = new Uri(server);
+            //Uri relativeUri = new Uri(relativePath, UriKind.Relative);
+            //Uri fullUri = new Uri(serverUri, relativeUri);
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(picUrl);
             request.Method = WebRequestMethods.Http.Head;
@@ -36,6 +66,7 @@ namespace IceBreak
             }
             catch (WebException ex)
             {
+                //404 error - dbs.addError(ErrorCodes.EEVENT, ex.Message, "ViewEvent.aspx[Page_Load]");
                 pageExists = false;
             }
 
@@ -44,19 +75,36 @@ namespace IceBreak
                 picUrl = "http://icebreak.azurewebsites.net/images/events/default.png";
             }
 
+            DateTime date = FromUnixTime(evnt.Date);
+            DateTime enddate = FromUnixTime(evnt.End_Date);
+
+
+
             EventImage.InnerHtml = "<img class='img-responsive img-center' src='" +picUrl+ "'/>";
 
             EventName.InnerHtml = evnt.Title;
 
-            EventDate.InnerHtml = "Date: "+evnt.Date;
 
-            EventStart.InnerHtml = "Start Time: " + evnt.Time;
+            EventDate.InnerHtml = "Date: " + date.ToShortDateString();
+            EventStart.InnerHtml = "Start Time: "+date.ToShortTimeString();
+            
+            EventEnd.InnerHtml = "End Date: " + enddate.ToShortDateString();
 
-            EventEnd.InnerHtml = "End Time: " + evnt.EndTime;
+            EndTime.InnerHtml = "End Time: " + enddate.ToShortTimeString();
 
             EventAddress.InnerHtml = "Address: " + evnt.Address;
 
             EVentDescription.InnerHtml = evnt.Description;
+        }
+        protected void btnGenerateQR(object sender, EventArgs e)
+        {
+
+        }
+
+        public DateTime FromUnixTime(long unixTime)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return epoch.AddSeconds(unixTime);
         }
     }
 }

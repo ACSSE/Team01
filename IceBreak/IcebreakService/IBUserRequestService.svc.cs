@@ -21,13 +21,15 @@ namespace IcebreakServices
     public class IBUserRequestService : IIBUserRequestService
     {
         private DBServerTools db;
+        private static double _eQuatorialEarthRadius = 6378.1370D;
+        private static double _d2r = (Math.PI / 180D);
 
         public IBUserRequestService()
         {
             db = new DBServerTools();
         }
 
-        public void addEvent(Stream streamdata)
+        public string addEvent(Stream streamdata)
         {
             Event ev = new Event();
             StreamReader reader = new StreamReader(streamdata);
@@ -47,8 +49,50 @@ namespace IcebreakServices
                         string var = kv_pair.Split('=')[0];
                         string val = kv_pair.Split('=')[1];
 
-                        switch (var)
+                        switch (var.ToLower())
                         {
+                            case "access_code":
+                                int code;
+                                if (int.TryParse(val, out code))
+                                {
+                                    ev.AccessCode = int.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to integer.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
+                            case "date":
+                                long date;
+                                if (long.TryParse(val, out date))
+                                {
+                                    ev.Date = long.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to long.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
+                            case "end_date":
+                                long end_date;
+                                if (long.TryParse(val, out end_date))
+                                {
+                                    ev.End_Date = long.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to long.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
+                            case "meeting_places":
+                                ev.Meeting_Places = val;
+                                break;
                             case "title":
                                 ev.Title = val;
                                 break;
@@ -61,7 +105,7 @@ namespace IcebreakServices
                             case "gps":
                                 ev.Gps_location = val;
                                 break;
-                            case "radius":
+                            /*case "radius":
                                 int radius;
                                 if (int.TryParse(val, out radius))
                                 {
@@ -72,8 +116,11 @@ namespace IcebreakServices
                                 {
                                     response = "Error: Cannot convert " + val + " to integer.";
                                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
-                                    return;
-                                }
+                                    return response;
+                                }*/
+                            case "manager":
+                                ev.Manager = val;
+                                break;
                         }
                     }
                     else
@@ -83,28 +130,177 @@ namespace IcebreakServices
                         break;
                     }
                 }
-                //Add event to DB
-                string exec_res = db.addEvent(ev);
-
-                List<Event> events = db.getEvents();
-                string eventId = "";
-                foreach(Event e in events)
+                //Attempt to add Event to DB
+                if (!String.IsNullOrEmpty(ev.Manager))
                 {
-                    //TODO: validate with user admin attribute for event
-                    if(e.Title.Equals(ev.Title) && e.Gps_location.Equals(ev.Gps_location) && e.Radius==ev.Radius)
+                    User mgr = db.getUser(ev.Manager);
+                    string exec_res = db.addEvent(ev,mgr.Access_level);
+
+                    if (exec_res.ToLower().Contains("success"))
                     {
-                        eventId = Convert.ToString(e.Id);
+                        List<Event> events = db.getAllEvents();
+                        string eventId = "";
+                        foreach (Event e in events)
+                        {
+                            //if(e.Title.Equals(ev.Title) && e.Gps_location.Equals(ev.Gps_location) && e.Radius==ev.Radius)
+                            if (e.isEqualTo(ev))
+                            {
+                                eventId = Convert.ToString(e.Id);
+                            }
+                        }
+
+                        response = exec_res;
+                        WebOperationContext.Current.OutgoingResponse.Headers.Add("event_id", eventId);
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                    }
+                    else
+                    {
+                        response = "Query Execution Error: " + exec_res;
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                     }
                 }
-                if(exec_res.ToLower().Contains("success"))
+            }
+            else
+            {
+                response = "Error: Invalid token count";
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+            }
+            return response;
+        }
+
+        public string updateEvent(Stream streamdata)
+        {
+            Event ev = new Event();
+            StreamReader reader = new StreamReader(streamdata);
+            string inbound_payload = reader.ReadToEnd();
+            string response = "";
+            reader.Close();
+            reader.Dispose();
+
+            inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
+            string[] usr_details = inbound_payload.Split('&');
+            if (usr_details.Length == 5)
+            {
+                foreach (string kv_pair in usr_details)
                 {
-                    response = "Success: " + exec_res.ToString();
-                    WebOperationContext.Current.OutgoingResponse.Headers.Add("req_event_icon", eventId);
-                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                    if (kv_pair.Contains('='))
+                    {
+                        string var = kv_pair.Split('=')[0];
+                        string val = kv_pair.Split('=')[1];
+
+                        switch (var.ToLower())
+                        {
+                            case "id":
+                                long id;
+                                if (long.TryParse(val, out id))
+                                {
+                                    ev.Id = long.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to UInt16.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
+                            case "access_code":
+                                int code;
+                                if (int.TryParse(val, out code))
+                                {
+                                    ev.AccessCode = int.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to integer.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
+                            case "date":
+                                long date;
+                                if (long.TryParse(val, out date))
+                                {
+                                    ev.Date = long.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to long.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
+                            case "end_date":
+                                long end_date;
+                                if (long.TryParse(val, out end_date))
+                                {
+                                    ev.End_Date = long.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to long.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }
+                            case "meeting_places":
+                                ev.Meeting_Places = val;
+                                break;
+                            case "title":
+                                ev.Title = val;
+                                break;
+                            case "description":
+                                ev.Description = val;
+                                break;
+                            case "address":
+                                ev.Address = val;
+                                break;
+                            case "gps":
+                                ev.Gps_location = val;
+                                break;
+                            /*case "radius":
+                                int radius;
+                                if (int.TryParse(val, out radius))
+                                {
+                                    ev.Radius = int.Parse(val);
+                                    break;
+                                }
+                                else
+                                {
+                                    response = "Error: Cannot convert " + val + " to integer.";
+                                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                                    return response;
+                                }*/
+                            case "manager":
+                                ev.Manager = val;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        response = "Error: Broken key-value pair";
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                        break;
+                    }
                 }
-                else
+                //Update Event on DB
+                if(!String.IsNullOrEmpty(ev.Manager))
                 {
-                    response = "Query Execution Error: " + exec_res;
+                    User mgr = db.getUser(ev.Manager);
+                    string exec_res = db.updateEvent(ev, mgr.Access_level);
+                    if (exec_res.ToLower().Contains("success"))
+                    {
+                        response = exec_res;
+                        //WebOperationContext.Current.OutgoingResponse.Headers.Add("req_event_icon", eventId);
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+                    }
+                    else
+                    {
+                        response = "Query Execution Error: " + exec_res;
+                        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                    }
+                }else
+                {
+                    response = "Error:Invalid Manager.";
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                 }
             }
@@ -113,6 +309,7 @@ namespace IcebreakServices
                 response = "Error: Invalid token count";
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
             }
+            return response;
         }
 
         public string imageUpload(string name, Stream fileStream)
@@ -139,7 +336,7 @@ namespace IcebreakServices
 
                 //Write Metadata
                 TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
-                int since_epoch = (int)t.TotalSeconds;
+                long since_epoch = (long)t.TotalSeconds;
                 Metadata meta = new Metadata()
                 {
                     Entry=(dir+dirs[dirs.Length-1]).Replace("/","|"),
@@ -375,7 +572,7 @@ namespace IcebreakServices
             //Process form submission
             Message new_msg = new Message();
             DateTime d = DateTime.Now;
-            new_msg.Message_time = String.Format("{0:yyyy-MM-dd H-mm-ss}",d); //d.Year + "/" + d.Month + "/" + d.Day + " " + d.TimeOfDay ;
+            new_msg.Message_time = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds; //d.Year + "/" + d.Month + "/" + d.Day + " " + d.TimeOfDay ;
             //Set other fields
             inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
             string[] msg_details = inbound_payload.Split('&');
@@ -415,6 +612,9 @@ namespace IcebreakServices
                     }
                 }
                 //Insert to DB
+                User sender = db.getUser(new_msg.Message_sender);
+                new_msg.Event_id = sender.Event_id;//store event where icebreaking for statistical purposes.
+
                 string exec_result = db.addMessage(new_msg);
                 if (exec_result.ToLower().Contains("success"))
                 {
@@ -432,7 +632,7 @@ namespace IcebreakServices
                                             new_msg.Message_id,DBServerTools.ICEBREAK_SERV_RECEIVED);*/
 
                     string title = new_msg.Message_status>=DBServerTools.ICEBREAK?"New IceBreak Request":"New Message";
-                    User sender = db.getUser(new_msg.Message_sender);
+                    
                     if (sender!=null)
                     {
                         string fname = DBServerTools.isEmpty(sender.Fname) ? "X" : sender.Fname;
@@ -469,32 +669,24 @@ namespace IcebreakServices
                     {
                         response = exec_result;
                         WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-                        db.addError(ErrorCodes.ENOTIF, "Can't send notification because send is NULL", "addMessage");
+                        db.addError(ErrorCodes.ENOTIF, "Can't send notification because sender is NULL", "addMessage");
                     }
                 }
                 else
                 {
                     response = exec_result;
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-                    db.addError(ErrorCodes.ENOTIF, "Can't send notification because addMessage wasn't successful", "addMessage");
+                    db.addError(ErrorCodes.ENOTIF, "Can't send notification because addMessage wasn't successful: " +response, "addMessage");
                 }
             }
             else
             {
                 response = "Error: Invalid token count (" + msg_details.Length + ") >> " + inbound_payload;
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                db.addError(ErrorCodes.ENOTIF, response, "addMessage");
             }
             return response;
         }
-
-        /*
-        { "notification": {
-    "title": "Portugal vs. Denmark",
-    "text": "5 to 1"
-  },
-  "to" : "bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1..."
-}
-        */
 
         public void sendNotification(string url_params)
         {
@@ -583,14 +775,17 @@ namespace IcebreakServices
             }
         }
 
-        public List<Event> readEvents()
+        public List<Event> getAllEvents()
         {
-            return db.getEvents();
+            return db.getAllEvents();
         }
 
         public List<User> getUsersAtEvent(string eventId)
         {
-            return db.getUsersAtEvent(Convert.ToUInt16(eventId));
+            long id;
+            if (long.TryParse(eventId, out id))
+                return db.getUsersAtEvent(long.Parse(eventId));
+            else return null;
         }
 
         /*public string updateUserMailbox(Stream streamdata)
@@ -660,10 +855,11 @@ namespace IcebreakServices
             WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
             WebOperationContext.Current.OutgoingResponse.Headers.Add("Response", "<Response goes here>");
             return "Some response";*/
+            long now = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
             inbound_payload = HttpContext.Current.Server.UrlDecode(inbound_payload);
             string[] usr_details = inbound_payload.Split('&');
             User new_user = new User();
-            if(handle.Length>=0)
+            if (handle.Length >= 0)
             {
                 new_user.Username = handle;
                 foreach (string usr in usr_details)
@@ -673,7 +869,7 @@ namespace IcebreakServices
                         string var = usr.Split('=')[0];
                         string val = usr.Split('=')[1];
 
-                        switch (var)
+                        switch (var.ToLower())
                         {
                             case "fname":
                                 new_user.Fname = val;
@@ -698,11 +894,11 @@ namespace IcebreakServices
                             case "event_id":
                                 new_user.Event_id = Convert.ToUInt16(val);
                                 break;
-                             case "age":
+                            case "age":
                                 new_user.Age = Convert.ToUInt16(val);
                                 break;
                             case "gender":
-                                new_user.Gender = val;
+                                new_user.Gender = val.ToLower();
                                 break;
                             case "occupation":
                                 new_user.Occupation = val;
@@ -719,6 +915,12 @@ namespace IcebreakServices
                             case "fb_id":
                                 new_user.Fb_id = val;
                                 break;
+                            case "last_seen":
+                                new_user.Last_Seen = now;
+                                break;
+                            default:
+                                db.addError(ErrorCodes.EUSR,"Unknown attribute '" + var + "'", "");
+                                break;
                         }
                     }
                     else
@@ -729,7 +931,7 @@ namespace IcebreakServices
 
                 string result = db.updateUserDetails(new_user);
                 WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
-                
+
                 if (result.ToLower().Contains("success"))
                 {
                     //WebOperationContext.Current.OutgoingResponse.StatusDescription = "Successfully updated user.";
@@ -749,30 +951,6 @@ namespace IcebreakServices
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
                 return "Not enough URL params";
             }
-        }
-
-        public List<User> getUserContacts()
-        {
-            string[] fnames = { "Adrian", "Chanel", "Jacob", "George", "Chayenne", "Lois" };
-            string[] lnames = { "Jones", "Jonas", "Brown", "Black", "Victor", "Travis" };
-            List<User> users = new List<User>();
-            Random rand = new Random();
-            for (int i = 0; i < 10; i++)
-            {
-                users.Add(new User()
-                {
-                    Fname = fnames[rand.Next(0,fnames.Length)],
-                    Lname = lnames[rand.Next(0, lnames.Length)],
-                    Bio = "<insert bio here>"
-                });
-            }
-            return users;
-        }
-
-        public int getRandomNumber(int max)
-        {
-            double r = new Random().NextDouble();
-            return Convert.ToInt16(Math.Floor(r * max));
         }
 
         public List<Message> checkUserInbox(string username)
@@ -795,21 +973,358 @@ namespace IcebreakServices
             return db.getEvent(event_id);
         }
 
-        [WebGet(ResponseFormat = WebMessageFormat.Json)]
-        public void getUsersIcebreakCount()
-        {
-            //if(HttpContext.Current.Request["getUsersIcebreakCountCallback"]!=null)
-                
-            //string response = "getUsersIcebreakCount([{" + db.getUsersIcebreakCount() + "}])";
-            string response = "getUsersIcebreakCount({var1:0,var2:1,var3:2});";
-            //WebOperationContext.Current.OutgoingResponse.ContentType = "text/plain";
-            HttpContext.Current.Response.ContentType = "text/plain";
-            HttpContext.Current.Response.Write(response);
-        }
-
         public Metadata getMeta(string record)
         {
             return db.getMeta(record);
+        }
+
+        public static double HaversineInKM(double lat1, double long1, double lat2, double long2)
+        {
+            double dlong = (long2 - long1) * _d2r;
+            double dlat = (lat2 - lat1) * _d2r;
+            double a = Math.Pow(Math.Sin(dlat / 2D), 2D) + Math.Cos(lat1 * _d2r) * Math.Cos(lat2 * _d2r) * Math.Pow(Math.Sin(dlong / 2D), 2D);
+            double c = 2D * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1D - a));
+            double d = _eQuatorialEarthRadius * c;
+
+            return d;
+        }
+
+        public List<Event> getNearbyEvents(string lat, string lng, string strRange)
+        {
+            double meLat = 0.0, meLng=0.0, range=0.0;
+            if (double.TryParse(lat, out meLat))
+            {
+                meLat = double.Parse(lat);
+            }
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return null;
+            }
+            
+            if (double.TryParse(lng, out meLng))
+            {
+                meLng = double.Parse(lng);
+            }
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return null;
+            }
+            
+            if (double.TryParse(strRange, out range))
+            {
+                range = double.Parse(strRange);
+            }
+            else
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
+                return null;
+            }
+
+            List<Event> valid_events = new List<Event>();
+            if(meLat!=0.0 && meLng!=0.0 && range!=0.0)
+            {
+                List<Event> events = db.getAllEvents();
+                foreach(Event e in events)
+                {
+                    Point ep = e.getOrigin();
+                    if (!ep.isZero())
+                    {
+                        double distance_km = HaversineInKM(meLat, meLng, ep.Lat, ep.Lng);
+                        if (distance_km <= range)
+                            valid_events.Add(e);
+                    }
+                }
+            }
+            return valid_events;
+        }
+
+        public List<string> getNearbyEventIds(string lat, string lng, string range)
+        {
+            List<Event> events = getNearbyEvents(lat,lng,range);
+            List<string> event_ids = new List<string>();
+            foreach(Event e in events)
+            {
+                event_ids.Add(Convert.ToString(e.Id));
+            }
+            return event_ids;
+        }
+
+        public List<IBException> getExceptions()
+        {
+            return db.getExceptions();
+        }
+
+        #region Statistics
+
+        /******Master Stats*************/
+
+        public int getTotalIcebreakCount()
+        {
+            return db.getTotalIcebreakCount();
+        }
+
+        public int getTotalSuccessfulIcebreakCount()
+        {
+            return db.getTotalSuccessfulIcebreakCount();
+        }
+
+        public int getTotalIcebreakCountBetweenTime(string start, string end)
+        {
+            long s,e;
+            if (long.TryParse(start, out s) && long.TryParse(end, out e))
+                return db.getTotalIcebreakCountBetweenTime(long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getTotalSuccessfullIcebreakCountBetweenTime(string start, string end)
+        {
+            long s, e;
+            if (long.TryParse(start, out s) && long.TryParse(end, out e))
+                return db.getTotalSuccessfulIcebreakCountBetweenTime(long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
+        }
+
+        /******User Stats*************/
+
+        public int getUserIcebreakCount(string username)
+        {
+            HttpContext.Current.Response.ContentType = "text/plain";
+            if (!String.IsNullOrEmpty(username))
+                return db.getUserIcebreakCount(username);
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserSuccessfulIcebreakCount(string username)
+        {
+            if(!String.IsNullOrEmpty(username))
+                return db.getUserSuccessfulIcebreakCount(username);
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserIcebreakCountAtEvent(string username, string event_id)
+        {
+            long id;
+            if (long.TryParse(event_id, out id) && !String.IsNullOrEmpty(username))
+                return db.getUserIcebreakCountAtEvent(username, long.Parse(event_id));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserSuccessfulIcebreakCountAtEvent(string username, string event_id)
+        {
+            long id;
+            if (long.TryParse(event_id, out id) && !String.IsNullOrEmpty(username))
+                return db.getUserSuccessfulIcebreakCountAtEvent(username, long.Parse(event_id));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserIcebreakCountBetweenTime(string username, string start, string end)
+        {
+            long s, e;
+            if (long.TryParse(start, out s) && long.TryParse(end, out e))
+                return db.getUserIcebreakCountBetweenTime(username, long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserSuccessfulIcebreakCountBetweenTime(string username, string start, string end)
+        {
+            long s,e;
+            if (long.TryParse(start, out s) && long.TryParse(end, out e) && !String.IsNullOrEmpty(username))
+                return db.getUserSuccessfulIcebreakCountBetweenTime(username, long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserIcebreakCountBetweenTimeAtEvent(string username, string start, string end, string event_id)
+        {
+            long s, e, id;
+            if (long.TryParse(start, out s) && long.TryParse(end, out e) && long.TryParse(event_id, out id) && !String.IsNullOrEmpty(username))
+                return db.getUserIcebreakCountBetweenTimeAtEvent(username, long.Parse(start), long.Parse(end), long.Parse(event_id));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserSuccessfulIcebreakCountBetweenTimeAtEvent(string username, string start, string end, string event_id)
+        {
+            long s, e, id;
+            if (long.TryParse(start, out s) && long.TryParse(end, out e) && long.TryParse(event_id, out id) && !String.IsNullOrEmpty(username))
+                return db.getUserSuccessfulIcebreakCountBetweenTimeAtEvent(username, long.Parse(start), long.Parse(end), long.Parse(event_id));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getMaxUserIcebreakCountAtOneEvent(string username)
+        {
+            return db.getMaxUserIcebreakCountAtOneEvent(username).Value;
+        }
+
+        public int getMaxUserSuccessfulIcebreakCountAtOneEvent(string username)
+        {
+            return db.getMaxUserSuccessfulIcebreakCountAtOneEvent(username).Value;
+        }
+
+        public int getUserIcebreakCountXHoursApart(string username, string hours)
+        {
+            long hrs;
+            if (long.TryParse(hours, out hrs))
+                return db.getUserIcebreaksXHoursApart(username, long.Parse(hours)).Count;
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getUserSuccessfulIcebreakCountXHoursApart(string username, string hours)
+        {
+            long hrs;
+            if (long.TryParse(hours, out hrs))
+                return db.getUserSuccessfulIcebreaksXHoursApart(username, long.Parse(hours)).Count;
+            else return ErrorCodes.ECONV;
+        }
+
+        public List<Event> getUserEventHistory(string username)
+        {
+            return db.getUserEventHistory(username);
+        }
+
+        public List<Achievement> getUserAchievements(string username)
+        {
+            return db.getUserAchievements(username);
+        }
+
+        /******Event Stats************/
+
+        public int getEventIcebreakCount(string event_id)
+        {
+            long id;
+            if (long.TryParse(event_id, out id))
+                return db.getEventIcebreakCount(long.Parse(event_id));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getEventIcebreakCountBetweenTime(string event_id, string start, string end)
+        {
+            long id, s, e;
+            if (long.TryParse(event_id, out id) && long.TryParse(start, out s) && long.TryParse(end, out e))
+                return db.getEventIcebreakCountBetweenTime(long.Parse(event_id), long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
+        }
+
+        public int getEventSuccessfulIcebreakCountBetweenTime(string event_id, string start, string end)
+        {
+            long id, s, e;
+            if (long.TryParse(event_id, out id) && long.TryParse(start, out s) && long.TryParse(end, out e))
+                return db.getEventSuccessfulIcebreakCountBetweenTime(long.Parse(event_id), long.Parse(start), long.Parse(end));
+            else return ErrorCodes.ECONV;
+        }
+
+        #endregion Statistics
+
+        public Achievement getAchievement(string ach_id)
+        {
+            long id;
+            if (long.TryParse(ach_id, out id))
+                return db.getAchievement(long.Parse(ach_id));
+            else return null;
+        }
+
+        public Reward getReward(string rew_id)
+        {
+            long id;
+            if (long.TryParse(rew_id, out id))
+                return db.getReward(long.Parse(rew_id));
+            else return null;
+        }
+
+        public List<Achievement> getAllAchievements()
+        {
+            return db.getAllAchievements();
+        }
+
+        public List<Reward> getAllRewards()
+        {
+            return db.getAllRewards();
+        }
+
+        public string ping(string username)
+        {
+            string res = db.ping(username);
+            if (res.ToLower().Equals("success"))
+            {
+                List<Achievement> usr_achs = db.getUserAchievements(username);
+                List<Achievement> new_usr_achs = db.getNewUserAchievements(username);
+                if(usr_achs.Count < new_usr_achs.Count)
+                {
+                    User usr = db.getUser(username);
+                    //Has gotten new achievements - send notification
+                    for (int i=usr_achs.Count;i<new_usr_achs.Count;i++)
+                    {
+                        string notif = "{" +
+                                "\"data\": {" +
+                                "\"Achievement_id\": \"" + new_usr_achs.ElementAt(i).Id + "\"}," +
+                                "\"to\": \"" + db.getUserToken(username) + "\"}";
+                        sendNotification(notif);
+
+                        //TODO: Add to User_Achievements bridging table
+                        db.addUserAchievement(new_usr_achs.ElementAt(i), username);
+                        //Increase User points
+                        usr.Points += new_usr_achs.ElementAt(i).Value;
+                    }
+                    db.updateUserDetails(usr);//update user points
+                    //db.addError(123, "["+ (new_usr_achs.Count - usr_achs.Count) + "] new achievements for user ["+username+"].", "ping");
+                }
+            }
+            return res;
+        }
+
+        public List<Reward> getUserPreparedRewardsForEvent(string username, string event_id)
+        {
+            long id;
+            if (long.TryParse(event_id, out id))
+                return db.getUserPreparedRewardsAtEvent(username, long.Parse(event_id));
+            else return null;
+        }
+
+        public string claimReward(string username, string reward_id, string event_id, string code)
+        {
+            return db.claimReward(username, reward_id, event_id, code);
+        }
+
+        public Reward getRewardForEvent(string event_id)
+        {
+            return db.getRewardForEvent(event_id);
+        }
+
+        public List<Reward> getUserRewardsAtEvent(string username, string event_id)
+        {
+            return db.getUserRewardsAtEvent(username, event_id);
+        }
+
+        public List<Reward> getRewardsCreatedByUser(string username)
+        {
+            return db.getRewardsCreatedByUser(username);
+        }
+
+        public string addUserReward(string rw_id, string code, string date, string event_id)
+        {
+            Reward rwd = new Reward();
+            rwd.Code = code;
+            rwd.Id = int.Parse(rw_id);
+            rwd.Date = long.Parse(date);
+            rwd.Event_ID = long.Parse(event_id);
+            return db.addUserReward(rwd);
+        }
+
+        public string redeemReward(string username, string reward_id, string event_id, string code, string new_code)
+        {
+            return db.redeemReward(username, reward_id, event_id, code, new_code);
+        }
+
+        public List<Reward> getRewardsForEvent(string event_id)
+        {
+            return db.getRewardsForEvent(event_id);
+        }
+
+        public int getUserAchievementPoints(string username, string method)
+        {
+            Achievement ach = new Achievement();
+            ach.Method = method;
+            return db.getUserAchievementPoints(ach, username);
         }
     }
 }

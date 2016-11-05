@@ -23,8 +23,18 @@ a
 .btn:focus, .btn:active:focus, .btn.active:focus {
     outline: 0 none;
 }
- 
+.search
+{
+    Color:#808080
+}
+.remove
+{
+    margin-left:2%;
+    background: #f44242;
+    color: #ffffff;
+}
 .btn-primary {
+    margin-left:2%;
     background: #59D0F7;
     color: #ffffff;
 }
@@ -43,10 +53,15 @@ a
     padding-right: 0px;
     padding-left: 0px;
 }
+.floatingEditContainer {
+    bottom: 2em;
+    position: fixed;
+    right: 8em;
+}
 .floatingContainer {
     bottom: 2em;
     position: fixed;
-    right: 6em;
+    right: 2em;
 }
 .actionButton {
     background-color: #59D0F7;

@@ -114,18 +114,23 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AboutUsSlider.aspx" />
     <Content Include="AddEvent.aspx" />
+    <Content Include="EditEvent.aspx" />
     <Content Include="Event.aspx" />
+    <Content Include="images\AboutUs\Company2.jpg" />
+    <Content Include="images\AboutUs\left_icon.png" />
+    <Content Include="images\AboutUs\Office1.jpg" />
+    <Content Include="images\AboutUs\right_icon.png" />
+    <Content Include="images\AboutUs\SLOGAN2.jpg" />
     <Content Include="images\blurred_lines.jpeg" />
     <Content Include="images\favicon.png" />
-    <Content Include="images\image1.jpg" />
     <Content Include="images\image2.jpg" />
     <Content Include="images\iphone.png" />
     <Content Include="images\partyedit.jpg" />
     <Content Include="images\pattern.jpg" />
     <Content Include="images\pencil.png" />
     <Content Include="images\profile.jpg" />
-    <Content Include="images\Tevin.jpg" />
     <Content Include="images\view.JPG" />
     <Content Include="packages.config" />
     <Content Include="ApplicationInsights.config">
@@ -134,6 +139,8 @@
     <Content Include="master.Master" />
     <Content Include="Metadata\deploymentTemplates\apiappconfig.azureresource.json" />
     <Content Include="apiapp.json" />
+    <Content Include="SearchResults.aspx" />
+    <Content Include="YourEvents.aspx" />
     <None Include="compilerconfig.json" />
     <None Include="compilerconfig.json.defaults">
       <DependentUpon>compilerconfig.json</DependentUpon>
@@ -143,7 +150,9 @@
     <None Include="Properties\PublishProfiles\icebreak - Web Deploy.pubxml" />
     <Content Include="scripts\jquery.backstretch.min.js" />
     <Content Include="scripts\scripts.js" />
+    <Content Include="scripts\slider.js" />
     <Content Include="stats.aspx" />
+    <Content Include="stylesheets\about us.css" />
     <Content Include="stylesheets\addeventform.css">
       <DependentUpon>addeventform.scss</DependentUpon>
     </Content>
@@ -185,12 +194,26 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutUsSlider.aspx.cs">
+      <DependentUpon>AboutUsSlider.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AboutUsSlider.aspx.designer.cs">
+      <DependentUpon>AboutUsSlider.aspx</DependentUpon>
+    </Compile>
     <Compile Include="AddEvent.aspx.cs">
       <DependentUpon>AddEvent.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="AddEvent.aspx.designer.cs">
       <DependentUpon>AddEvent.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="EditEvent.aspx.cs">
+      <DependentUpon>EditEvent.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="EditEvent.aspx.designer.cs">
+      <DependentUpon>EditEvent.aspx</DependentUpon>
     </Compile>
     <Compile Include="Event.aspx.cs">
       <DependentUpon>Event.aspx</DependentUpon>
@@ -221,6 +244,13 @@
       <DependentUpon>Profile.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchResults.aspx.cs">
+      <DependentUpon>SearchResults.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SearchResults.aspx.designer.cs">
+      <DependentUpon>SearchResults.aspx</DependentUpon>
+    </Compile>
     <Compile Include="stats.aspx.cs">
       <DependentUpon>stats.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -234,6 +264,13 @@
     </Compile>
     <Compile Include="ViewEvent.aspx.designer.cs">
       <DependentUpon>ViewEvent.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="YourEvents.aspx.cs">
+      <DependentUpon>YourEvents.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="YourEvents.aspx.designer.cs">
+      <DependentUpon>YourEvents.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

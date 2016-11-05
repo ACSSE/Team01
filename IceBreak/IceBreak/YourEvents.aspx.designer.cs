@@ -10,7 +10,7 @@
 namespace IceBreak {
     
     
-    public partial class Event {
+    public partial class YourEvents {
         
         /// <summary>
         /// EventView control.
@@ -22,21 +22,12 @@ namespace IceBreak {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl EventView;
         
         /// <summary>
-        /// AddButton control.
+        /// delete control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAnchor AddButton;
-        
-        /// <summary>
-        /// EditButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlAnchor EditButton;
+        protected global::System.Web.UI.WebControls.Button delete;
     }
 }

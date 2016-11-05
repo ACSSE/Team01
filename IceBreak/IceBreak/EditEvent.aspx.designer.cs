@@ -10,276 +10,276 @@
 namespace IceBreak {
     
     
-    public partial class master {
+    public partial class EditEvent {
         
         /// <summary>
-        /// head control.
+        /// lbl_name control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder head;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl lbl_name;
         
         /// <summary>
-        /// form1 control.
+        /// eventname control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText eventname;
         
         /// <summary>
-        /// YourEvents control.
+        /// address_span control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl YourEvents;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl address_span;
         
         /// <summary>
-        /// login control.
+        /// eventaddress control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl login;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText eventaddress;
         
         /// <summary>
-        /// searchtext control.
+        /// gps_span control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox searchtext;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl gps_span;
         
         /// <summary>
-        /// DIV control.
+        /// gps control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl DIV;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText gps;
         
         /// <summary>
-        /// ScriptManager1 control.
+        /// descrip_span control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.ScriptManager ScriptManager1;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl descrip_span;
         
         /// <summary>
-        /// ContentPlaceHolder1 control.
+        /// eventdescrip control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ContentPlaceHolder ContentPlaceHolder1;
+        protected global::System.Web.UI.HtmlControls.HtmlTextArea eventdescrip;
         
         /// <summary>
-        /// logout control.
+        /// date_span control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button logout;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl date_span;
         
         /// <summary>
-        /// Search control.
+        /// edit_event_date control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Search;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl edit_event_date;
         
         /// <summary>
-        /// loginModal control.
+        /// end_date_span control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl loginModal;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl end_date_span;
         
         /// <summary>
-        /// usernameBox control.
+        /// edit_event_end_date control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl usernameBox;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl edit_event_end_date;
         
         /// <summary>
-        /// txtUsername control.
+        /// time_span control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        public global::System.Web.UI.HtmlControls.HtmlInputText txtUsername;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl time_span;
         
         /// <summary>
-        /// passwordBox control.
+        /// edit_event_time control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl passwordBox;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl edit_event_time;
         
         /// <summary>
-        /// txtPassword control.
+        /// end_time_span control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputPassword txtPassword;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl end_time_span;
         
         /// <summary>
-        /// txtInvalid control.
+        /// edit_event_end_time control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl txtInvalid;
+        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl edit_event_end_time;
         
         /// <summary>
-        /// btnLogin control.
+        /// meeting_span control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnLogin;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl meeting_span;
         
         /// <summary>
-        /// signUpModal control.
+        /// NumEvents control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl signUpModal;
+        protected global::System.Web.UI.WebControls.DropDownList NumEvents;
         
         /// <summary>
-        /// NameBox control.
+        /// meeting_place_1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl NameBox;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText meeting_place_1;
         
         /// <summary>
-        /// txtName control.
+        /// meeting_place_2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputText txtName;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText meeting_place_2;
         
         /// <summary>
-        /// lastNameBox control.
+        /// meeting_place_3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl lastNameBox;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText meeting_place_3;
         
         /// <summary>
-        /// txtLastName control.
+        /// meeting_place_4 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputText txtLastName;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText meeting_place_4;
         
         /// <summary>
-        /// EmailBox control.
+        /// meeting_place_5 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl EmailBox;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText meeting_place_5;
         
         /// <summary>
-        /// txtemail control.
+        /// reward_name_span control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl txtemail;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl reward_name_span;
         
         /// <summary>
-        /// UsernameSignupBox control.
+        /// rewardname control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl UsernameSignupBox;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText rewardname;
         
         /// <summary>
-        /// txtUsrname control.
+        /// rdescrip_span control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputText txtUsrname;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl rdescrip_span;
         
         /// <summary>
-        /// PasswordSignupBox control.
+        /// rewarddescrip control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl PasswordSignupBox;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText rewarddescrip;
         
         /// <summary>
-        /// txtPass control.
+        /// FileUpload control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputPassword txtPass;
+        protected global::System.Web.UI.WebControls.FileUpload FileUpload;
         
         /// <summary>
-        /// Div4 control.
+        /// upload control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl Div4;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl upload;
         
         /// <summary>
-        /// btnRegister control.
+        /// btnUpdateButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRegister;
+        protected global::System.Web.UI.WebControls.Button btnUpdateButton;
     }
 }

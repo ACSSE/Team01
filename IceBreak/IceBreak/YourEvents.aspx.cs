@@ -4,41 +4,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
+using System.Web.Script.Services;
+using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace IceBreak
 {
-    public partial class Event : System.Web.UI.Page
+    public partial class YourEvents : System.Web.UI.Page
     {
+        protected string EventID = "";
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
+
+
+            String username = (string)Session["User"];
+            DBServerTools dbs = new DBServerTools();
+
+
+            List<IcebreakServices.Event> events = dbs.getEventsforUser(username);
+
+            if (events.Any())
             {
-                if (Session["LEVEL"] != null)
-                {
-                    //dbs.addError(ErrorCodes.EEVENT,ex.Message, "Event.aspx[Page_Load]");
-                    int check = (int)Session["LEVEL"];
-                    if (check == 1)
-                    {
-                        EditButton.InnerHtml = "<div class='floatingEditContainer'> " +
-                           " <div class='actionButton'>" +
-                              "<span class='glyphicon glyphicon-pencil glyphicon-center' style='font-size:x-large;color:white;'></span>" +
-                             "</div>" +
-                            "</div>";
-                        AddButton.InnerHtml = "<div class='floatingContainer'>" +
-                            "<div class='actionButton'>" +
-                               "<span class='glyphicon glyphicon-plus glyphicon-center' style='font-size:x-large;color:white;'></span>" +
-                          " </div>" +
-                        "</div>";
-                    }
-                }
-                // Page.ClientScript.RegisterStartupScript(this.GetType(),"onLoad", "<script type='text/javascript'> startTime();</script>", true);
-
-                DBServerTools dbs = new DBServerTools();
-
-                List<IcebreakServices.Event> events = dbs.getAllEvents();
-
                 foreach (IcebreakServices.Event evnt in events)
                 {
                     String picUrl = "http://icebreak.azurewebsites.net/images/events/event_icons-" + evnt.Id + ".png";
@@ -59,7 +46,6 @@ namespace IceBreak
                     catch (WebException ex)
                     {
                         pageExists = false;
-                        //dbs.addError(ErrorCodes.EEVENT, ex.Message, "Event.aspx[Page_Load]");
                     }
 
                     if (!pageExists)
@@ -76,19 +62,44 @@ namespace IceBreak
                         "<div class='col-md-5'>" +
                             "<h3>" + evnt.Title + "</h3>" +
                             "<h4>" + evnt.Address + "</h4>" +
-                            "<p>" + date.ToShortDateString() +" "+date.ToShortTimeString() + "</p>" +
-                            "<a class='btn btn-primary' href='ViewEvent.aspx?evntid=" + evnt.Id + "'>View Event <span class='glyphicon glyphicon-chevron-right'></span></a>" +
+                            "<p>" + date.ToShortDateString() + " " + date.ToShortTimeString() + "</p>" +
+                            "<a class='btn btn-primary' href='ViewEvent.aspx?evntid=" + evnt.Id + "'>View Event <span class='glyphicon glyphicon-chevron-right'></span></a><a class='btn btn-primary' href='EditEvent.aspx?evntid=" + evnt.Id + "'>Edit Event <span class='glyphicon glyphicon-chevron-right'><a href='javascript:Delete(" + evnt.Id + ")' class='btn remove'><span class='glyphicon glyphicon-remove'></span></a>" +
                        " </div>" +
                     "</div>" +
                     "<hr>";
                 }
-
+            }
+            else
+            {
+                EventView.InnerHtml += "You have no events";
             }
         }
         public DateTime FromUnixTime(long unixTime)
         {
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return epoch.AddSeconds(unixTime);
+        }
+        [ScriptMethod,WebMethod]
+        protected void Delete(object sender, CommandEventArgs e)
+        {
+            this.EventID = Request.Form["EventId"];
+           
+
+            DBServerTools dst = new DBServerTools();
+
+            String check1 = dst.deleteReward(this.EventID);
+
+            String check = dst.deleteEvent(this.EventID);
+            if (check.ToLower().Contains("success") && check1.ToLower().Contains("success"))
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "window.location ='YourEvents.aspx';", true);
+            }
+            else
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert(\"Event deletion unsuccessful: " + check + "\");", true);
+            }
+
+
         }
     }
 }

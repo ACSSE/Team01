@@ -1,15 +1,15 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/master.Master" AutoEventWireup="true" CodeBehind="Event.aspx.cs" Inherits="IceBreak.Event" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/master.Master" AutoEventWireup="true" CodeBehind="SearchResults.aspx.cs" Inherits="IceBreak.SearchResults" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-<div id="page-content-wrapper">
-    <div class="container" id="EventView" runat="server">
+    <div id="page-content-wrapper">
+    <div class="container" id="SearchView" runat="server">
 
         <!-- Page Heading -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header"> Events
+                <h1 class="page-header">
                     <small><p id="date"></p></small>
                 </h1>
             </div>
@@ -17,14 +17,7 @@
 
     </div>
 </div>
-   
-<a id="AddButton" href="AddEvent.aspx" runat="server">
-
-</a>
-<a id="EditButton" href="YourEvents.aspx" runat="server">
-
-</a>
-
+    
     <script>
         function startTime() {
             var today = new Date();
@@ -54,4 +47,3 @@
         window.onload = startTime
     </script>
 </asp:Content>
-

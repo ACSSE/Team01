@@ -19,35 +19,37 @@ namespace IceBreak
     
         protected void Page_Load(object sender, EventArgs e)
         {
-            
+            searchtext.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
             if (Session["USER"] != null)
-                {
+            {
                 string check = (string)Session["USER"];
                 string checkName = (string)Session["NAME"];
                 string checkLastName = (string)Session["LASTNAME"];
                 login.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
+                YourEvents.InnerHtml = "<a href='YourEvents.aspx'>Your Events</a>";
                 DIV.InnerHtml = "<a href = '#'>" +
                         "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + check + ".png' alt=''/>" +
                     "</a>" + "<label class='Sidebarname'>" + checkName + " " + checkLastName + "</label>";
                 //DIV.InnerHtml = "<label class='Sidebarname'>" + checkName + " " + checkLastName + "</label>";
-
-
             }
-           
-
-            }
+        }
 
         [ScriptMethod, WebMethod]
         protected void Logout(object sender, EventArgs e)
         {
             if (Session["USER"] != null)
             {
+                Session["LEVEL"] = 0;
                 Session.Clear();
                 Response.Redirect("index.aspx");
             }
         }
-
-
+        [ScriptMethod, WebMethod]
+        protected void SearchEvent(object sender, EventArgs e)
+        {
+            Response.Redirect("SearchResults.aspx?search=" + searchtext.Text);
+           
+        }
         protected void Login(object sender, EventArgs e)
         {
               
@@ -69,18 +71,18 @@ namespace IceBreak
             User user = new User();
             user.Username = username;
             user.Password = password;
-            
 
             DBServerTools dbs = new DBServerTools();
-            String check =  dbs.signIn(user);
 
-            IcebreakServices.User u = dbs.getUser(username);
-            String firstname = u.Fname;
-            String lastname = u.Lname;
+            IcebreakServices.User usr = dbs.getUser(username);
+            
+            String check =  dbs.signIn(user);
 
             if (check.ToLower().Contains("isvaliduser=true"))
             {
-               
+                String firstname = usr.Fname;
+                String lastname = usr.Lname;
+
                 Session["USER"] = username;
                 Session["NAME"] = firstname;
                 Session["LASTNAME"] = lastname;
@@ -88,10 +90,11 @@ namespace IceBreak
                 int lvl  = user.Access_level;
                 Session["LEVEL"] = lvl;
                 login.InnerHtml = "<a href='javascript:Logout()'  runat='server' >Logout " + username + "</a>";
+                YourEvents.InnerHtml = "<a href='YourEvents.aspx'>Your Events</a>";
                 DIV.InnerHtml = "<a href = '#'>" +
                         "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + username + ".png' alt=''/>" +
                     "</a>" + "<label class='Sidebarname'>" + firstname + " " + lastname + "</label>";
-              // DIV.InnerHtml = "<label class='Sidebarname'>" + firstname +" "+ lastname + "</label>";
+                Response.Redirect(Request.RawUrl);
             }
             else
             {
@@ -148,21 +151,15 @@ namespace IceBreak
                 user.Password = pass;
 
 
-            String check=dbs.registerUser(user);
-            
-                
-              
-
-                if (check.ToLower().Contains("success"))
-                {
-                    Session["USER"] = usrname;
-                    login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + usrname + "</a>";
-                }
-                else
-                {
-                    txtInvalid.Style.Clear();
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "loginModal", "$('#loginModal').modal();", true);
-                }
+            if (check.ToLower().Contains("success"))
+            {
+                Session["USER"] = usrname;
+                login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + usrname + "</a>";
+            }
+            else
+            {
+                txtInvalid.Style.Clear();
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "loginModal", "$('#loginModal').modal();", true);
             }
 
         }

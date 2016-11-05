@@ -15,7 +15,7 @@ namespace IcebreakServices
         private string email;
         private string password;
         private int access_level = 0;
-        private int event_id = 0;
+        private long event_id = 0;
         private int age = 0;
         private string gender;
         private string occupaton;
@@ -23,6 +23,8 @@ namespace IcebreakServices
         private string catchphrase;
         private string fb_token;
         private string fb_id;
+        private long _points = 0;
+        private long _last_seen = 0;
 
         /*public User(string fname, string lname, string username, string email)
         {
@@ -175,7 +177,7 @@ namespace IcebreakServices
             }
         }
         [DataMember]
-        public int Event_id
+        public long Event_id
         {
             get
             {
@@ -211,6 +213,34 @@ namespace IcebreakServices
             set
             {
                 fb_id = value;
+            }
+        }
+
+        [DataMember]
+        public long Last_Seen
+        {
+            get
+            {
+                return _last_seen;
+            }
+
+            set
+            {
+                _last_seen = value;
+            }
+        }
+
+        [DataMember]
+        public long Points
+        {
+            get
+            {
+                return _points;
+            }
+
+            set
+            {
+                _points = value;
             }
         }
 
