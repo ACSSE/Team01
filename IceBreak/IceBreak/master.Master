@@ -77,7 +77,7 @@
                 <li><a href="Profile.aspx"><span class="glyphicon glyphicon-user"></span> View Full Profile</a></li>
                 <li><a href="#"><span class="glyphicon glyphicon-book"></span> History</a></li>
                  <li><a href="#"><span class="glyphicon glyphicon-cog"></span> Settings</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
+                <li id="logout2" runat="server"></li>
             </ul>
         </div>
        
@@ -135,7 +135,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Sign Up <span  style="color:#59D0F7">IceBreak</span></h4>
+                        <h4 class="modal-title">Sign Up<span  style="color:#59D0F7">IceBreak</span></h4>
                     </div>
                     <div class="modal-body" id="NameBox" runat="server">
                         <div class="form-inline">

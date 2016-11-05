@@ -26,6 +26,8 @@ namespace IceBreak
                 string checkName = (string)Session["NAME"];
                 string checkLastName = (string)Session["LASTNAME"];
                 login.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
+                logout2.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
+
                 YourEvents.InnerHtml = "<a href='YourEvents.aspx'>Your Events</a>";
                 DIV.InnerHtml = "<a href = '#'>" +
                         "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + check + ".png' alt=''/>" +
@@ -90,6 +92,7 @@ namespace IceBreak
                 int lvl  = user.Access_level;
                 Session["LEVEL"] = lvl;
                 login.InnerHtml = "<a href='javascript:Logout()'  runat='server' >Logout " + username + "</a>";
+                logout2.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
                 YourEvents.InnerHtml = "<a href='YourEvents.aspx'>Your Events</a>";
                 DIV.InnerHtml = "<a href = '#'>" +
                         "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + username + ".png' alt=''/>" +
@@ -155,6 +158,8 @@ namespace IceBreak
             {
                 Session["USER"] = usrname;
                 login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + usrname + "</a>";
+
+                logout2.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
             }
             else
             {
