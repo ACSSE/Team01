@@ -16,7 +16,7 @@ namespace IceBreak
 {
     public partial class master : System.Web.UI.MasterPage
     {
-    
+
         protected void Page_Load(object sender, EventArgs e)
         {
             searchtext.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
@@ -50,14 +50,14 @@ namespace IceBreak
         protected void SearchEvent(object sender, EventArgs e)
         {
             Response.Redirect("SearchResults.aspx?search=" + searchtext.Text);
-           
+
         }
         protected void Login(object sender, EventArgs e)
         {
-              
+
             string username = txtUsername.Value;
             string password = txtPassword.Value;
-            
+
             if (String.IsNullOrEmpty(username))
             {
                 usernameBox.Attributes.Add("class", "form-inline has-error has-feedback");
@@ -77,8 +77,8 @@ namespace IceBreak
             DBServerTools dbs = new DBServerTools();
 
             IcebreakServices.User usr = dbs.getUser(username);
-            
-            String check =  dbs.signIn(user);
+
+            String check = dbs.signIn(user);
 
             if (check.ToLower().Contains("isvaliduser=true"))
             {
@@ -89,7 +89,7 @@ namespace IceBreak
                 Session["NAME"] = firstname;
                 Session["LASTNAME"] = lastname;
                 user = dbs.getUser(username);
-                int lvl  = user.Access_level;
+                int lvl = user.Access_level;
                 Session["LEVEL"] = lvl;
                 login.InnerHtml = "<a href='javascript:Logout()'  runat='server' >Logout " + username + "</a>";
                 logout2.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
@@ -108,51 +108,52 @@ namespace IceBreak
         }
         protected void SignUp(object sender, EventArgs e)
         {
-                DBServerTools dbs = new DBServerTools();
-                string name = txtName.Value;
-                string lastname = txtLastName.Value;
-                string email = txtemail.Value;
-                string usrname = txtUsrname.Value;
-                string pass = txtPass.Value;
-                if (String.IsNullOrEmpty(name))
-                {
-                    NameBox.Attributes.Add("class", "form-inline has-error has-feedback");
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
-                    return;
-                }
-                if (String.IsNullOrEmpty(lastname))
-                {
-                    lastNameBox.Attributes.Add("class", "form-inline has-error has-feedback");
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
-                    return;
-                }
-                if (String.IsNullOrEmpty(email))
-                {
-                    EmailBox.Attributes.Add("class", "form-inline has-error has-feedback");
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
-                    return;
-                }
-                if (String.IsNullOrEmpty(usrname))
-                {
-                    UsernameSignupBox.Attributes.Add("class", "form-inline has-error has-feedback");
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
-                    return;
-                }
-                if (String.IsNullOrEmpty(pass))
-                {
-                    PasswordSignupBox.Attributes.Add("class", "form-inline has-error has-feedback");
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
-                    return;
-                }
+            DBServerTools dbs = new DBServerTools();
+            string name = txtName.Value;
+            string lastname = txtLastName.Value;
+            string email = txtemail.Value;
+            string usrname = txtUsrname.Value;
+            string pass = txtPass.Value;
+            if (String.IsNullOrEmpty(name))
+            {
+                NameBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            if (String.IsNullOrEmpty(lastname))
+            {
+                lastNameBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            if (String.IsNullOrEmpty(email))
+            {
+                EmailBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            if (String.IsNullOrEmpty(usrname))
+            {
+                UsernameSignupBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
+            if (String.IsNullOrEmpty(pass))
+            {
+                PasswordSignupBox.Attributes.Add("class", "form-inline has-error has-feedback");
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
+                return;
+            }
 
 
-                User user = new User();
-                user.Fname = name;
-                user.Lname = lastname;
-                user.Email = email;
-                user.Username = usrname;
-                user.Password = pass;
+            User user = new User();
+            user.Fname = name;
+            user.Lname = lastname;
+            user.Email = email;
+            user.Username = usrname;
+            user.Password = pass;
 
+            String check = dbs.registerUser(user);
 
             if (check.ToLower().Contains("success"))
             {
@@ -168,6 +169,7 @@ namespace IceBreak
             }
 
         }
-     
+
 
     }
+}
