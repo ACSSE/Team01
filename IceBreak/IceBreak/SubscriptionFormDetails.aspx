@@ -1,17 +1,15 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/master.Master" AutoEventWireup="true" CodeBehind="SubscriptionFormDetails.aspx.cs" Inherits="IceBreak.SubscriptionFormDetails" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-     
+    <script src="scripts/jquery.backstretch.min.js"></script>
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="stylesheets/SubscriptionForm.css" />
- <link rel="stylesheet" href="~/stylesheets/sidebar.css" runat="server"/>
+    
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <body>
+
         <div class ="thecontainer">
              <h1 >Become an Event Manager today!</h1>
-  
-        <form>
 
 
             <div class="contentform">
@@ -19,7 +17,7 @@
 
                 <div class="leftcontact">
                     <div class="form-group">
-                        <p>Surname<span>*</span></p>
+                        <p class="heading2">Surname<span>*</span></p>
                         <span class="icon-case"><i class="fa fa-male"></i></span>
                         <input type="text" name="nom" id="nom" data-rule="required" data-msg="Vérifiez votre saisie sur les champs : Le champ 'Nom' doit être renseigné." />
                         <div class="validation"></div>
@@ -104,12 +102,12 @@
             </div>
             <button type="submit" class="bouton-contact">Submit</button>
 
-        </form>	
         </div>
-	 
-
-  
-</body>
-</html>
+	
+    <script type="text/javascript">
+         jQuery(document).ready(function () {
+             $.backstretch("images/pic4.jpg");
+         });
+     </script>
 
 </asp:Content>

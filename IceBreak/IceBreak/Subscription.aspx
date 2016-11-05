@@ -17,13 +17,13 @@
                         <hr class="intro-divider">
                         <ul class="list-inline intro-social-buttons">
                             <li>
-                                <a href="https://twitter.com/SBootstrap" class="btn btn-default btn-lg"><span class="network-name">Monthly R99</span></a>
+                                <a href="SubscriptionFormDetails.aspx" class="btn btn-default btn-lg"><span class="network-name">Monthly R99</span></a>
                             </li>
                             <li>
-                                <a href="https://github.com/IronSummitMedia/startbootstrap" class="btn btn-default btn-lg"> <span class="network-name">Yearly R999</span></a>
+                                <a href="SubscriptionFormDetails.aspx" class="btn btn-default btn-lg"> <span class="network-name">Yearly R999</span></a>
                             </li>
                             <li>
-                                <a href="#" class="btn btn-default btn-lg"> <span class="network-name">Once Off</span></a>
+                                <a href="SubscriptionFormDetails.aspx" class="btn btn-default btn-lg"> <span class="network-name">Once Off</span></a>
                             </li>
                         </ul>
                     </div>
