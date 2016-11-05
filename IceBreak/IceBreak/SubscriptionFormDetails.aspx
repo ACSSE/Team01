@@ -9,7 +9,7 @@
 
 
         <div class ="thecontainer">
-             <h1 >Become an Event Manager today!</h1>
+             <h1>Become an Event Manager today!</h1>
 
 
             <div class="contentform">
@@ -100,7 +100,7 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="bouton-contact">Submit</button>
+             <asp:Button runat="server" ID="btnChangeAccess"  UseSubmitBehavior="true" CssClass="bouton-contact" OnClick="ChangeAccess" Text="Submit"></asp:Button>
 
         </div>
 	
