@@ -140,6 +140,7 @@
     <Content Include="master.Master" />
     <Content Include="Metadata\deploymentTemplates\apiappconfig.azureresource.json" />
     <Content Include="apiapp.json" />
+    <Content Include="stylesheets\SubscriptionForm.css" />
     <Content Include="SearchResults.aspx" />
     <Content Include="stylesheets\Subscription.css">
       <DependentUpon>Subscription.scss</DependentUpon>
