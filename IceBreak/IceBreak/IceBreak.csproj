@@ -131,6 +131,7 @@
     <Content Include="images\pattern.jpg" />
     <Content Include="images\pencil.png" />
     <Content Include="images\profile.jpg" />
+    <Content Include="images\subscription.jpg" />
     <Content Include="images\view.JPG" />
     <Content Include="packages.config" />
     <Content Include="ApplicationInsights.config">
@@ -140,6 +141,13 @@
     <Content Include="Metadata\deploymentTemplates\apiappconfig.azureresource.json" />
     <Content Include="apiapp.json" />
     <Content Include="SearchResults.aspx" />
+    <Content Include="stylesheets\Subscription.css">
+      <DependentUpon>Subscription.scss</DependentUpon>
+    </Content>
+    <Content Include="stylesheets\Subscription.min.css">
+      <DependentUpon>Subscription.css</DependentUpon>
+    </Content>
+    <Content Include="Subscription.aspx" />
     <Content Include="YourEvents.aspx" />
     <None Include="compilerconfig.json" />
     <None Include="compilerconfig.json.defaults">
@@ -175,6 +183,7 @@
       <DependentUpon>ViewEvent.css</DependentUpon>
     </Content>
     <Content Include="stylesheets\ViewEvent.scss" />
+    <Content Include="stylesheets\Subscription.scss" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -257,6 +266,13 @@
     </Compile>
     <Compile Include="stats.aspx.designer.cs">
       <DependentUpon>stats.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Subscription.aspx.cs">
+      <DependentUpon>Subscription.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Subscription.aspx.designer.cs">
+      <DependentUpon>Subscription.aspx</DependentUpon>
     </Compile>
     <Compile Include="ViewEvent.aspx.cs">
       <DependentUpon>ViewEvent.aspx</DependentUpon>

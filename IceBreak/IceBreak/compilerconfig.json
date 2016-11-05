@@ -10,5 +10,9 @@
   {
     "outputFile": "stylesheets/ViewEvent.css",
     "inputFile": "stylesheets/ViewEvent.scss"
+  },
+  {
+    "outputFile": "stylesheets/Subscription.css",
+    "inputFile": "stylesheets/Subscription.scss"
   }
 ]

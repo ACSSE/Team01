@@ -7,11 +7,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IceBreak
-{
-
-
-    public partial class Subscription
-    {
+namespace IceBreak {
+    
+    
+    public partial class Subscription {
     }
 }
