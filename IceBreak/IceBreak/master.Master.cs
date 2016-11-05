@@ -16,7 +16,7 @@ namespace IceBreak
 {
     public partial class master : System.Web.UI.MasterPage
     {
-    
+
         protected void Page_Load(object sender, EventArgs e)
         {
             searchtext.Attributes.Add("onkeydown", "return (event.keyCode!=13);");
@@ -26,6 +26,8 @@ namespace IceBreak
                 string checkName = (string)Session["NAME"];
                 string checkLastName = (string)Session["LASTNAME"];
                 login.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
+                logout2.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
+
                 YourEvents.InnerHtml = "<a href='YourEvents.aspx'>Your Events</a>";
                 DIV.InnerHtml = "<a href = '#'>" +
                         "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + check + ".png' alt=''/>" +
@@ -48,14 +50,14 @@ namespace IceBreak
         protected void SearchEvent(object sender, EventArgs e)
         {
             Response.Redirect("SearchResults.aspx?search=" + searchtext.Text);
-           
+
         }
         protected void Login(object sender, EventArgs e)
         {
-              
+
             string username = txtUsername.Value;
             string password = txtPassword.Value;
-            
+
             if (String.IsNullOrEmpty(username))
             {
                 usernameBox.Attributes.Add("class", "form-inline has-error has-feedback");
@@ -75,8 +77,8 @@ namespace IceBreak
             DBServerTools dbs = new DBServerTools();
 
             IcebreakServices.User usr = dbs.getUser(username);
-            
-            String check =  dbs.signIn(user);
+
+            String check = dbs.signIn(user);
 
             if (check.ToLower().Contains("isvaliduser=true"))
             {
@@ -87,9 +89,10 @@ namespace IceBreak
                 Session["NAME"] = firstname;
                 Session["LASTNAME"] = lastname;
                 user = dbs.getUser(username);
-                int lvl  = user.Access_level;
+                int lvl = user.Access_level;
                 Session["LEVEL"] = lvl;
                 login.InnerHtml = "<a href='javascript:Logout()'  runat='server' >Logout " + username + "</a>";
+                logout2.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
                 YourEvents.InnerHtml = "<a href='YourEvents.aspx'>Your Events</a>";
                 DIV.InnerHtml = "<a href = '#'>" +
                         "<img class='image-circle' src='http://icebreak.azurewebsites.net/images/profile/" + username + ".png' alt=''/>" +
@@ -105,6 +108,7 @@ namespace IceBreak
         }
         protected void SignUp(object sender, EventArgs e)
         {
+            DBServerTools dbs = new DBServerTools();
             string name = txtName.Value;
             string lastname = txtLastName.Value;
             string email = txtemail.Value;
@@ -140,6 +144,8 @@ namespace IceBreak
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "signUpModal", "$('#signUpModal').modal();", true);
                 return;
             }
+
+
             User user = new User();
             user.Fname = name;
             user.Lname = lastname;
@@ -147,14 +153,14 @@ namespace IceBreak
             user.Username = usrname;
             user.Password = pass;
 
-            DBServerTools dbs = new DBServerTools();
-            dbs.registerUser(user);
             String check = dbs.registerUser(user);
 
             if (check.ToLower().Contains("success"))
             {
                 Session["USER"] = usrname;
                 login.InnerHtml = "<a href='#' data-toggle='modal' data-target='#loginModal' >Logout " + usrname + "</a>";
+
+                logout2.InnerHtml = "<a href='javascript:Logout()' runat='server'>Logout " + check + "</a>";
             }
             else
             {
@@ -162,25 +168,8 @@ namespace IceBreak
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "loginModal", "$('#loginModal').modal();", true);
             }
 
-
-
         }
-        //protected void profilePic()
-        //{
-        //    DBServerTools dbs = new DBServerTools();
-        //    User user = new User();
-        //    string username = txtUsername.Value;
-        //    user.Username = username;
-        //    String check = dbs.userExists(user);
-        //    string usr = (string)Session["USER"];
-        //    username = usr;
 
-        //    dbs.getUser(username);
-        //    pp.InnerHtml += "<a href = '#'>" +
-        //                   "<img class='img-circle' src='http://icebreak.azurewebsites.net/images/profile/" + usr + ".png' alt=''/>" +
-        //               "</a>";
-
-        //}
 
     }
 }
