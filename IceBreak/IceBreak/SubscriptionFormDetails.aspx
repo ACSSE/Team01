@@ -64,7 +64,7 @@
                 <div class="rightcontact">
 
                     <div class="form-group">
-                       <p class="heading2">Card Numebr <span>*</span></p>
+                       <p class="heading2">Card Number <span>*</span></p>
                         <span class="icon-case"><i class="fa fa-info"></i></span>
                         <input type="text" name="fonction" id="fonction" data-rule="required" data-msg="Vérifiez votre saisie sur les champs : Le champ 'Fonction' doit être renseigné." />
                         <div class="validation"></div>
@@ -104,7 +104,7 @@
                     </div>
                 </div>
             </div>
-             <asp:Button runat="server" ID="btnChangeAccess"  UseSubmitBehavior="true" CssClass="bouton-contact" OnClick="ChangeAccess" Text="Submit"></asp:Button>
+             <asp:Button runat="server" ID="btnChangeAccess"  UseSubmitBehavior="true" CssClass="SButton" OnClick="ChangeAccess" Text="Submit"></asp:Button>
 
         </div>
 	
