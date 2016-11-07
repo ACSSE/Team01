@@ -51,13 +51,13 @@ namespace IceBreak
                         IcebreakServices.Event curr_event=null;
                         if (id > 0)
                             curr_event = dbTools.getEvent(Convert.ToString(id));
-                        string overview_html = "<div style='width:400px;height:auto;margin:auto;background-color:#e2e2e2;border-radius:5px;border:1px solid #494949;'>"
-                                                        + "<p># total Icebreaks: " + dbTools.getUserIcebreakCount(usr) + "</p>"
-                                                        + "<p># successful Icebreaks: " + dbTools.getUserSuccessfulIcebreakCount(usr) + "</p>";
+                        string overview_html = "<div style='width:400px;height:auto;margin:auto;background-color:#ffff;border-radius:5px;border:1px solid #494949;'>"
+                                                        + "<p >Total Icebreaks: " + dbTools.getUserIcebreakCount(usr) + "</p>"
+                                                        + "<p> Successful Icebreaks: " + dbTools.getUserSuccessfulIcebreakCount(usr) + "</p>";
                         if (curr_event != null)
                         {
-                            overview_html += "<p># Icebreaks at '" + curr_event.Title + "': " + dbTools.getUserIcebreakCountAtEvent(usr, id) + "</p>";
-                            overview_html += "<p># successful Icebreaks at '" + curr_event.Title + "': " + dbTools.getUserSuccessfulIcebreakCountAtEvent(usr, id) + "</p>";
+                            overview_html += "<p>Number of Icebreaks at '" + curr_event.Title + "': " + dbTools.getUserIcebreakCountAtEvent(usr, id) + "</p>";
+                            overview_html += "<p>Number of successful Icebreaks at '" + curr_event.Title + "': " + dbTools.getUserSuccessfulIcebreakCountAtEvent(usr, id) + "</p>";
                         }
                         overview_html += "</div>";
 
@@ -394,20 +394,20 @@ namespace IceBreak
                                                         + "label: '"+label+"',"
                                                         + "data: [" + y_axis + "],"
                                                         + "backgroundColor: ["
-                                                            + "'rgba(255, 99, 132, 0.2)',"
-                                                            + "'rgba(54, 162, 235, 0.2)',"
-                                                            + "'rgba(255, 206, 86, 0.2)',"
-                                                            + "'rgba(75, 192, 192, 0.2)',"
-                                                            + "'rgba(153, 102, 255, 0.2)',"
-                                                            + "'rgba(255, 159, 64, 0.2)'"
+                                                            + "'rgba(70 , 189, 240, 0.5)',"
+                                                            + "'rgba(70 , 189, 240, 0.5)',"
+                                                            + "'rgba(70 , 189, 240, 0.5)',"
+                                                            + "'rgba(70 , 189, 240, 0.5)',"
+                                                            + "'rgba(70 , 189, 240, 0.5)',"
+                                                            + "'rgba(70 , 189, 240, 0.5)'"
                                                         + "],"
                                                         + "borderColor: ["
-                                                            + "'rgba(255,99,132,1)',"
-                                                            + "'rgba(54, 162, 235, 1)',"
-                                                            + "'rgba(255, 206, 86, 1)',"
-                                                            + "'rgba(75, 192, 192, 1)',"
-                                                            + "'rgba(153, 102, 255, 1)',"
-                                                            + "'rgba(255, 159, 64, 1)'"
+                                                            + "'rgba(70 , 189, 240, 1)',"
+                                                            + "'rgba(70 , 189, 240, 1)',"
+                                                            + "'rgba(70 , 189, 240, 1)',"
+                                                            + "'rgba(70 , 189, 240, 1)',"
+                                                            + "'rgba(70 , 189, 240, 1)',"
+                                                            + "'rgba(70 , 189, 240, 1)'"
                                                         + "],"
                                                         + "borderWidth:1"
                                                     + "}"
