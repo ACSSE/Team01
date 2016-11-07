@@ -51,13 +51,13 @@ namespace IceBreak
                         IcebreakServices.Event curr_event=null;
                         if (id > 0)
                             curr_event = dbTools.getEvent(Convert.ToString(id));
-                        string overview_html = "<div style='width:400px;height:auto;margin:auto;background-color:#ffff;border-radius:5px;border:1px solid #494949;'>"
-                                                        + "<p >Total Icebreaks: " + dbTools.getUserIcebreakCount(usr) + "</p>"
-                                                        + "<p> Successful Icebreaks: " + dbTools.getUserSuccessfulIcebreakCount(usr) + "</p>";
+                        string overview_html = "<div style='width:500px;height:auto;margin:auto;background-color:#ffff;border-radius:3px;border:1px solid #494949;font-family:Lucida Sans Unicode'>"
+                                                        + "<li><p style='margin-left:3%' >Total Icebreaks: " + dbTools.getUserIcebreakCount(usr) + "</p></li>"
+                                                        + "<li><p style='margin-left:3%' > Successful Icebreaks: " + dbTools.getUserSuccessfulIcebreakCount(usr) + "</p></li>";
                         if (curr_event != null)
                         {
-                            overview_html += "<p>Number of Icebreaks at '" + curr_event.Title + "': " + dbTools.getUserIcebreakCountAtEvent(usr, id) + "</p>";
-                            overview_html += "<p>Number of successful Icebreaks at '" + curr_event.Title + "': " + dbTools.getUserSuccessfulIcebreakCountAtEvent(usr, id) + "</p>";
+                            overview_html += "<li><p style='margin-left:3%' >Number of Icebreaks at '" + curr_event.Title + "': " + dbTools.getUserIcebreakCountAtEvent(usr, id) + "</p></li>";
+                            overview_html += "<li><p style='margin-left:3%' >Number of successful Icebreaks at '" + curr_event.Title + "': " + dbTools.getUserSuccessfulIcebreakCountAtEvent(usr, id) + "</p></li>";
                         }
                         overview_html += "</div>";
 
@@ -116,7 +116,7 @@ namespace IceBreak
                                                                                 graph_h, 
                                                                                 vpad, 
                                                                                 graph_type,
-                                                                                "# of user Icebreaks",
+                                                                                "Number of Icebreaks user made",
                                                                                 dbTools);
 
                             //Get successful Icebreak count graph
@@ -125,7 +125,7 @@ namespace IceBreak
                                                                                             graph_h, 
                                                                                             vpad, 
                                                                                             graph_type,
-                                                                                            "# of successful user Icebreaks",
+                                                                                            "Number of succesful Icebreaks user made",
                                                                                             dbTools);
 
                             //Get unsuccessful Icebreak count graph
@@ -134,7 +134,7 @@ namespace IceBreak
                                                                                             graph_h,
                                                                                             vpad,
                                                                                             graph_type,
-                                                                                            "# of unsuccessful user Icebreaks",
+                                                                                            "Number of unsuccesful Icebreaks user made",
                                                                                             dbTools);
 
                             int usr_img_size = 90;//px
@@ -144,7 +144,7 @@ namespace IceBreak
                             {
                                 string img_url = "./images/profile/" + u.Username + ".png";
                                 string name = String.IsNullOrEmpty(u.Fname) ? "Anonymous" : u.Fname + " " + u.Lname;
-                                users_at_event_html += "<div style='width:500px;height:100px;margin:auto;background-color:#e2e2e2;border:1px solid #343434;'>"
+                                users_at_event_html += "<div style='width:500px;height:100px;margin:auto;background-color:#ffff;border:1px solid #343434;'>"
                                                             + "<div style='border-radius:100px;width:" + usr_img_size + "px;height:"+ usr_img_size + "px;float:left;'>"
                                                                 + "<img style='border-radius:100px;border:1px solid #343434;' src='" + img_url+"' height='"+ usr_img_size + "' width='"+ usr_img_size + "' alt='"+name+" profile image'/>"
                                                             +"</div>"
@@ -157,11 +157,11 @@ namespace IceBreak
                             int GRAPH_VPOS_OFFSET = 10;//px;
                             //" + (graph_h*NUM_GRAPHS+GRAPH_VPOS_OFFSET) + "
 
-                            string overview_html = "<div style='width:400px;height:auto;margin:auto;background-color:#e2e2e2;border-radius:5px;border:1px solid #494949;'>"
-                                                        + "<p># users at " + selected_event.Title + ": " + users_at_event.Count + "</p>"
-                                                        + "<p># Icebreak count at " + selected_event.Title + ": " + dbTools.getEventIcebreakCountBetweenTime(selected_event.Id, selected_event.Date, selected_event.End_Date) + "</p>"
-                                                        + "<p># successful Icebreaks at " + selected_event.Title + ": " + dbTools.getEventSuccessfulIcebreakCountBetweenTime(selected_event.Id,selected_event.Date,selected_event.End_Date) + "</p>"
-                                                        + "<p># unsuccessful Icebreaks at " + selected_event.Title + ": " + dbTools.getEventUnsuccessfulIcebreakCountBetweenTime(selected_event.Id, selected_event.Date, selected_event.End_Date) + "</p>"
+                            string overview_html = "<div style='width:400px;height:auto;margin:auto;background-color:#ffff;border-radius:5px;border:1px solid #494949;'>"
+                                                        + "<p>Number of users at " + selected_event.Title + ": " + users_at_event.Count + "</p>"
+                                                        + "<p>Number of Icebreak count at " + selected_event.Title + ": " + dbTools.getEventIcebreakCountBetweenTime(selected_event.Id, selected_event.Date, selected_event.End_Date) + "</p>"
+                                                        + "<p>Number of successful Icebreaks at " + selected_event.Title + ": " + dbTools.getEventSuccessfulIcebreakCountBetweenTime(selected_event.Id,selected_event.Date,selected_event.End_Date) + "</p>"
+                                                        + "<p>Number of unsuccessful Icebreaks at " + selected_event.Title + ": " + dbTools.getEventUnsuccessfulIcebreakCountBetweenTime(selected_event.Id, selected_event.Date, selected_event.End_Date) + "</p>"
                                                     +"</div>";
                             string canvas_html =
                                  "<div style='width:" + graph_w + "px;height:auto;margin-left:auto;margin-right:auto;margin-top:" + vpad + "px;'>"
@@ -504,7 +504,7 @@ namespace IceBreak
                     u.Event_id = id;
                     List<Reward> user_rewards = dbTools.getUserRewardsAtEvent(u.Username, Convert.ToString(u.Event_id));
 
-                    users_html += "<div style='width:600px;height:140px;margin:auto;background-color:#e2e2e2;border:1px solid #343434;border-radius:10px;'>"
+                    users_html += "<div style='width:600px;height:140px;margin:auto;background-color:#ffff;border:1px solid #343434;border-radius:3px;'>"
                                     + "<div style='border-radius:" + usr_img_size + "px;width:" + usr_img_size + "px;height:" + usr_img_size + "px;float:left;'>"
                                         + "<img style='border-radius:" + usr_img_size + "px;border:1px solid #343434;' src='" + img_url + "' height='" + usr_img_size + "' width='" + usr_img_size + "' alt='" + name + " profile image'/>"
                                     + "</div>"
