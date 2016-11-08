@@ -742,7 +742,8 @@ namespace IcebreakServices
                         string notif = "{" +
                                 "\"data\": {" +
                                 "\"msg_id\": \"" + new_msg.Message_id + "\"}," +
-                                "\"to\": \"" + reg_token_rec + "\"}";
+                                "\"to\": \"" + reg_token_rec + 
+                                "\"}";
                         //send push notification to receiver
                         sendNotification(notif);
 
@@ -1432,7 +1433,6 @@ namespace IcebreakServices
                                 "\"to\": \"" + db.getUserToken(username) + "\"}";
                         sendNotification(notif);
 
-                        //TODO: Add to User_Achievements bridging table
                         db.addUserAchievement(new_usr_achs.ElementAt(i), username);
                         //Increase User points
                         usr.Points += new_usr_achs.ElementAt(i).Value;
@@ -1440,6 +1440,18 @@ namespace IcebreakServices
                     db.updateUserDetails(usr);//update user points
                     //db.addError(123, "["+ (new_usr_achs.Count - usr_achs.Count) + "] new achievements for user ["+username+"].", "ping");
                 }
+                //Check Icebreaks
+                List<Message> messages = db.checkUserInbox(username);
+                foreach (Message m in messages)
+                {
+                    string notif = "{" +
+                            "\"data\": {" +
+                            "\"msg_id\": \"" + m.Message_id + "\"}," +
+                            "\"to\": \"" + username + "\"}";
+                    //send push notification to User
+                    sendNotification(notif);
+                }
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
             }
             return res;
         }
@@ -1484,7 +1496,10 @@ namespace IcebreakServices
 
         public string redeemReward(string username, string reward_id, string event_id, string code, string new_code)
         {
-            return db.redeemReward(username, reward_id, event_id, code, new_code);
+            string response = db.redeemReward(username, reward_id, event_id, code, new_code);
+            //if (response.ToLower().Contains("success"))
+            //    WebOperationContext.Current.OutgoingResponse.Location = "http://icebreak.azurewebsites.net/stats.aspx?notif_msg=Success";
+            return response;
         }
 
         public List<Reward> getRewardsForEvent(string event_id)
@@ -1508,6 +1523,16 @@ namespace IcebreakServices
                 event_ids.Add(Convert.ToString(e.Id));
             }
             return event_ids;
+        }
+
+        public Reward getUserReward(string username, string rw_id)
+        {
+            return db.getUserReward(username, rw_id);
+        }
+
+        public List<Reward> getRewardsAtEvent(string event_id)
+        {
+            return db.getRewardsAtEvent(event_id);
         }
     }
 }

@@ -14,17 +14,18 @@ namespace IceBreak
         protected void Page_Load(object sender, EventArgs e)
         {
             loading_qr_ico.Visible = false;
-            if (Session["LEVEL"] != null || Session["USER"] != null)
+            if (Session["LEVEL"] != null && Session["USER"] != null)
             {
                 int check = (int)Session["LEVEL"];
                 if (check >= 0)
                 {
-                    divQR.Style.Add("display", "normal");
+                    //divQR.Style.Add("display", "normal");
                     loading_qr_ico.Visible = true;
                 }
                 else
                 {
                     ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('You do not have access to this page');window.location ='index.aspx';", true);
+                    Response.Redirect("http://icebreak.azurewebsites.net/index.aspx");
                     return;
                 }
             }
@@ -35,19 +36,14 @@ namespace IceBreak
 
             IcebreakServices.Event evnt = dbs.getEvent(eventid);
 
-            if(evnt==null)
-                return;
-            if (Session["LEVEL"] != null)
+            if (evnt == null)
             {
-                if ((int)Session["LEVEL"] > 0)
-                {
-                    if (qr_code != null)
-                    {
-                        qr_code.Src = "https://chart.googleapis.com/chart?cht=qr&chl=" + evnt.AccessCode + "&chs=400x400";
-                        loading_qr_ico.Visible = false;
-                    }
-                } 
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Event object is null.');window.location ='index.aspx';", true);
+                return;
             }
+            qr_code.Src = "http://chart.googleapis.com/chart?cht=qr&chl=" + evnt.AccessCode + "&chs=400x400";
+            access_code.InnerText = "The access code is " + Convert.ToString(evnt.AccessCode);
+            loading_qr_ico.Visible = true;
 
             String picUrl = "http://icebreak.azurewebsites.net/images/events/event_icons-" + evnt.Id + ".png";
             //String server = "http://icebreak.azurewebsites.net";
@@ -95,10 +91,6 @@ namespace IceBreak
             EventAddress.InnerHtml = "Address: " + evnt.Address;
 
             EVentDescription.InnerHtml = evnt.Description;
-        }
-        protected void btnGenerateQR(object sender, EventArgs e)
-        {
-
         }
 
         public DateTime FromUnixTime(long unixTime)

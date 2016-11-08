@@ -53,7 +53,7 @@ namespace IcebreakServices
                     conn = new SqlConnection(dbConnectionString);
                     conn.Open();
 
-                    if(user.Access_level>=0)
+                    if(user.Access_level>0)
                     {
                         cmd = new SqlCommand("UPDATE [dbo].[Users] SET access_level=@lvl WHERE username=@usr", conn);
                         cmd.Parameters.AddWithValue(@"lvl", user.Access_level);
@@ -1140,6 +1140,55 @@ namespace IcebreakServices
             }
         }
 
+        public Reward getUserReward(string username, string rw_id)
+        {
+            Reward reward = null;
+            long id = 0;
+            if (long.TryParse(rw_id, out id))
+                reward = getReward(id);
+            else return null;
+            if (reward != null)
+            {
+                conn = new SqlConnection(dbConnectionString);
+                try
+                {
+                    conn.Open();
+
+                    cmd = new SqlCommand("SELECT * FROM [dbo].[User_Rewards] WHERE Reward_id=@id AND username=@usr", conn);
+                    cmd.Parameters.AddWithValue(@"id", rw_id);
+                    cmd.Parameters.AddWithValue(@"usr", username);
+
+                    dataReader = cmd.ExecuteReader();
+
+                    if (dataReader.HasRows)
+                    {
+                        dataReader.Read();
+                        //reward = new Reward();
+
+                        long rwd_id = long.Parse(Convert.ToString(dataReader.GetValue(1)));
+
+                        reward.Id = rwd_id;
+                        reward.Code = Convert.ToString(dataReader.GetValue(3));
+                        reward.Date = long.Parse(Convert.ToString(dataReader.GetValue(4)));
+                        reward.Event_ID = long.Parse(Convert.ToString(dataReader.GetValue(5)));
+                        reward.Owner = username;
+                    }
+
+                    dataReader.Close();
+                    cmd.Dispose();
+                    conn.Close();
+
+                    return reward;
+                }
+                catch (Exception e)
+                {
+                    addError(ErrorCodes.EREW, e.Message, "getUserReward");
+                    return null;
+                }
+            }
+            else return null;
+        }
+
         public List<Reward> getRewardsCreatedByUser(string username)
         {
             List<Reward> rewards = null;
@@ -1194,6 +1243,50 @@ namespace IcebreakServices
             catch (Exception e)
             {
                 addError(ErrorCodes.EREW, e.Message, "getRewardsCreatedByUser");
+                return null;
+            }
+        }
+
+        public List<Reward> getRewardsAtEvent(string event_id)
+        {
+            List<Reward> rewards = null;
+            conn = new SqlConnection(dbConnectionString);
+            try
+            {
+                rewards = new List<Reward>();
+                conn.Open();
+
+                cmd = new SqlCommand("SELECT * FROM [dbo].[Rewards] WHERE Event_id=@event_id", conn);
+                cmd.Parameters.AddWithValue(@"event_id", event_id);
+
+                dataReader = cmd.ExecuteReader();
+                Reward reward = new Reward();
+
+                if (dataReader.HasRows)
+                {
+                    while (dataReader.Read())
+                    {
+                        reward = new Reward()
+                        {
+                            Id = long.Parse(Convert.ToString(dataReader.GetValue(0))),
+                            Name = (string)dataReader.GetValue(1),
+                            Description = (string)dataReader.GetValue(2),
+                            Owner = (string)dataReader.GetValue(3),
+                            Value = (int)dataReader.GetValue(4)
+                        };
+                        rewards.Add(reward);
+                    }
+                }
+
+                dataReader.Close();
+                cmd.Dispose();
+                conn.Close();
+
+                return rewards;
+            }
+            catch (Exception e)
+            {
+                addError(ErrorCodes.EREW, e.Message, "getRewardsAtEvent");
                 return null;
             }
         }
@@ -1649,38 +1742,63 @@ namespace IcebreakServices
                 {
                     try
                     {
-                        conn = new SqlConnection(dbConnectionString);
-                        conn.Open();
-                        
-                        string query = "UPDATE [dbo].[User_Rewards] SET Reward_code=@code, event_id=@ev_id WHERE Reward_id=@id AND username=@usr AND event_id=@ev_id";
-
-                        cmd = new SqlCommand(query, conn);
-
-                        cmd.Parameters.AddWithValue(@"id", rw_id);
-                        cmd.Parameters.AddWithValue(@"ev_id", event_id);
-                        cmd.Parameters.AddWithValue(@"code", new_code);
-                        cmd.Parameters.AddWithValue(@"usr", username);
-
-                        cmd.ExecuteNonQuery();
-
-                        cmd.Dispose();
-                        conn.Close();
-
                         if (new_code.Equals(RW_CLAIMED))
                         {
                             //Get reward
                             Reward rwd = getReward(long.Parse(rw_id));
-                            //Decrease user pts.
-                            User u = getUser(username);
-                            u.Points -= rwd.Value;
-                            //Update user points
-                            updateUserDetails(u);
-                        }
-                        return "Success";
+                            if (rwd != null)
+                            {
+                                //Decrease user pts.
+                                User u = getUser(username);
+                                if (u.Points >= rwd.Value)
+                                {
+                                    //Update User_Reward
+                                    conn = new SqlConnection(dbConnectionString);
+                                    conn.Open();
+
+                                    string query = "UPDATE [dbo].[User_Rewards] SET Reward_code=@code, event_id=@ev_id WHERE Reward_id=@id AND username=@usr AND event_id=@ev_id";
+
+                                    cmd = new SqlCommand(query, conn);
+
+                                    cmd.Parameters.AddWithValue(@"id", rw_id);
+                                    cmd.Parameters.AddWithValue(@"ev_id", event_id);
+                                    cmd.Parameters.AddWithValue(@"code", new_code);
+                                    cmd.Parameters.AddWithValue(@"usr", username);
+
+                                    cmd.ExecuteNonQuery();
+
+                                    cmd.Dispose();
+                                    conn.Close();
+                                    //Decrease user points
+                                    u.Points -= rwd.Value;
+                                    //Update user points
+                                    updateUserDetails(u);
+                                    //Send notification
+                                    string notif = "{" +
+                                    "\"data\": {" +
+                                    "\"rwd_id\": \"" + rw_id + "\"}," +
+                                    "\"to\": \"" + getUserToken(username) +
+                                    "\"}";
+                                    sendNotification(notif);
+                                }
+                                else
+                                {
+                                    string notif = "{" +
+                                    "\"data\": {" +
+                                    "\"rwd_id\": \"" + rw_id + "\"}," +
+                                    "\"to\": \"" + getUserToken(username) +
+                                    "\"}";
+                                    sendNotification(notif);
+
+                                    return "Error: Insufficient points.";
+                                }
+                            }
+                            return "Successfully redeemed reward.";
+                        }else return "Error: Reward not found.";
                     }
                     catch (Exception e)
                     {
-                        addError(ErrorCodes.EEVENT, e.Message, "addReward");
+                        addError(ErrorCodes.EEVENT, e.Message, "redeemReward");
                         return "Error:" + e.Message;
                     }
                 }
@@ -1964,14 +2082,14 @@ namespace IcebreakServices
                         string id = Convert.ToString(dataReader.GetValue(2));
                         ids.Add(id);
                     }
-
-                    foreach(string id in ids)
-                        events.Add(getEvent(id));
                 }
 
                 dataReader.Close();
                 cmd.Dispose();
                 conn.Close();
+
+                foreach (string id in ids)
+                    events.Add(getEvent(id));
 
                 return events;
             }
@@ -2003,6 +2121,7 @@ namespace IcebreakServices
             conn = new SqlConnection(dbConnectionString);
             try
             {
+                //Update last seen
                 string last_seen = Convert.ToString((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds);
 
                 conn.Open();

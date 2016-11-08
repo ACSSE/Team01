@@ -108,6 +108,7 @@ namespace IceBreak
             string EventEndDate = event_end_date.Value;
             string EventDate = date.Value;
             string EventGps = gps.Value;
+            string EventRadius = txtRadius.Value;
             string RewardName = rewardname.Value;
             string RewardDescrip = rewarddescrip.Value;
             string mp1 = meeting_place_1.Value;
@@ -140,9 +141,14 @@ namespace IceBreak
                 gps_span.Style.Add("display", "normal");
                 return;
             }
+            if (String.IsNullOrEmpty(EventRadius))
+            {
+                radius_span.Style.Add("display", "normal");
+                return;
+            }
             else
             {
-                gps_span.Style.Add("display", "none");
+                radius_span.Style.Add("display", "none");
             }
             if (String.IsNullOrEmpty(EventDescrip))
             {
@@ -228,7 +234,27 @@ namespace IceBreak
             {
                 rdescrip_span.Style.Add("display", "none");
             }
-            int num = int.Parse(NumEvents.SelectedValue);
+            //Validate number of meeting places
+            int num=0;
+            if(!int.TryParse(NumEvents.SelectedValue, out num))
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid number of meeting places');", true);
+                meeting_span.Style.Add("display", "normal");
+                return;
+            }
+            if (num <= 0)
+                return;
+            //Validate event radius
+            double radius = 0.0;
+            if (!double.TryParse(EventRadius, out radius))
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "alert('Invalid event radius.');", true);
+                radius_span.Style.Add("display", "normal");
+                return;
+            }
+            if (radius <= 0)
+                return;
+
             string meetingplace = " ";
             for(int i =0;i<num;i++)
             {
@@ -275,7 +301,7 @@ namespace IceBreak
                 return;
             }
             //Get passcode
-            int pcode = DBServerTools.getRandomNumber(9999999);
+            int pcode = DBServerTools.getRandomNumber(9999);
             pcode = pcode >= 1000 ? pcode : pcode + 1000;//make sure passcode is always >= 4 digits
 
             IcebreakServices.Event evnt = new IcebreakServices.Event();
@@ -294,7 +320,7 @@ namespace IceBreak
 
                 if (!loc.Contains(";"))//If there's not already and array of coordinates
                 {
-                    double radius = 0.003555;
+                    //double radius = 0.003555;
                     double lat = double.Parse(loc.Split(',')[0]);
                     double lng = double.Parse(loc.Split(',')[1]);
 
@@ -303,7 +329,7 @@ namespace IceBreak
                     double[] bottom_left = { lat + radius, lng - radius };
                     double[] bottom_right = { lat + radius, lng + radius };
 
-                    loc = top_left[0] + "," + top_left[1] + ";" + top_right[0] + "," + top_right[1] + ";" + bottom_left[0] + "," + bottom_left[1] + ";" + bottom_right[0] + "," + bottom_right[1];
+                    loc = top_left[0] + "," + top_left[1] + ";" + top_right[0] + "," + top_right[1] + ";" + bottom_right[0] + "," + bottom_right[1] + ";" + bottom_left[0] + "," + bottom_left[1] + ";" + top_left[0] + "," + top_left[1];
                 }
             }
             else return;//Invalid GPS coordinates

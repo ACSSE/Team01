@@ -34,6 +34,17 @@ namespace IceBreak
                     "</a>" + "<label class='Sidebarname'>" + checkName + " " + checkLastName + "</label>";
                 //DIV.InnerHtml = "<label class='Sidebarname'>" + checkName + " " + checkLastName + "</label>";
             }
+            
+            //ScriptManager.RegisterStartupScript(this, this.GetType(), "NotificationModalMessage", "$('#notifMsg').data('value');", true);
+            string msg = Request.QueryString["notif_msg"];
+            if (msg != null)
+            {
+                if (msg.Length > 0)
+                {
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "NotificationModal", "$('#NotificationModal').modal();", true);
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "NotificationModalMessage", "$('#notif_msg').text('" + msg + "');", true);
+                }
+            }
         }
 
         [ScriptMethod, WebMethod]

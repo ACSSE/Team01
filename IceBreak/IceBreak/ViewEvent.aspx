@@ -21,13 +21,11 @@
                     <p class="lead section-lead" id ="EndTime" runat="server"></p>
                     <p class="lead section-lead" id ="EventAddress" runat="server"></p>
                     <p class="section-paragraph" id ="EVentDescription" runat="server"></p>
-                    <!--<div id="divQR" runat="server" style="display:none;">
-                        <asp:Button runat="server" ID="btnQR" Width="200px"  UseSubmitBehavior="true" CssClass="AddButton" OnClick="btnGenerateQR" Text="Generate QR Code"></asp:Button>
-                    </div>-->
                 </div>
             </div>
             <div style="width:500px;height:500px;margin:auto;float:left;display:block;visibility:visible;" id="loading_qr_ico" runat="server">
                 <img src="./images/public_res/ring-alt.gif" width="500" height="500" alt="QR Code" id="qr_code" runat="server"/>
+                <h4 id="access_code" runat="server" style="text-align:center;">Access Code:</h4>
             </div>
         </div>
     </section>

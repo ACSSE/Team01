@@ -173,6 +173,14 @@ namespace IcebreakServices
         List<Reward> getUserRewardsAtEvent(string username, string event_id);
 
         [OperationContract]
+        [WebGet(UriTemplate = "/getUserReward/{username}/{rw_id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        Reward getUserReward(string username, string rw_id);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/getRewardsAtEvent/{event_id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        List<Reward> getRewardsAtEvent(string event_id);
+
+        [OperationContract]
         [WebGet(UriTemplate = "/getRewardsCreatedByUser/{username}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         List<Reward> getRewardsCreatedByUser(string username);
 

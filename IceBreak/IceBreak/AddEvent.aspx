@@ -33,6 +33,10 @@
                              <input  id="gps" type="text" readonly="readonly" name="gps" placeholder="enter your gps coordinates..." runat="server" />
                        </div>
                         <div class="form-group" style="text-align:left">
+                             <label for="gps_radius">Event radius</label><span id="radius_span" runat="server" style="color:red; display:none"> - Please enter your event radius.</span>
+                             <input  id="txtRadius" type="number" name="txtRadius" placeholder="Enter your event radius" runat="server" value="0.003555"/>
+                       </div>
+                        <div class="form-group" style="text-align:left">
                             <label for="EventDescription">Event Description</label><span id="descrip_span" runat="server" style="color:red; display:none"> - Please enter your event description.</span>
                             <textarea class="form-control" rows="4" id="eventdescrip" name="eventdescrip" placeholder="enter your event description..."  runat="server" onkeydown = "return (event.keyCode!=13);"></textarea>
                         </div>

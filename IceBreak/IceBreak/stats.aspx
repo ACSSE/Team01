@@ -41,8 +41,6 @@
             </div>
         </div>
         <div id="tab_redeem">
-            <div id="js_redeem_notifications" style="width:600px;height:auto;margin:auto;border:1px solid #0094ff;border-radius:10px;">
-            </div>
             <div style="width:400px;height:50px;margin:auto;">
                 <h3 style="text-align:center;">Search user</h3>
             </div>

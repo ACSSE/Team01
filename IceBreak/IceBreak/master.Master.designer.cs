@@ -175,6 +175,24 @@ namespace IceBreak {
         protected global::System.Web.UI.WebControls.Button btnLogin;
         
         /// <summary>
+        /// NotificationModal control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl NotificationModal;
+        
+        /// <summary>
+        /// footer_text control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl footer_text;
+        
+        /// <summary>
         /// signUpModal control.
         /// </summary>
         /// <remarks>
