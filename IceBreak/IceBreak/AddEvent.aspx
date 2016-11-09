@@ -34,7 +34,7 @@
                        </div>
                         <div class="form-group" style="text-align:left">
                              <label for="gps_radius">Event radius</label><span id="radius_span" runat="server" style="color:red; display:none"> - Please enter your event radius.</span>
-                             <input  id="txtRadius" type="number" name="txtRadius" placeholder="Enter your event radius" runat="server" value="0.003555"/>
+                             <input  id="txRadius" type="text" name="txRadius" placeholder="Enter your event radius" runat="server" value="0.003555"/>
                        </div>
                         <div class="form-group" style="text-align:left">
                             <label for="EventDescription">Event Description</label><span id="descrip_span" runat="server" style="color:red; display:none"> - Please enter your event description.</span>

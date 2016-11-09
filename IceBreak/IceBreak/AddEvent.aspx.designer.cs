@@ -76,13 +76,13 @@ namespace IceBreak {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl radius_span;
         
         /// <summary>
-        /// txtRadius control.
+        /// txRadius control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputGenericControl txtRadius;
+        protected global::System.Web.UI.HtmlControls.HtmlInputText txRadius;
         
         /// <summary>
         /// descrip_span control.

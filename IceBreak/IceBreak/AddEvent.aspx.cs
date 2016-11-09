@@ -108,7 +108,7 @@ namespace IceBreak
             string EventEndDate = event_end_date.Value;
             string EventDate = date.Value;
             string EventGps = gps.Value;
-            string EventRadius = txtRadius.Value;
+            string EventRadius = txRadius.Value;
             string RewardName = rewardname.Value;
             string RewardDescrip = rewarddescrip.Value;
             string mp1 = meeting_place_1.Value;

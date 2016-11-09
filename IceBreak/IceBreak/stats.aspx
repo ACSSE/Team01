@@ -14,6 +14,7 @@
             $("#redeem").click(function () { $("#tab_personal").hide(); $("#tab_events").hide(); $("#tab_redeem").show(); });
         });
     </script>
+
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server" >
